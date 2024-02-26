@@ -1,16 +1,11 @@
-#include "raylib.h"
-
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
+#include "../src/renderer.hpp"
 
 int main(void) {
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
+    Renderer renderer;
+    World world;
 
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        EndDrawing();
+        renderer.draw_world(&world);
     }
 
     return 0;
