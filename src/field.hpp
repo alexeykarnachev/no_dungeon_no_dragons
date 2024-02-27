@@ -21,5 +21,5 @@ public:
 
     Field();
     u32 get_n_cells();
-    Vector2 get_cell_xy(u32 id);
+    Vector2 get_cell_center(u32 id);
 };
