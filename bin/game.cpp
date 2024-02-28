@@ -5,6 +5,7 @@ int main(void) {
     World world;
 
     while (!WindowShouldClose()) {
+        world.update();
         renderer.draw_world(&world);
     }
 

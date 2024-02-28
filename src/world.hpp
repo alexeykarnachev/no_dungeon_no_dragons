@@ -9,4 +9,6 @@ public:
     MyCamera camera;
 
     World();
+
+    void update();
 };

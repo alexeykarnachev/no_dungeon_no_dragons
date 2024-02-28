@@ -10,9 +10,10 @@ private:
 
     Shader vox_plane_shader;
     unsigned int vox_vao;
-    unsigned int vox_cube_center_position_vbo;
+    unsigned int vox_cube_position_vbo;
+    unsigned int vox_face_id_vbo;
 
-    void draw_field(Field *field, Matrix vp);
+    void draw_field(Field *field);
 
 public:
     Renderer();

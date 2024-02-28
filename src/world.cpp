@@ -2,3 +2,7 @@
 
 World::World() : field(), camera() {
 }
+
+void World::update() {
+    camera.update_orbital();
+}

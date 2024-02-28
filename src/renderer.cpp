@@ -21,40 +21,55 @@ Renderer::Renderer() {
     vox_vao = rlLoadVertexArray();
     rlEnableVertexArray(vox_vao);
 
-    vox_cube_center_position_vbo = rlLoadVertexBuffer(0, 256 * 3 * 4, true);
+    vox_cube_position_vbo = rlLoadVertexBuffer(0, 256 * 3 * 4, true);
     rlSetVertexAttribute(0, 3, RL_FLOAT, false, 0, 0);
     rlEnableVertexAttribute(0);
+
+    vox_face_id_vbo = rlLoadVertexBuffer(0, 256 * 3 * 1, true);
+    rlSetVertexAttribute(1, 1, RL_UNSIGNED_BYTE, false, 0, 0);
+    rlEnableVertexAttribute(1);
 }
 
-void Renderer::draw_field(Field *field, Matrix vp) {
+void Renderer::draw_field(Field *field) {
     rlEnableVertexArray(vox_vao);
-
     rlEnableShader(vox_plane_shader.id);
+
+    Matrix view = rlGetMatrixModelview();
+    Matrix proj = rlGetMatrixProjection();
+    Matrix vp = MatrixMultiply(view, proj);
 
     int u_vp = GetShaderLocation(vox_plane_shader, "u_vp");
     int u_cube_size = GetShaderLocation(vox_plane_shader, "u_cube_size");
 
-    float cube_center_position[3] = {0.0, 0.0, 0.0};
+    // rlDisableBackfaceCulling();
+
+#define N 36
+    unsigned char face_ids[N] = {
+        0, 0, 0, 0, 0, 0,
+        1, 1, 1, 1, 1, 1,
+        2, 2, 2, 2, 2, 2,
+        3, 3, 3, 3, 3, 3,
+        4, 4, 4, 4, 4, 4,
+        5, 5, 5, 5, 5, 5
+    };
+    rlUpdateVertexBuffer(vox_face_id_vbo, face_ids, N, 0); 
+
     float cube_size = 1.0;
     SetShaderValueMatrix(vox_plane_shader, u_vp, vp);
     SetShaderValue(vox_plane_shader, u_cube_size, &cube_size, SHADER_UNIFORM_FLOAT);
 
-    rlDrawVertexArray(0, 8);
+    rlDrawVertexArray(0, N);
 
     rlDisableShader();
 }
 
 void Renderer::draw_world(World *world) {
-
-    float aspect = (float)GetScreenWidth() / GetScreenHeight();
-    Matrix proj = GetCameraProjectionMatrix(&world->camera.cam, aspect);
-    Matrix view = GetCameraViewMatrix(&world->camera.cam);
-    Matrix vp = MatrixMultiply(proj, view);
-
     BeginDrawing();
     ClearBackground(DARKGRAY);
 
-    draw_field(&world->field, vp);
+    BeginMode3D(world->camera.cam);
+    draw_field(&world->field);
+    EndMode3D();
 
     DrawFPS(0, 0);
 

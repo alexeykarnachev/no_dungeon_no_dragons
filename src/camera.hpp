@@ -8,5 +8,7 @@ public:
 
     MyCamera();
     MyCamera(Vector3 position, Vector3 target, float fov);
+
+    void update_orbital();
 };
 
