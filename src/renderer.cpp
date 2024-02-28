@@ -21,17 +21,16 @@ Renderer::Renderer() {
     vox_vao = rlLoadVertexArray();
     rlEnableVertexArray(vox_vao);
 
-    vox_cube_position_vbo = rlLoadVertexBuffer(0, 256 * 3 * 4, true);
+    vox_cube_position_vbo = rlLoadVertexBuffer(0, VOX_BATCH_SIZE * 3 * 4, true);
     rlSetVertexAttribute(0, 3, RL_FLOAT, false, 0, 0);
     rlEnableVertexAttribute(0);
 
-    vox_face_id_vbo = rlLoadVertexBuffer(0, 256 * 3 * 1, true);
+    vox_face_id_vbo = rlLoadVertexBuffer(0, VOX_BATCH_SIZE * 3 * 1, true);
     rlSetVertexAttribute(1, 1, RL_UNSIGNED_BYTE, false, 0, 0);
     rlEnableVertexAttribute(1);
 }
 
 void Renderer::draw_field(Field *field) {
-    rlEnableVertexArray(vox_vao);
     rlEnableShader(vox_plane_shader.id);
 
     Matrix view = rlGetMatrixModelview();
@@ -41,24 +40,32 @@ void Renderer::draw_field(Field *field) {
     int u_vp = GetShaderLocation(vox_plane_shader, "u_vp");
     int u_cube_size = GetShaderLocation(vox_plane_shader, "u_cube_size");
 
-    // rlDisableBackfaceCulling();
+    static u8 face_ids[VOX_BATCH_SIZE];
+    static float cube_positions[VOX_BATCH_SIZE * 3];
+    int n_cells = field->get_n_cells();
+    for (int i_cube = 0; i_cube < n_cells; ++i_cube) {
+        Vector2 cell_position = field->get_cell_position(i_cube);
+        for (int i_face = 0; i_face < 6; ++i_face) {
+            for (int i_vert = 0; i_vert < 6; ++i_vert) {
+                int i = i_cube * 36 + i_face * 6 + i_vert;
+                face_ids[i] = i_face;
+                cube_positions[i * 3 + 0] = cell_position.x;
+                cube_positions[i * 3 + 1] = cell_position.y;
+                cube_positions[i * 3 + 2] = 0.0;
+            }
+        }
+    }
 
-#define N 36
-    unsigned char face_ids[N] = {
-        0, 0, 0, 0, 0, 0,
-        1, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 2,
-        3, 3, 3, 3, 3, 3,
-        4, 4, 4, 4, 4, 4,
-        5, 5, 5, 5, 5, 5
-    };
-    rlUpdateVertexBuffer(vox_face_id_vbo, face_ids, N, 0); 
+    int n_verts = n_cells * 36;
+    rlUpdateVertexBuffer(vox_face_id_vbo, face_ids, n_verts * 1 * 1, 0); 
+    rlUpdateVertexBuffer(vox_cube_position_vbo, cube_positions, n_verts * 3 * 4, 0); 
 
     float cube_size = 1.0;
     SetShaderValueMatrix(vox_plane_shader, u_vp, vp);
     SetShaderValue(vox_plane_shader, u_cube_size, &cube_size, SHADER_UNIFORM_FLOAT);
 
-    rlDrawVertexArray(0, N);
+    rlEnableVertexArray(vox_vao);
+    rlDrawVertexArray(0, n_verts);
 
     rlDisableShader();
 }

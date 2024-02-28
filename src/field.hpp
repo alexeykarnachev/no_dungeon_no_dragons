@@ -11,8 +11,8 @@ enum class CellType : u8 {
 
 class Field {
 private:
-    static constexpr u32 WIDTH = 64;
-    static constexpr u32 HEIGHT = 64;
+    static constexpr u32 WIDTH = 256;
+    static constexpr u32 HEIGHT = 256;
     static constexpr u32 N_CELLS = WIDTH * HEIGHT;
     static constexpr float CELL_SIZE = 1.0;
 
@@ -21,5 +21,5 @@ public:
 
     Field();
     u32 get_n_cells();
-    Vector2 get_cell_center(u32 id);
+    Vector2 get_cell_position(u32 id);
 };

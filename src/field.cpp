@@ -9,11 +9,11 @@ u32 Field::get_n_cells() {
     return N_CELLS;
 }
 
-Vector2 Field::get_cell_center(u32 id) {
+Vector2 Field::get_cell_position(u32 id) {
     u32 row = HEIGHT - 1 - id / WIDTH;
     u32 col = id % WIDTH;
-    float x = col * CELL_SIZE + 0.5 * CELL_SIZE;
-    float y = row * CELL_SIZE + 0.5 * CELL_SIZE;
+    float x = col * CELL_SIZE;
+    float y = row * CELL_SIZE;
 
     return {x, y};
 }

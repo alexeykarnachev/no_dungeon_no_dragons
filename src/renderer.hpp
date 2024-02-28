@@ -7,6 +7,7 @@ class Renderer {
 private:
     static constexpr int SCREEN_WIDTH = 1024;
     static constexpr int SCREEN_HEIGHT = 768;
+    static constexpr int VOX_BATCH_SIZE = 36 * 256 * 256;
 
     Shader vox_plane_shader;
     unsigned int vox_vao;
