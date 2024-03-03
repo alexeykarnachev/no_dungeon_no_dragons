@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "rcamera.h"
 #include "rlgl.h"
+#include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <string>
@@ -35,6 +36,10 @@ class Resources {
 };
 
 class ThirdPersonCamera {
+  private:
+    float min_y = 0.2;
+    float dist_to_target = 5.0;
+
   public:
     Camera3D camera3d;
 
@@ -56,21 +61,39 @@ class ThirdPersonCamera {
         Vector2 mouse_delta = GetMouseDelta();
         CameraYaw(&camera3d, -rot_speed * mouse_delta.x, true);
         CameraPitch(&camera3d, -rot_speed * mouse_delta.y, true, true, false);
+
+        camera3d.position.y = std::max(camera3d.position.y, min_y);
+        CameraMoveToTarget(
+            &camera3d, dist_to_target - Vector3Distance(target, camera3d.position)
+        );
     }
 };
 
 class ThirdPersonController {
+  private:
+    Vector3 world_dir;
+    u8 keys_mask;
+    bool preserve_direction = false;
+
   public:
-    ThirdPersonController(){};
+    ThirdPersonController() : keys_mask(0){};
 
-    Vector3 get_step(float dt, Camera3D camera3d, Vector3 position) {
-        Vector2 dir = Vector2Zero();
-        if (IsKeyDown(KEY_W)) dir.y -= 1.0;
-        if (IsKeyDown(KEY_S)) dir.y += 1.0;
-        if (IsKeyDown(KEY_A)) dir.x -= 1.0;
-        if (IsKeyDown(KEY_D)) dir.x += 1.0;
+    Vector3 get_direction(Camera3D camera3d, Vector3 position) {
+        u8 new_keys_mask = 0;
+        new_keys_mask |= IsKeyDown(KEY_W) << 0;
+        new_keys_mask |= IsKeyDown(KEY_S) << 1;
+        new_keys_mask |= IsKeyDown(KEY_A) << 2;
+        new_keys_mask |= IsKeyDown(KEY_D) << 3;
 
-        if (dir.x != 0.0 || dir.y != 0.0) {
+        if (!new_keys_mask) {
+            world_dir = Vector3Zero();
+        } else if (new_keys_mask && (new_keys_mask != keys_mask || !preserve_direction)) {
+            Vector2 dir = Vector2Zero();
+            if (IsKeyDown(KEY_W)) dir.y -= 1.0;
+            if (IsKeyDown(KEY_S)) dir.y += 1.0;
+            if (IsKeyDown(KEY_A)) dir.x -= 1.0;
+            if (IsKeyDown(KEY_D)) dir.x += 1.0;
+
             Vector2 s = GetWorldToScreen(position, camera3d);
             s = Vector2Add(s, dir);
             Ray r = GetMouseRay(s, camera3d);
@@ -85,14 +108,13 @@ class ThirdPersonController {
                     r.position, Vector3Scale(Vector3Normalize(r.direction), t)
                 );
 
-                Vector3 d = Vector3Subtract(isect, position);
-                d = Vector3Normalize(d);
-                Vector3 step = Vector3Scale(d, dt * 1.5);
-                return step;
+                world_dir = Vector3Normalize(Vector3Subtract(isect, position));
+                world_dir.y = 0.0;
             }
         }
 
-        return Vector3Zero();
+        keys_mask = new_keys_mask;
+        return world_dir;
     }
 };
 
@@ -109,8 +131,15 @@ class Player {
     }
 
     void update(float dt) {
-        Vector3 step = controller.get_step(dt, camera.camera3d, transform.translation);
-        transform.translation = Vector3Add(transform.translation, step);
+        Vector3 dir = controller.get_direction(camera.camera3d, transform.translation);
+        transform.translation = Vector3Add(
+            transform.translation, Vector3Scale(dir, dt * 1.5)
+        );
+        if (Vector3Length(dir) > EPSILON) {
+            transform.rotation = QuaternionFromVector3ToVector3(
+                (Vector3){0.0, 0.0, 1.0}, Vector3Normalize(dir)
+            );
+        }
 
         camera.update(transform.translation);
     }
@@ -123,6 +152,7 @@ class World {
     World(Vector3 player_position) : player(player_position) {}
 
     void update() {
+        if (GetTime() < 0.5) return;
         player.update(GetFrameTime());
     }
 };
@@ -142,9 +172,19 @@ class Renderer {
 
     void draw_world(World &world, Resources &resources) {
         BeginMode3D(world.player.camera.camera3d);
-        DrawModel(
-            resources.models["player"], world.player.transform.translation, 0.01, WHITE
+
+        Matrix r = QuaternionToMatrix(world.player.transform.rotation);
+        Matrix t = MatrixTranslate(
+            world.player.transform.translation.x,
+            world.player.transform.translation.y,
+            world.player.transform.translation.z
         );
+        Matrix transform = MatrixMultiply(r, t);
+        rlPushMatrix();
+        rlMultMatrixf(MatrixToFloat(transform));
+        DrawModel(resources.models["player"], Vector3Zero(), 0.01, WHITE);
+        rlPopMatrix();
+
         DrawGrid(16, 1.0);
         EndMode3D();
         DrawFPS(0, 0);
