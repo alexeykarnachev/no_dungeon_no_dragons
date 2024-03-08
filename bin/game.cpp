@@ -3,8 +3,11 @@
 #include "rcamera.h"
 #include "rlgl.h"
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
@@ -18,20 +21,80 @@ using u8 = uint8_t;
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 
+class AnimatedModel {
+  public:
+    Model model;
+    ModelAnimation *animations;
+
+    int animation_idx = 0;
+    int n_animations = 0;
+    int n_frames = 0;
+    int fps = 0;
+    int frame_idx = 0;
+    float time = 0.0;
+
+    AnimatedModel() {}
+
+    AnimatedModel(const char *file_path) {
+        model = LoadModel(file_path);
+        animations = LoadModelAnimations(file_path, &n_animations);
+        if (n_animations == 0) return;
+
+        n_frames = animations[0].frameCount;
+        fps = 30;
+    }
+
+    void play(std::string animation_name, int fps, float dt) {
+        this->fps = fps;
+
+        int animation_idx = -1;
+        for (int i = 0; i < n_animations; ++i) {
+            if (animation_name == animations[i].name) {
+                animation_idx = i;
+            }
+        }
+
+        if (animation_idx == -1) {
+            throw std::runtime_error("Animation " + animation_name + " is not found");
+        }
+
+        if (this->animation_idx != animation_idx) {
+            this->animation_idx = animation_idx;
+            n_frames = animations[this->animation_idx].frameCount;
+            time = 0.0;
+        }
+
+        if (n_frames <= 0) {
+            throw std::runtime_error(
+                "Can't update the AnimationCounter with n_frames <= 0"
+            );
+        }
+
+        time += dt;
+        frame_idx = time / (1.0f / fps);
+        frame_idx %= n_frames;
+    }
+
+    void draw() {
+        UpdateModelAnimation(model, animations[animation_idx], frame_idx);
+        DrawModel(model, Vector3Zero(), 0.01, WHITE);
+    }
+};
+
 class Resources {
   public:
     std::unordered_map<std::string, Shader> shaders;
-    std::unordered_map<std::string, Model> models;
+    std::unordered_map<std::string, AnimatedModel> animated_models;
 
     Resources() {
-        models["player"] = LoadModel("resources/models/zed_1.glb");
+        animated_models["zed_1"] = AnimatedModel("resources/models/zed_1.glb");
     }
 
     ~Resources() {
         for (auto &pair : shaders)
             UnloadShader(pair.second);
-        for (auto &pair : models)
-            UnloadModel(pair.second);
+        for (auto &pair : animated_models)
+            UnloadModelAnimations(pair.second.animations, pair.second.n_animations);
     }
 };
 
@@ -118,30 +181,49 @@ class ThirdPersonController {
     }
 };
 
+enum class PlayerState {
+    IDLE,
+    WALK,
+};
+
 class Player {
   public:
     ThirdPersonCamera camera;
     ThirdPersonController controller;
     Transform transform;
+    PlayerState state;
+    AnimatedModel animated_model;
 
-    Player(Vector3 position) : camera(position) {
+    Player(Vector3 position, AnimatedModel animated_model)
+        : camera(position), animated_model(animated_model) {
         transform.rotation = QuaternionIdentity();
         transform.scale = Vector3One();
         transform.translation = position;
+        state = PlayerState::IDLE;
     }
 
     void update(float dt) {
+        state = PlayerState::IDLE;
+
         Vector3 dir = controller.get_direction(camera.camera3d, transform.translation);
-        transform.translation = Vector3Add(
-            transform.translation, Vector3Scale(dir, dt * 1.5)
-        );
         if (Vector3Length(dir) > EPSILON) {
+            transform.translation = Vector3Add(
+                transform.translation, Vector3Scale(dir, dt * 1.0)
+            );
             transform.rotation = QuaternionFromVector3ToVector3(
                 (Vector3){0.0, 0.0, 1.0}, Vector3Normalize(dir)
             );
+
+            state = PlayerState::WALK;
         }
 
         camera.update(transform.translation);
+
+        if (state == PlayerState::IDLE) {
+            animated_model.play("idle", 120, dt);
+        } else if (state == PlayerState::WALK) {
+            animated_model.play("walk", 120, dt);
+        }
     }
 };
 
@@ -149,7 +231,8 @@ class World {
   public:
     Player player;
 
-    World(Vector3 player_position) : player(player_position) {}
+    World(Resources *resources, Vector3 player_position)
+        : player(player_position, resources->animated_models["zed_1"]) {}
 
     void update() {
         if (GetTime() < 0.5) return;
@@ -182,10 +265,12 @@ class Renderer {
         Matrix transform = MatrixMultiply(r, t);
         rlPushMatrix();
         rlMultMatrixf(MatrixToFloat(transform));
-        DrawModel(resources.models["player"], Vector3Zero(), 0.01, WHITE);
+
+        world.player.animated_model.draw();
+
         rlPopMatrix();
 
-        DrawGrid(16, 1.0);
+        DrawGrid(16, 2.0);
         EndMode3D();
         DrawFPS(0, 0);
     }
@@ -193,12 +278,12 @@ class Renderer {
 
 int main(void) {
     Renderer renderer;
-    World world(Vector3Zero());
     Resources resources;
+    World world(&resources, Vector3Zero());
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(DARKBLUE);
+        ClearBackground(BLACK);
 
         world.update();
         renderer.draw_world(world, resources);
