@@ -38,6 +38,7 @@ BraceWrapping:
 BreakBeforeBinaryOperators: All
 BreakBeforeBraces: Attach
 BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
 BreakStringLiterals: true
 ColumnLimit:     90
 CommentPragmas:  '^ IWYU pragma:'

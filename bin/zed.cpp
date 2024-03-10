@@ -139,7 +139,8 @@ class ThirdPersonController {
     bool preserve_direction = false;
 
   public:
-    ThirdPersonController() : keys_mask(0){};
+    ThirdPersonController()
+        : keys_mask(0){};
 
     Vector3 get_direction(Camera3D camera3d, Vector3 position) {
         u8 new_keys_mask = 0;
@@ -195,7 +196,8 @@ class Player {
     AnimatedModel animated_model;
 
     Player(Vector3 position, AnimatedModel animated_model)
-        : camera(position), animated_model(animated_model) {
+        : camera(position)
+        , animated_model(animated_model) {
         transform.rotation = QuaternionIdentity();
         transform.scale = Vector3One();
         transform.translation = position;

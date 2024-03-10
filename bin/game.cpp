@@ -34,9 +34,12 @@ class Sprite {
     Sprite(
         Texture2D texture, Rectangle src, std::unordered_map<std::string, Rectangle> masks
     )
-        : texture(texture), src(src), masks(masks) {}
+        : texture(texture)
+        , src(src)
+        , masks(masks) {}
 
-    Sprite(json frame_json, Texture2D texture) : texture(texture) {
+    Sprite(json frame_json, Texture2D texture)
+        : texture(texture) {
         json sprite_json = frame_json["sprite"];
         json masks_json = frame_json["masks"];
         this->src = rect_from_json(sprite_json);
@@ -99,7 +102,8 @@ class SpriteSheetAnimator {
 
   public:
     SpriteSheetAnimator() {}
-    SpriteSheetAnimator(SpriteSheet *sprite_sheet) : sprite_sheet(sprite_sheet) {}
+    SpriteSheetAnimator(SpriteSheet *sprite_sheet)
+        : sprite_sheet(sprite_sheet) {}
 
     void play(std::string name, float frame_duration, bool is_repeat) {
         this->frame_duration = frame_duration;
@@ -205,6 +209,7 @@ class GameCamera {
 
 enum class EntityState {
     IDLE,
+    MOVING,
 };
 
 enum class EntityController {
@@ -218,13 +223,18 @@ class Entity {
     Vector2 position;
     SpriteSheetAnimator animator;
 
+    bool is_hflip = false;
+
     Entity(
         EntityState state,
         EntityController controller,
         Vector2 position,
         SpriteSheetAnimator animator
     )
-        : state(state), controller(controller), position(position), animator(animator) {}
+        : state(state)
+        , controller(controller)
+        , position(position)
+        , animator(animator) {}
 };
 
 // -----------------------------------------------------------------------
@@ -250,12 +260,16 @@ class World {
             if (entity.controller == EntityController::PLAYER) {
 
                 if (IsKeyDown(KEY_A)) {
-                    entity.position.x -= 30.0 * dt;
+                    entity.position.x -= 90.0 * dt;
+                    entity.is_hflip = true;
+                    entity.animator.play("knight_run", 0.1, true);
                 } else if (IsKeyDown(KEY_D)) {
-                    entity.position.x += 30.0 * dt;
+                    entity.position.x += 90.0 * dt;
+                    entity.is_hflip = false;
+                    entity.animator.play("knight_run", 0.1, true);
+                } else {
+                    entity.animator.play("knight_idle", 0.1, true);
                 }
-
-                entity.animator.play("knight_idle", 0.1, true);
             }
 
             entity.animator.update(dt);
@@ -296,10 +310,12 @@ class Renderer {
         BeginShaderMode(this->shaders["sprite"]);
         for (auto &entity : world.entities) {
             Sprite sprite = entity.animator.get_sprite();
-            Rectangle dst = sprite.src;
+            Rectangle src = sprite.src;
+            Rectangle dst = src;
+            src.width = entity.is_hflip ? -src.width : src.width;
             dst.x = entity.position.x - 0.5 * dst.width;
             dst.y = entity.position.y - dst.height;
-            DrawTexturePro(sprite.texture, sprite.src, dst, Vector2Zero(), 0.0, WHITE);
+            DrawTexturePro(sprite.texture, src, dst, Vector2Zero(), 0.0, WHITE);
         }
         EndShaderMode();
 
