@@ -248,7 +248,14 @@ class World {
 
         for (auto &entity : this->entities) {
             if (entity.controller == EntityController::PLAYER) {
-                entity.animator.play("knight_attack_1", 0.1, true);
+
+                if (IsKeyDown(KEY_A)) {
+                    entity.position.x -= 30.0 * dt;
+                } else if (IsKeyDown(KEY_D)) {
+                    entity.position.x += 30.0 * dt;
+                }
+
+                entity.animator.play("knight_idle", 0.1, true);
             }
 
             entity.animator.update(dt);
