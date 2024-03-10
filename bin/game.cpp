@@ -13,6 +13,9 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
+#define SCREEN_WIDTH 1024
+#define SCREEN_HEIGHT 768
+
 // -----------------------------------------------------------------------
 // Sprite
 Rectangle rect_from_json(json data) {
@@ -118,6 +121,12 @@ class SpriteSheetAnimator {
     }
 
     Sprite get_sprite() {
+        if (this->name.empty()) {
+            throw std::runtime_error(
+                "Failed to get the sprite, the animation is not playing"
+            );
+        }
+
         int n_frames = this->sprite_sheet.count_frames(this->name);
         int idx = std::round(this->progress * (n_frames - 1.0));
         Sprite sprite = this->sprite_sheet.get_sprite(this->name, idx);
@@ -173,20 +182,67 @@ class Resources {
 };
 
 // -----------------------------------------------------------------------
+// Game camera
+class GameCamera {
+  private:
+    float zoom = 4.0;
+
+  public:
+    Camera2D camera2d;
+
+    GameCamera() {
+        camera2d = {
+            .offset = {0.5 * SCREEN_WIDTH, 0.5 * SCREEN_HEIGHT},
+            .target = {0.0, 0.0},
+            .rotation = 0.0,
+            .zoom = this->zoom};
+    }
+};
+
+// -----------------------------------------------------------------------
+// Knight
+enum class KnightState { IDLE };
+
+class Knight {
+  public:
+    Vector2 position;
+    KnightState state;
+    SpriteSheetAnimator animator;
+
+    Knight(Resources &resources, Vector2 position)
+        : position(position), animator(resources.get_sprite_sheet_animator("0")) {}
+};
+
+// -----------------------------------------------------------------------
+// World
+class World {
+  public:
+    Knight player;
+    GameCamera camera;
+
+    World(Resources &resources) : player(resources, {0.0, 0.0}) {}
+
+    void update() {
+        float dt = GetFrameTime();
+
+        // ---------------------------------------------------------------
+        // update player
+        this->player.animator.play("knight_attack_1", 0.1, true);
+        this->player.animator.update(dt);
+    }
+};
+
+// -----------------------------------------------------------------------
 // Renderer
 class Renderer {
   private:
-    int screen_width = 1024;
-    int screen_height = 768;
-    int sprite_scale = 4.0;
-
     std::unordered_map<std::string, Shader> shaders;
 
   public:
     Renderer() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         SetTargetFPS(60);
-        InitWindow(this->screen_width, this->screen_height, "Game");
+        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
 
         shaders["sprite"] = load_shader("base.vert", "sprite.frag");
     }
@@ -200,14 +256,23 @@ class Renderer {
 
     void draw_sprite(Sprite sprite, Vector2 position) {
         Rectangle dst = sprite.src;
-        dst.height *= this->sprite_scale;
-        dst.width *= this->sprite_scale;
         dst.x = position.x - 0.5 * dst.width;
         dst.y = position.y - dst.height;
 
         BeginShaderMode(this->shaders["sprite"]);
         DrawTexturePro(sprite.texture, sprite.src, dst, Vector2Zero(), 0.0, WHITE);
         EndShaderMode();
+    }
+
+    void draw_world(World &world) {
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        BeginMode2D(world.camera.camera2d);
+        draw_sprite(world.player.animator.get_sprite(), world.player.position);
+        EndMode2D();
+
+        EndDrawing();
     }
 };
 
@@ -216,31 +281,10 @@ class Renderer {
 int main() {
     Renderer renderer;
     Resources resources;
-
-    auto animator = resources.get_sprite_sheet_animator("0");
-    animator.play("knight_attack_1", 0.1, true);
-
-    Camera2D camera = {
-        .offset = (Vector2){0.0, 0.0},
-        .target = (Vector2){0.0, 0.0},
-        .rotation = 0,
-        .zoom = 1.0};
+    World world(resources);
 
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        animator.update(GetFrameTime());
-        Sprite sprite = animator.get_sprite();
-
-        BeginMode2D(camera);
-        DrawCircle(0, 0, 30.0, RED);
-        renderer.draw_sprite(sprite, (Vector2){500, 300});
-        renderer.draw_sprite(sprite, (Vector2){500, 500});
-        renderer.draw_sprite(sprite, (Vector2){100, 300});
-        renderer.draw_sprite(sprite, (Vector2){100, 500});
-        EndMode2D();
-
-        EndDrawing();
+        world.update();
+        renderer.draw_world(world);
     }
 }
