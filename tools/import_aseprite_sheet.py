@@ -12,7 +12,7 @@ import numpy as np
 _THIS_DIR = Path(__file__).parent
 _ROOT_DIR = _THIS_DIR / ".."
 _ASEPRITE_DIR = _ROOT_DIR / "aseprite"
-_ASSETS_DIR = _ROOT_DIR / "resources/sprites"
+_ASSETS_DIR = _ROOT_DIR / "resources/sprite_sheets"
 
 _SPRITE_LAYER = "sprite"
 _MASK_LAYER_PREFIX = "mask_"
@@ -46,7 +46,7 @@ class Sprite:
         tr = self.tr
         return [(bl[0], bl[1] + 1), (tr[0] + 1, tr[1])]
 
-    def to_meta(self, sheet_h):
+    def to_meta(self):
         # NOTE:
         # When convertic sprite to the meta (coordinates on the sprite sheet)
         # we shrink its size by 1 pixel on each size, because the sprite
@@ -56,7 +56,6 @@ class Sprite:
         x += 1
         y += 1
 
-        y = sheet_h - y - 1
         w, h = self.w, self.h
         w -= 2
         h -= 2
@@ -79,9 +78,8 @@ class Mask:
     w: int
     h: int
 
-    def to_meta(self, sprite_h):
+    def to_meta(self):
         x, y = self.tl
-        y = sprite_h - y - 1
 
         return {
             "name": self.name,
@@ -241,10 +239,6 @@ if __name__ == "__main__":
     sheet = sheet[..., :-1]
     # --------------------------------------------------------------------
     # Prepare sheet meta file (sprites and colliders coordinates)
-    # NOTE: aseprite assumes that the min y is at the top of the sheet,
-    # but I flip it and the 0th y coordinate is at the bottom.
-    # Such the format is more convenient, because it corresponds to the
-    # OpenGL textures coordinates
     sheet_h, sheet_w = sheet.shape[:2]
     meta = {
         "size": [sheet_w, sheet_h],
@@ -255,13 +249,13 @@ if __name__ == "__main__":
 
         for i in range(len(sprites_)):
             sprite = sprites_[i]
-            sprite_meta = sprite.to_meta(sheet_h)
+            sprite_meta = sprite.to_meta()
 
             masks_meta = {}
             for mask_name in masks[sprite_name]:
                 m = masks[sprite_name][mask_name].get(sprite.frame_idx)
                 if m:
-                    masks_meta[mask_name] = m.to_meta(sprite.h)
+                    masks_meta[mask_name] = m.to_meta()
 
             frame_meta = {
                 _SPRITE_LAYER: sprite_meta,
@@ -270,6 +264,6 @@ if __name__ == "__main__":
             meta["frames"][sprite.name].append(frame_meta)
 
     # Save the final sheet and meta json
-    cv2.imwrite(str(out_dir / "atlas.png"), sheet)
-    with open(out_dir / "atlas.json", "w") as f:
+    cv2.imwrite(str(out_dir / "0.png"), sheet)
+    with open(out_dir / "0.json", "w") as f:
         json.dump(meta, f, indent=4)

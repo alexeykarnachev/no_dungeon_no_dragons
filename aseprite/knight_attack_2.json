@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "knight_attack_0.mask_attack..0",
+    "filename": "knight_attack_2.mask_attack..0",
     "frame": { "x": 1, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..1",
+    "filename": "knight_attack_2.mask_attack..1",
     "frame": { "x": 142, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -18,7 +18,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..2",
+    "filename": "knight_attack_2.mask_attack..2",
     "frame": { "x": 283, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -27,7 +27,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..3",
+    "filename": "knight_attack_2.mask_attack..3",
     "frame": { "x": 424, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -36,7 +36,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..4",
+    "filename": "knight_attack_2.mask_attack..4",
     "frame": { "x": 565, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -45,7 +45,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..5",
+    "filename": "knight_attack_2.mask_attack..5",
     "frame": { "x": 706, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -54,7 +54,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..6",
+    "filename": "knight_attack_2.mask_attack..6",
     "frame": { "x": 847, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -63,7 +63,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_attack..7",
+    "filename": "knight_attack_2.mask_attack..7",
     "frame": { "x": 988, "y": 1, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -72,7 +72,43 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..0",
+    "filename": "knight_attack_2.mask_attack..8",
+    "frame": { "x": 1129, "y": 1, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_attack..9",
+    "frame": { "x": 1270, "y": 1, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_attack..10",
+    "frame": { "x": 1411, "y": 1, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_attack..11",
+    "frame": { "x": 1552, "y": 1, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_rigid..0",
     "frame": { "x": 1, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -81,7 +117,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..1",
+    "filename": "knight_attack_2.mask_rigid..1",
     "frame": { "x": 142, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -90,7 +126,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..2",
+    "filename": "knight_attack_2.mask_rigid..2",
     "frame": { "x": 283, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -99,7 +135,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..3",
+    "filename": "knight_attack_2.mask_rigid..3",
     "frame": { "x": 424, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -108,7 +144,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..4",
+    "filename": "knight_attack_2.mask_rigid..4",
     "frame": { "x": 565, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -117,7 +153,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..5",
+    "filename": "knight_attack_2.mask_rigid..5",
     "frame": { "x": 706, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -126,7 +162,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..6",
+    "filename": "knight_attack_2.mask_rigid..6",
     "frame": { "x": 847, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -135,7 +171,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.mask_rigid..7",
+    "filename": "knight_attack_2.mask_rigid..7",
     "frame": { "x": 988, "y": 37, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -144,7 +180,43 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..0",
+    "filename": "knight_attack_2.mask_rigid..8",
+    "frame": { "x": 1129, "y": 37, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_rigid..9",
+    "frame": { "x": 1270, "y": 37, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_rigid..10",
+    "frame": { "x": 1411, "y": 37, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.mask_rigid..11",
+    "frame": { "x": 1552, "y": 37, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.sprite..0",
     "frame": { "x": 1, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -153,7 +225,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..1",
+    "filename": "knight_attack_2.sprite..1",
     "frame": { "x": 142, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -162,7 +234,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..2",
+    "filename": "knight_attack_2.sprite..2",
     "frame": { "x": 283, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -171,7 +243,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..3",
+    "filename": "knight_attack_2.sprite..3",
     "frame": { "x": 424, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -180,7 +252,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..4",
+    "filename": "knight_attack_2.sprite..4",
     "frame": { "x": 565, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -189,7 +261,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..5",
+    "filename": "knight_attack_2.sprite..5",
     "frame": { "x": 706, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -198,7 +270,7 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..6",
+    "filename": "knight_attack_2.sprite..6",
     "frame": { "x": 847, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
@@ -207,8 +279,44 @@
     "duration": 100
    },
    {
-    "filename": "knight_attack_0.sprite..7",
+    "filename": "knight_attack_2.sprite..7",
     "frame": { "x": 988, "y": 73, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.sprite..8",
+    "frame": { "x": 1129, "y": 73, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.sprite..9",
+    "frame": { "x": 1270, "y": 73, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.sprite..10",
+    "frame": { "x": 1411, "y": 73, "w": 139, "h": 34 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
+    "sourceSize": { "w": 139, "h": 34 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_attack_2.sprite..11",
+    "frame": { "x": 1552, "y": 73, "w": 139, "h": 34 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 139, "h": 34 },
@@ -219,9 +327,9 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.3-rc2-x64",
-  "image": "knight_attack_0.png",
+  "image": "knight_attack_2.png",
   "format": "RGBA8888",
-  "size": { "w": 1128, "h": 108 },
+  "size": { "w": 1692, "h": 108 },
   "scale": "1",
   "layers": [
    { "name": "mask_attack", "opacity": 128, "blendMode": "normal" },

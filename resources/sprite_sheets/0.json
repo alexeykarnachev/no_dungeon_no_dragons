@@ -1,0 +1,562 @@
+{
+    "size": [
+        846,
+        210
+    ],
+    "frames": {
+        "knight_attack_1": [
+            {
+                "sprite": {
+                    "name": "knight_attack_1",
+                    "x": 1,
+                    "y": 1,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_1",
+                        "x": 63,
+                        "y": 5,
+                        "w": 15,
+                        "h": 29,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_1",
+                    "x": 1,
+                    "y": 37,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_1",
+                        "x": 63,
+                        "y": 4,
+                        "w": 14,
+                        "h": 30,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_1",
+                    "x": 143,
+                    "y": 1,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "attack": {
+                        "name": "knight_attack_1",
+                        "x": 52,
+                        "y": 1,
+                        "w": 48,
+                        "h": 28,
+                        "frame_idx": 2
+                    },
+                    "rigid": {
+                        "name": "knight_attack_1",
+                        "x": 65,
+                        "y": 6,
+                        "w": 14,
+                        "h": 28,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_1",
+                    "x": 143,
+                    "y": 37,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "attack": {
+                        "name": "knight_attack_1",
+                        "x": 76,
+                        "y": 5,
+                        "w": 23,
+                        "h": 18,
+                        "frame_idx": 3
+                    },
+                    "rigid": {
+                        "name": "knight_attack_1",
+                        "x": 65,
+                        "y": 7,
+                        "w": 14,
+                        "h": 27,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_1",
+                    "x": 1,
+                    "y": 73,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_1",
+                        "x": 65,
+                        "y": 7,
+                        "w": 14,
+                        "h": 27,
+                        "frame_idx": 4
+                    }
+                }
+            }
+        ],
+        "knight_attack_2": [
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 285,
+                    "y": 1,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 66,
+                        "y": 6,
+                        "w": 14,
+                        "h": 28,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 143,
+                    "y": 73,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 76,
+                        "y": 6,
+                        "w": 12,
+                        "h": 28,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 285,
+                    "y": 37,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 77,
+                        "y": 6,
+                        "w": 15,
+                        "h": 28,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 285,
+                    "y": 73,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 78,
+                        "y": 6,
+                        "w": 15,
+                        "h": 28,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 1,
+                    "y": 109,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "attack": {
+                        "name": "knight_attack_2",
+                        "x": 90,
+                        "y": 10,
+                        "w": 49,
+                        "h": 18,
+                        "frame_idx": 4
+                    },
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 90,
+                        "y": 8,
+                        "w": 18,
+                        "h": 26,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 427,
+                    "y": 1,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "attack": {
+                        "name": "knight_attack_2",
+                        "x": 92,
+                        "y": 13,
+                        "w": 36,
+                        "h": 15,
+                        "frame_idx": 5
+                    },
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 90,
+                        "y": 7,
+                        "w": 18,
+                        "h": 27,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 143,
+                    "y": 109,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 90,
+                        "y": 7,
+                        "w": 18,
+                        "h": 27,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 427,
+                    "y": 37,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 90,
+                        "y": 7,
+                        "w": 18,
+                        "h": 27,
+                        "frame_idx": 7
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 285,
+                    "y": 109,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 8
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 90,
+                        "y": 7,
+                        "w": 18,
+                        "h": 27,
+                        "frame_idx": 8
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 427,
+                    "y": 73,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 9
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 76,
+                        "y": 6,
+                        "w": 12,
+                        "h": 28,
+                        "frame_idx": 9
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 427,
+                    "y": 109,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 10
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 66,
+                        "y": 6,
+                        "w": 14,
+                        "h": 28,
+                        "frame_idx": 10
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_2",
+                    "x": 1,
+                    "y": 145,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 11
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_2",
+                        "x": 65,
+                        "y": 7,
+                        "w": 14,
+                        "h": 27,
+                        "frame_idx": 11
+                    }
+                }
+            }
+        ],
+        "knight_attack_0": [
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 569,
+                    "y": 1,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 62,
+                        "y": 4,
+                        "w": 16,
+                        "h": 30,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 143,
+                    "y": 145,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 62,
+                        "y": 4,
+                        "w": 16,
+                        "h": 30,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 569,
+                    "y": 37,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 62,
+                        "y": 4,
+                        "w": 16,
+                        "h": 30,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 285,
+                    "y": 145,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 62,
+                        "y": 5,
+                        "w": 16,
+                        "h": 29,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 569,
+                    "y": 73,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 61,
+                        "y": 5,
+                        "w": 16,
+                        "h": 29,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 427,
+                    "y": 145,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "attack": {
+                        "name": "knight_attack_0",
+                        "x": 67,
+                        "y": 13,
+                        "w": 34,
+                        "h": 4,
+                        "frame_idx": 5
+                    },
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 64,
+                        "y": 6,
+                        "w": 16,
+                        "h": 28,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 569,
+                    "y": 109,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "attack": {
+                        "name": "knight_attack_0",
+                        "x": 77,
+                        "y": 14,
+                        "w": 20,
+                        "h": 2,
+                        "frame_idx": 6
+                    },
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 64,
+                        "y": 6,
+                        "w": 16,
+                        "h": 28,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_attack_0",
+                    "x": 569,
+                    "y": 145,
+                    "w": 139,
+                    "h": 33,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_attack_0",
+                        "x": 64,
+                        "y": 6,
+                        "w": 16,
+                        "h": 28,
+                        "frame_idx": 7
+                    }
+                }
+            }
+        ]
+    }
+}

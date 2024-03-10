@@ -1,14 +1,20 @@
 #include "json.hpp"
 #include "raylib.h"
+#include "raymath.h"
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-using json = nlohmann::json;
 
+using json = nlohmann::json;
+namespace fs = std::filesystem;
+
+// -----------------------------------------------------------------------
+// Sprite
 Rectangle rect_from_json(json data) {
     Rectangle rect = {
         .x = data["x"], .y = data["y"], .width = data["w"], .height = data["h"]};
@@ -47,7 +53,12 @@ class SpriteSheet {
     json meta;
 
   public:
-    SpriteSheet(std::string meta_file_path, std::string texture_file_path) {
+    SpriteSheet(){};
+
+    SpriteSheet(std::string dir_path, std::string name) {
+        std::string meta_file_path = fs::path(dir_path) / fs::path(name + ".json");
+        std::string texture_file_path = fs::path(dir_path) / fs::path(name + ".png");
+
         std::ifstream file(meta_file_path);
         if (!file.is_open()) {
             throw std::runtime_error("Failed to open file: " + meta_file_path);
@@ -57,10 +68,7 @@ class SpriteSheet {
         file.close();
 
         texture = LoadTexture(texture_file_path.c_str());
-    }
-
-    ~SpriteSheet() {
-        UnloadTexture(texture);
+        SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
     }
 
     int count_frames(std::string &name) {
@@ -71,6 +79,10 @@ class SpriteSheet {
         json frame_json = meta["frames"][name][idx];
         Sprite sprite(frame_json, this->texture);
         return sprite;
+    }
+
+    void unload() {
+        UnloadTexture(texture);
     }
 };
 
@@ -113,15 +125,106 @@ class SpriteSheetAnimator {
     }
 };
 
+// -----------------------------------------------------------------------
+// Resources
+std::string load_shader_src(const std::string &file_name) {
+    const std::string version_src = "#version 460 core";
+    std::ifstream common_file("resources/shaders/common.glsl");
+    std::ifstream shader_file("resources/shaders/" + file_name);
+
+    std::stringstream common_stream, shader_stream;
+    common_stream << common_file.rdbuf();
+    shader_stream << shader_file.rdbuf();
+
+    std::string common_src = common_stream.str();
+    std::string shader_src = shader_stream.str();
+
+    std::string full_src = version_src + "\n" + common_src + "\n" + shader_src;
+
+    return full_src;
+}
+
+Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_name) {
+    std::string vs, fs;
+
+    vs = load_shader_src(vs_file_name);
+    fs = load_shader_src(fs_file_name);
+    Shader shader = LoadShaderFromMemory(vs.c_str(), fs.c_str());
+    return shader;
+}
+
+class Resources {
+  public:
+    std::unordered_map<std::string, SpriteSheet> sprite_sheets;
+
+    Resources() {
+        sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
+    }
+
+    ~Resources() {
+        for (auto &pair : sprite_sheets)
+            pair.second.unload();
+    }
+
+    SpriteSheetAnimator get_sprite_sheet_animator(std::string sprite_sheet_name) {
+        SpriteSheetAnimator animator(sprite_sheets[sprite_sheet_name]);
+        return animator;
+    }
+};
+
+// -----------------------------------------------------------------------
+// Renderer
+class Renderer {
+  private:
+    int screen_width = 1024;
+    int screen_height = 768;
+    int sprite_scale = 4.0;
+
+    std::unordered_map<std::string, Shader> shaders;
+
+  public:
+    Renderer() {
+        SetConfigFlags(FLAG_MSAA_4X_HINT);
+        SetTargetFPS(60);
+        InitWindow(this->screen_width, this->screen_height, "Game");
+
+        shaders["sprite"] = load_shader("base.vert", "sprite.frag");
+    }
+
+    ~Renderer() {
+        for (auto &pair : shaders)
+            UnloadShader(pair.second);
+
+        CloseWindow();
+    }
+
+    void draw_sprite(Sprite sprite, Vector2 position) {
+        Rectangle dst = sprite.src;
+        dst.height *= this->sprite_scale;
+        dst.width *= this->sprite_scale;
+        dst.x = position.x - 0.5 * dst.width;
+        dst.y = position.y - dst.height;
+
+        BeginShaderMode(this->shaders["sprite"]);
+        DrawTexturePro(sprite.texture, sprite.src, dst, Vector2Zero(), 0.0, WHITE);
+        EndShaderMode();
+    }
+};
+
+// -----------------------------------------------------------------------
+// Main
 int main() {
-    SetConfigFlags(FLAG_MSAA_4X_HINT);
-    SetTargetFPS(60);
-    InitWindow(1024, 768, "Game");
+    Renderer renderer;
+    Resources resources;
 
-    SpriteSheet sheet("./resources/sprites/atlas.json", "./resources/sprites/atlas.png");
+    auto animator = resources.get_sprite_sheet_animator("0");
+    animator.play("knight_attack_1", 0.1, true);
 
-    SpriteSheetAnimator animator(sheet);
-    animator.play("knight_attack_0", 0.1, true);
+    Camera2D camera = {
+        .offset = (Vector2){0.0, 0.0},
+        .target = (Vector2){0.0, 0.0},
+        .rotation = 0,
+        .zoom = 1.0};
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -129,6 +232,14 @@ int main() {
 
         animator.update(GetFrameTime());
         Sprite sprite = animator.get_sprite();
+
+        BeginMode2D(camera);
+        DrawCircle(0, 0, 30.0, RED);
+        renderer.draw_sprite(sprite, (Vector2){500, 300});
+        renderer.draw_sprite(sprite, (Vector2){500, 500});
+        renderer.draw_sprite(sprite, (Vector2){100, 300});
+        renderer.draw_sprite(sprite, (Vector2){100, 500});
+        EndMode2D();
 
         EndDrawing();
     }
