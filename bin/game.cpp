@@ -17,7 +17,7 @@ namespace fs = std::filesystem;
 #define SCREEN_HEIGHT 768
 
 // -----------------------------------------------------------------------
-// Sprite
+// sprite
 Rectangle rect_from_json(json data) {
     Rectangle rect = {
         .x = data["x"], .y = data["y"], .width = data["w"], .height = data["h"]};
@@ -91,14 +91,15 @@ class SpriteSheet {
 
 class SpriteSheetAnimator {
   private:
-    SpriteSheet &sprite_sheet;
+    SpriteSheet *sprite_sheet;
     std::string name = "";
     float frame_duration = 0.0;
     float progress = 0.0;
     bool is_repeat = true;
 
   public:
-    SpriteSheetAnimator(SpriteSheet &sprite_sheet) : sprite_sheet(sprite_sheet) {}
+    SpriteSheetAnimator() {}
+    SpriteSheetAnimator(SpriteSheet *sprite_sheet) : sprite_sheet(sprite_sheet) {}
 
     void play(std::string name, float frame_duration, bool is_repeat) {
         this->frame_duration = frame_duration;
@@ -113,7 +114,7 @@ class SpriteSheetAnimator {
     void update(float dt) {
         if (this->name.empty()) return;
 
-        int n_frames = this->sprite_sheet.count_frames(this->name);
+        int n_frames = this->sprite_sheet->count_frames(this->name);
 
         this->progress += dt / (n_frames * this->frame_duration);
         if (this->is_repeat) this->progress -= std::floor(this->progress);
@@ -127,15 +128,15 @@ class SpriteSheetAnimator {
             );
         }
 
-        int n_frames = this->sprite_sheet.count_frames(this->name);
+        int n_frames = this->sprite_sheet->count_frames(this->name);
         int idx = std::round(this->progress * (n_frames - 1.0));
-        Sprite sprite = this->sprite_sheet.get_sprite(this->name, idx);
+        Sprite sprite = this->sprite_sheet->get_sprite(this->name, idx);
         return sprite;
     }
 };
 
 // -----------------------------------------------------------------------
-// Resources
+// resources
 std::string load_shader_src(const std::string &file_name) {
     const std::string version_src = "#version 460 core";
     std::ifstream common_file("resources/shaders/common.glsl");
@@ -176,13 +177,13 @@ class Resources {
     }
 
     SpriteSheetAnimator get_sprite_sheet_animator(std::string sprite_sheet_name) {
-        SpriteSheetAnimator animator(sprite_sheets[sprite_sheet_name]);
+        SpriteSheetAnimator animator(&sprite_sheets[sprite_sheet_name]);
         return animator;
     }
 };
 
 // -----------------------------------------------------------------------
-// Game camera
+// game camera
 class GameCamera {
   private:
     float zoom = 4.0;
@@ -200,40 +201,63 @@ class GameCamera {
 };
 
 // -----------------------------------------------------------------------
-// Knight
-enum class KnightState { IDLE };
+// entity and components
 
-class Knight {
+enum class EntityState {
+    IDLE,
+};
+
+enum class EntityController {
+    PLAYER,
+};
+
+class Entity {
   public:
+    EntityState state;
+    EntityController controller;
     Vector2 position;
-    KnightState state;
     SpriteSheetAnimator animator;
 
-    Knight(Resources &resources, Vector2 position)
-        : position(position), animator(resources.get_sprite_sheet_animator("0")) {}
+    Entity(
+        EntityState state,
+        EntityController controller,
+        Vector2 position,
+        SpriteSheetAnimator animator
+    )
+        : state(state), controller(controller), position(position), animator(animator) {}
 };
 
 // -----------------------------------------------------------------------
-// World
+// world
 class World {
   public:
-    Knight player;
+    std::vector<Entity> entities;
     GameCamera camera;
 
-    World(Resources &resources) : player(resources, {0.0, 0.0}) {}
+    World(Resources &resources) {
+        entities.emplace_back(
+            EntityState::IDLE,
+            EntityController::PLAYER,
+            Vector2Zero(),
+            resources.get_sprite_sheet_animator("0")
+        );
+    }
 
     void update() {
         float dt = GetFrameTime();
 
-        // ---------------------------------------------------------------
-        // update player
-        this->player.animator.play("knight_attack_1", 0.1, true);
-        this->player.animator.update(dt);
+        for (auto &entity : this->entities) {
+            if (entity.controller == EntityController::PLAYER) {
+                entity.animator.play("knight_attack_1", 0.1, true);
+            }
+
+            entity.animator.update(dt);
+        }
     }
 };
 
 // -----------------------------------------------------------------------
-// Renderer
+// renderer
 class Renderer {
   private:
     std::unordered_map<std::string, Shader> shaders;
@@ -254,22 +278,24 @@ class Renderer {
         CloseWindow();
     }
 
-    void draw_sprite(Sprite sprite, Vector2 position) {
-        Rectangle dst = sprite.src;
-        dst.x = position.x - 0.5 * dst.width;
-        dst.y = position.y - dst.height;
-
-        BeginShaderMode(this->shaders["sprite"]);
-        DrawTexturePro(sprite.texture, sprite.src, dst, Vector2Zero(), 0.0, WHITE);
-        EndShaderMode();
-    }
-
     void draw_world(World &world) {
         BeginDrawing();
         ClearBackground(BLACK);
 
         BeginMode2D(world.camera.camera2d);
-        draw_sprite(world.player.animator.get_sprite(), world.player.position);
+
+        // ---------------------------------------------------------------
+        // draw sprites
+        BeginShaderMode(this->shaders["sprite"]);
+        for (auto &entity : world.entities) {
+            Sprite sprite = entity.animator.get_sprite();
+            Rectangle dst = sprite.src;
+            dst.x = entity.position.x - 0.5 * dst.width;
+            dst.y = entity.position.y - dst.height;
+            DrawTexturePro(sprite.texture, sprite.src, dst, Vector2Zero(), 0.0, WHITE);
+        }
+        EndShaderMode();
+
         EndMode2D();
 
         EndDrawing();
@@ -277,7 +303,7 @@ class Renderer {
 };
 
 // -----------------------------------------------------------------------
-// Main
+// main loop
 int main() {
     Renderer renderer;
     Resources resources;
