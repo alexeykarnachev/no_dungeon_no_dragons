@@ -239,21 +239,21 @@ class GameCamera {
 };
 
 // -----------------------------------------------------------------------
-// object and components
+// creatures
 
-enum class GameObjectState {
+enum class CreatureState {
     IDLE,
     MOVING,
 };
 
-enum class GameObjectType {
+enum class CreatureType {
     PLAYER,
 };
 
-class GameObject {
+class Creature {
   public:
-    GameObjectType type;
-    GameObjectState state;
+    CreatureType type;
+    CreatureState state;
     SpriteSheetAnimator animator;
 
     Vector2 position = {0.0, 0.0};
@@ -262,9 +262,9 @@ class GameObject {
     bool is_hflip = false;
     bool has_weight = false;
 
-    GameObject(
-        GameObjectType type,
-        GameObjectState state,
+    Creature(
+        CreatureType type,
+        CreatureState state,
         SpriteSheetAnimator animator,
         Vector2 position,
         bool has_weight
@@ -280,55 +280,55 @@ class GameObject {
 // world
 class World {
   public:
-    std::vector<GameObject> game_objects;
+    std::vector<Creature> creatures;
     GameCamera camera;
     float gravity = 600.0;
 
     World(Resources &resources) {
-        GameObject player(
-            GameObjectType::PLAYER,
-            GameObjectState::IDLE,
+        Creature player(
+            CreatureType::PLAYER,
+            CreatureState::IDLE,
             resources.get_sprite_sheet_animator("0"),
             Vector2Zero(),
             true
         );
 
-        game_objects.push_back(player);
+        creatures.push_back(player);
     }
 
     void update() {
         float dt = GetFrameTime();
 
-        for (auto &object : this->game_objects) {
+        for (auto &creature : this->creatures) {
 
-            if (object.has_weight) {
-                // object.velocity.y += dt * this->gravity;
+            if (creature.has_weight) {
+                // creature.velocity.y += dt * this->gravity;
             }
 
-            Vector2 step = Vector2Scale(object.velocity, dt);
+            Vector2 step = Vector2Scale(creature.velocity, dt);
 
-            if (object.type == GameObjectType::PLAYER) {
+            if (creature.type == CreatureType::PLAYER) {
                 if (IsKeyDown(KEY_A)) {
                     step.x -= 90.0 * dt;
-                    object.is_hflip = true;
-                    object.state = GameObjectState::MOVING;
+                    creature.is_hflip = true;
+                    creature.state = CreatureState::MOVING;
                 } else if (IsKeyDown(KEY_D)) {
                     step.x += 90.0 * dt;
-                    object.is_hflip = false;
-                    object.state = GameObjectState::MOVING;
+                    creature.is_hflip = false;
+                    creature.state = CreatureState::MOVING;
                 } else {
-                    object.state = GameObjectState::IDLE;
+                    creature.state = CreatureState::IDLE;
                 }
 
-                if (object.state == GameObjectState::MOVING) {
-                    object.animator.play("knight_run", 0.1, true);
-                } else if (object.state == GameObjectState::IDLE) {
-                    object.animator.play("knight_idle", 0.1, true);
+                if (creature.state == CreatureState::MOVING) {
+                    creature.animator.play("knight_run", 0.1, true);
+                } else if (creature.state == CreatureState::IDLE) {
+                    creature.animator.play("knight_idle", 0.1, true);
                 }
             }
 
-            object.animator.update(dt);
-            object.position = Vector2Add(object.position, step);
+            creature.animator.update(dt);
+            creature.position = Vector2Add(creature.position, step);
         }
     }
 };
@@ -364,16 +364,20 @@ class Renderer {
         // ---------------------------------------------------------------
         // draw sprites
         BeginShaderMode(this->shaders["sprite"]);
-        for (auto &object : world.game_objects) {
-            Sprite sprite = object.animator.get_sprite(object.position, object.is_hflip);
+        for (auto &creature : world.creatures) {
+            Sprite sprite = creature.animator.get_sprite(
+                creature.position, creature.is_hflip
+            );
             sprite.draw();
         }
         EndShaderMode();
 
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &object : world.game_objects) {
-            Sprite sprite = object.animator.get_sprite(object.position, object.is_hflip);
+        for (auto &creature : world.creatures) {
+            Sprite sprite = creature.animator.get_sprite(
+                creature.position, creature.is_hflip
+            );
             Rectangle *mask = sprite.get_mask("rigid");
             if (mask) {
                 DrawRectangleRec(*mask, ColorAlpha(RED, 0.5));
