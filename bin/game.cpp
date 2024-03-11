@@ -13,6 +13,9 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
+#define HASHMAP_GET_OR_NULL(map, key) \
+    ((map).find(key) != (map).end() ? &((map)[key]) : nullptr)
+
 #define SCREEN_WIDTH 1024
 #define SCREEN_HEIGHT 768
 
@@ -26,30 +29,59 @@ Rectangle rect_from_json(json data) {
 }
 
 class Sprite {
-  public:
+  private:
     Texture2D texture;
     Rectangle src;
+    Rectangle dst;
     std::unordered_map<std::string, Rectangle> masks;
 
+  public:
     Sprite(
-        Texture2D texture, Rectangle src, std::unordered_map<std::string, Rectangle> masks
+        Texture2D texture,
+        Rectangle src,
+        Rectangle dst,
+        std::unordered_map<std::string, Rectangle> masks
     )
         : texture(texture)
         , src(src)
+        , dst(dst)
         , masks(masks) {}
 
-    Sprite(json frame_json, Texture2D texture)
+    Sprite(json frame_json, Texture2D texture, Vector2 position, bool is_hflip)
         : texture(texture) {
         json sprite_json = frame_json["sprite"];
         json masks_json = frame_json["masks"];
-        this->src = rect_from_json(sprite_json);
+
+        Rectangle src = rect_from_json(sprite_json);
+        Rectangle dst = src;
+        dst.x = position.x - 0.5 * dst.width;
+        dst.y = position.y - dst.height;
 
         std::unordered_map<std::string, Rectangle> masks;
         for (auto it = masks_json.begin(); it != masks_json.end(); ++it) {
             const auto &mask_name = it.key();
             const auto &mask_json = it.value();
-            this->masks[mask_name] = rect_from_json(mask_json);
+
+            Rectangle mask = rect_from_json(mask_json);
+            Vector2 origin = {position.x - 0.5f * src.width, position.y - src.height};
+            mask.y = origin.y + mask.y;
+            mask.x = is_hflip ? origin.x - mask.x + src.width - mask.width
+                              : origin.x + mask.x;
+            this->masks[mask_name] = mask;
         }
+
+        src.width = is_hflip ? -src.width : src.width;
+
+        this->src = src;
+        this->dst = dst;
+    }
+
+    void draw() {
+        DrawTexturePro(this->texture, this->src, this->dst, Vector2Zero(), 0.0, WHITE);
+    }
+
+    Rectangle *get_mask(std::string name) {
+        return HASHMAP_GET_OR_NULL(this->masks, name);
     }
 };
 
@@ -81,9 +113,9 @@ class SpriteSheet {
         return meta["frames"][name].size();
     }
 
-    Sprite get_sprite(std::string &name, int idx) {
+    Sprite get_sprite(std::string &name, int idx, Vector2 position, bool is_hflip) {
         json frame_json = meta["frames"][name][idx];
-        Sprite sprite(frame_json, this->texture);
+        Sprite sprite(frame_json, this->texture, position, is_hflip);
         return sprite;
     }
 
@@ -125,7 +157,7 @@ class SpriteSheetAnimator {
         else this->progress = std::fmin(this->progress, 1.0);
     }
 
-    Sprite get_sprite() {
+    Sprite get_sprite(Vector2 position, bool is_hflip) {
         if (this->name.empty()) {
             throw std::runtime_error(
                 "Failed to get the sprite, the animation is not playing"
@@ -134,7 +166,9 @@ class SpriteSheetAnimator {
 
         int n_frames = this->sprite_sheet->count_frames(this->name);
         int idx = std::round(this->progress * (n_frames - 1.0));
-        Sprite sprite = this->sprite_sheet->get_sprite(this->name, idx);
+        Sprite sprite = this->sprite_sheet->get_sprite(
+            this->name, idx, position, is_hflip
+        );
         return sprite;
     }
 };
@@ -205,74 +239,96 @@ class GameCamera {
 };
 
 // -----------------------------------------------------------------------
-// entity and components
+// object and components
 
-enum class EntityState {
+enum class GameObjectState {
     IDLE,
     MOVING,
 };
 
-enum class EntityController {
+enum class GameObjectType {
     PLAYER,
 };
 
-class Entity {
+class GameObject {
   public:
-    EntityState state;
-    EntityController controller;
-    Vector2 position;
+    GameObjectType type;
+    GameObjectState state;
     SpriteSheetAnimator animator;
 
-    bool is_hflip = false;
+    Vector2 position = {0.0, 0.0};
+    Vector2 velocity = {0.0, 0.0};
 
-    Entity(
-        EntityState state,
-        EntityController controller,
+    bool is_hflip = false;
+    bool has_weight = false;
+
+    GameObject(
+        GameObjectType type,
+        GameObjectState state,
+        SpriteSheetAnimator animator,
         Vector2 position,
-        SpriteSheetAnimator animator
+        bool has_weight
     )
-        : state(state)
-        , controller(controller)
+        : type(type)
+        , state(state)
         , position(position)
-        , animator(animator) {}
+        , animator(animator)
+        , has_weight(has_weight) {}
 };
 
 // -----------------------------------------------------------------------
 // world
 class World {
   public:
-    std::vector<Entity> entities;
+    std::vector<GameObject> game_objects;
     GameCamera camera;
+    float gravity = 600.0;
 
     World(Resources &resources) {
-        entities.emplace_back(
-            EntityState::IDLE,
-            EntityController::PLAYER,
+        GameObject player(
+            GameObjectType::PLAYER,
+            GameObjectState::IDLE,
+            resources.get_sprite_sheet_animator("0"),
             Vector2Zero(),
-            resources.get_sprite_sheet_animator("0")
+            true
         );
+
+        game_objects.push_back(player);
     }
 
     void update() {
         float dt = GetFrameTime();
 
-        for (auto &entity : this->entities) {
-            if (entity.controller == EntityController::PLAYER) {
+        for (auto &object : this->game_objects) {
 
+            if (object.has_weight) {
+                // object.velocity.y += dt * this->gravity;
+            }
+
+            Vector2 step = Vector2Scale(object.velocity, dt);
+
+            if (object.type == GameObjectType::PLAYER) {
                 if (IsKeyDown(KEY_A)) {
-                    entity.position.x -= 90.0 * dt;
-                    entity.is_hflip = true;
-                    entity.animator.play("knight_run", 0.1, true);
+                    step.x -= 90.0 * dt;
+                    object.is_hflip = true;
+                    object.state = GameObjectState::MOVING;
                 } else if (IsKeyDown(KEY_D)) {
-                    entity.position.x += 90.0 * dt;
-                    entity.is_hflip = false;
-                    entity.animator.play("knight_run", 0.1, true);
+                    step.x += 90.0 * dt;
+                    object.is_hflip = false;
+                    object.state = GameObjectState::MOVING;
                 } else {
-                    entity.animator.play("knight_idle", 0.1, true);
+                    object.state = GameObjectState::IDLE;
+                }
+
+                if (object.state == GameObjectState::MOVING) {
+                    object.animator.play("knight_run", 0.1, true);
+                } else if (object.state == GameObjectState::IDLE) {
+                    object.animator.play("knight_idle", 0.1, true);
                 }
             }
 
-            entity.animator.update(dt);
+            object.animator.update(dt);
+            object.position = Vector2Add(object.position, step);
         }
     }
 };
@@ -308,16 +364,21 @@ class Renderer {
         // ---------------------------------------------------------------
         // draw sprites
         BeginShaderMode(this->shaders["sprite"]);
-        for (auto &entity : world.entities) {
-            Sprite sprite = entity.animator.get_sprite();
-            Rectangle src = sprite.src;
-            Rectangle dst = src;
-            src.width = entity.is_hflip ? -src.width : src.width;
-            dst.x = entity.position.x - 0.5 * dst.width;
-            dst.y = entity.position.y - dst.height;
-            DrawTexturePro(sprite.texture, src, dst, Vector2Zero(), 0.0, WHITE);
+        for (auto &object : world.game_objects) {
+            Sprite sprite = object.animator.get_sprite(object.position, object.is_hflip);
+            sprite.draw();
         }
         EndShaderMode();
+
+        // ---------------------------------------------------------------
+        // draw masks
+        for (auto &object : world.game_objects) {
+            Sprite sprite = object.animator.get_sprite(object.position, object.is_hflip);
+            Rectangle *mask = sprite.get_mask("rigid");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(RED, 0.5));
+            }
+        }
 
         EndMode2D();
 

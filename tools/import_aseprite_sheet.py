@@ -161,18 +161,11 @@ if __name__ == "__main__":
                     col = image.max(1)
                     left_x = row.argmax()
                     top_y = col.argmax()
-                    right_x = len(row) - row[::-1].argmax() - 1
-                    bot_y = len(col) - col[::-1].argmax() - 1
+                    right_x = len(row) - row[::-1].argmax()
+                    bot_y = len(col) - col[::-1].argmax()
 
-                    # Shift the mask on 1 pixel because the corresponding
-                    # sprite has been expanded
-                    # left_x += 1
-                    # right_x += 1
-                    bot_y += 1
-                    top_y += 1
-
-                    w = right_x - left_x + 1
-                    h = bot_y - top_y + 1
+                    w = right_x - left_x
+                    h = bot_y - top_y
 
                     bot_left = (left_x, bot_y)
                     top_right = (right_x, top_y)
