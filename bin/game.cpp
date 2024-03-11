@@ -20,6 +20,28 @@ namespace fs = std::filesystem;
 #define SCREEN_HEIGHT 768
 
 // -----------------------------------------------------------------------
+// collisions
+Vector2 get_aabb_mtv(Rectangle r1, Rectangle r2) {
+    Vector2 mtv = Vector2Zero();
+    if (!CheckCollisionRecs(r1, r2)) return mtv;
+
+    float x_west = r2.x - r1.x - r1.width;
+    float x_east = r2.x + r2.width - r1.x;
+    if (fabs(x_west) < fabs(x_east)) mtv.x = x_west;
+    else mtv.x = x_east;
+
+    float y_south = r2.y + r2.height - r1.y;
+    float y_north = r2.y - r1.y - r1.height;
+    if (fabs(y_south) < fabs(y_north)) mtv.y = y_south;
+    else mtv.y = y_north;
+
+    if (std::fabs(mtv.x) > std::fabs(mtv.y)) mtv.x = 0.0;
+    else mtv.y = 0.0;
+
+    return mtv;
+}
+
+// -----------------------------------------------------------------------
 // sprite
 Rectangle rect_from_json(json data) {
     Rectangle rect = {
@@ -260,6 +282,7 @@ class Creature {
     Vector2 velocity = {0.0, 0.0};
 
     bool is_hflip = false;
+    bool is_grounded = false;
     bool has_weight = false;
 
     Creature(
@@ -274,6 +297,10 @@ class Creature {
         , position(position)
         , animator(animator)
         , has_weight(has_weight) {}
+
+    Rectangle *get_rigid_collider() {
+        return this->animator.get_sprite(position, is_hflip).get_mask("rigid");
+    }
 };
 
 // -----------------------------------------------------------------------
@@ -281,8 +308,10 @@ class Creature {
 class World {
   public:
     std::vector<Creature> creatures;
+    std::vector<Rectangle> colliders;
+
     GameCamera camera;
-    float gravity = 600.0;
+    float gravity = 400.0;
 
     World(Resources &resources) {
         Creature player(
@@ -293,31 +322,42 @@ class World {
             true
         );
 
-        creatures.push_back(player);
+        this->creatures.push_back(player);
+
+        this->colliders.push_back({-1000.0, -50.0, 2000.0, 10.0});
+        this->colliders.push_back({-1000.0, 10.0, 2000.0, 10.0});
+        this->colliders.push_back({-50.0, -1000.0, 30.0, 2000.0});
+        this->colliders.push_back({80.0, -1000.0, 1.0, 2000.0});
     }
 
     void update() {
         float dt = GetFrameTime();
 
         for (auto &creature : this->creatures) {
-
             if (creature.has_weight) {
-                // creature.velocity.y += dt * this->gravity;
+                creature.velocity.y += dt * this->gravity;
             }
 
             Vector2 step = Vector2Scale(creature.velocity, dt);
-
             if (creature.type == CreatureType::PLAYER) {
+                creature.state = CreatureState::IDLE;
                 if (IsKeyDown(KEY_A)) {
                     step.x -= 90.0 * dt;
                     creature.is_hflip = true;
                     creature.state = CreatureState::MOVING;
-                } else if (IsKeyDown(KEY_D)) {
+                }
+                if (IsKeyDown(KEY_D)) {
                     step.x += 90.0 * dt;
                     creature.is_hflip = false;
                     creature.state = CreatureState::MOVING;
-                } else {
-                    creature.state = CreatureState::IDLE;
+                }
+                if (IsKeyDown(KEY_W)) {
+                    step.y -= 90.0 * dt;
+                    creature.state = CreatureState::MOVING;
+                }
+                if (IsKeyDown(KEY_S)) {
+                    step.y += 90.0 * dt;
+                    creature.state = CreatureState::MOVING;
                 }
 
                 if (creature.state == CreatureState::MOVING) {
@@ -327,8 +367,21 @@ class World {
                 }
             }
 
-            creature.animator.update(dt);
             creature.position = Vector2Add(creature.position, step);
+
+            Rectangle *my_collider = creature.get_rigid_collider();
+            if (my_collider) {
+                creature.is_grounded = false;
+                for (auto &collider : this->colliders) {
+                    Vector2 mtv = get_aabb_mtv(*my_collider, collider);
+                    creature.position = Vector2Add(creature.position, mtv);
+                    if (fabs(mtv.y) > EPSILON) creature.velocity.y = 0.0;
+                    if (fabs(mtv.x) > EPSILON) creature.velocity.x = 0.0;
+                    creature.is_grounded |= mtv.y > EPSILON;
+                }
+            }
+
+            creature.animator.update(dt);
         }
     }
 };
@@ -380,8 +433,14 @@ class Renderer {
             );
             Rectangle *mask = sprite.get_mask("rigid");
             if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(RED, 0.5));
+                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
             }
+        }
+
+        // ---------------------------------------------------------------
+        // draw colliders
+        for (auto &collider : world.colliders) {
+            DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
         }
 
         EndMode2D();
