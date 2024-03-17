@@ -20,6 +20,19 @@ namespace fs = std::filesystem;
 #define SCREEN_HEIGHT 768
 
 // -----------------------------------------------------------------------
+// utils
+json load_json(std::string file_path) {
+    std::ifstream file(file_path);
+    if (!file.is_open()) {
+        throw std::runtime_error("Failed to open file: " + file_path);
+    }
+
+    auto data = json::parse(file);
+    file.close();
+    return data;
+}
+
+// -----------------------------------------------------------------------
 // collisions
 Vector2 get_aabb_mtv(Rectangle r1, Rectangle r2) {
     Vector2 mtv = Vector2Zero();
@@ -118,14 +131,7 @@ class SpriteSheet {
     SpriteSheet(std::string dir_path, std::string name) {
         std::string meta_file_path = fs::path(dir_path) / fs::path(name + ".json");
         std::string texture_file_path = fs::path(dir_path) / fs::path(name + ".png");
-
-        std::ifstream file(meta_file_path);
-        if (!file.is_open()) {
-            throw std::runtime_error("Failed to open file: " + meta_file_path);
-        }
-
-        meta = json::parse(file);
-        file.close();
+        meta = load_json(meta_file_path);
 
         texture = LoadTexture(texture_file_path.c_str());
         SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
@@ -196,6 +202,37 @@ class SpriteSheetAnimator {
 };
 
 // -----------------------------------------------------------------------
+// tile
+class TileSheet {
+  private:
+    Texture2D texture;
+    json meta;
+
+  public:
+    TileSheet(){};
+
+    TileSheet(std::string meta_file_path) {
+        meta = load_json(meta_file_path);
+
+        std::string texture_file_path = "./resources/tiled/" + std::string(meta["image"]);
+        texture = LoadTexture(texture_file_path.c_str());
+        SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
+
+        // {"columns":32,"image":"tile_sheets/pixel_castle_2d/walls.png","imageheight":512,"imagewidth":512,"margin":0,"name":"walls","spacing":0,"tilecount":1024,"tiledversion":"1.10.2","tileheight":16,"tilewidth":16,"type":"tileset","version":"1.10"}
+    }
+
+    // Sprite get_sprite(std::string &name, int idx, Vector2 position, bool is_hflip) {
+    //     json frame_json = meta["frames"][name][idx];
+    //     Sprite sprite(frame_json, this->texture, position, is_hflip);
+    //     return sprite;
+    // }
+
+    void unload() {
+        UnloadTexture(texture);
+    }
+};
+
+// -----------------------------------------------------------------------
 // resources
 std::string load_shader_src(const std::string &file_name) {
     const std::string version_src = "#version 460 core";
@@ -226,13 +263,29 @@ Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_n
 class Resources {
   public:
     std::unordered_map<std::string, SpriteSheet> sprite_sheets;
+    std::unordered_map<std::string, json> level_jsons;
+    std::unordered_map<std::string, TileSheet> tile_sheets;
 
     Resources() {
         sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
+
+        level_jsons["0"] = load_json("./resources/tiled/level_0.json");
+        for (auto [_, level_json] : level_jsons) {
+            for (auto tileset_json : level_json["tilesets"]) {
+                std::string name = tileset_json["source"];
+                std::string meta_file_path = "./resources/tiled/" + std::string(name);
+                auto tile_sheet = TileSheet(meta_file_path);
+                if (!HASHMAP_GET_OR_NULL(tile_sheets, name)) {
+                    tile_sheets[name] = tile_sheet;
+                }
+            }
+        }
     }
 
     ~Resources() {
         for (auto &pair : sprite_sheets)
+            pair.second.unload();
+        for (auto &pair : tile_sheets)
             pair.second.unload();
     }
 
@@ -246,14 +299,14 @@ class Resources {
 // game camera
 class GameCamera {
   private:
-    float zoom = 4.0;
+    float zoom = 3.0;
 
   public:
     Camera2D camera2d;
 
     GameCamera() {
         camera2d = {
-            .offset = {0.5 * SCREEN_WIDTH, 0.5 * SCREEN_HEIGHT},
+            .offset = {0.5 * SCREEN_WIDTH, 0.5 * SCREEN_HEIGHT + 200.0},
             .target = {0.0, 0.0},
             .rotation = 0.0,
             .zoom = this->zoom};
@@ -314,20 +367,44 @@ class World {
     float gravity = 400.0;
 
     World(Resources &resources) {
-        Creature player(
-            CreatureType::PLAYER,
-            CreatureState::IDLE,
-            resources.get_sprite_sheet_animator("0"),
-            Vector2Zero(),
-            true
-        );
+        auto level_json = resources.level_jsons["0"];
+        for (auto layer_json : level_json["layers"]) {
+            std::string layer_name = std::string(layer_json["name"]);
+            for (auto object : layer_json["objects"]) {
+                for (auto property : object["properties"]) {
 
-        this->creatures.push_back(player);
+                    auto property_name = property["name"];
+                    auto property_value = property["value"];
+                    auto object_x = object["x"];
+                    auto object_y = object["y"];
+                    auto object_width = object["width"];
+                    auto object_height = object["height"];
 
-        this->colliders.push_back({-1000.0, -50.0, 2000.0, 10.0});
-        this->colliders.push_back({-1000.0, 10.0, 2000.0, 10.0});
-        this->colliders.push_back({-50.0, -1000.0, 30.0, 2000.0});
-        this->colliders.push_back({80.0, -1000.0, 1.0, 2000.0});
+                    if (layer_name == "colliders") {
+                        if (property_name == "is_rigid" && property_value) {
+                            this->colliders.push_back(
+                                {.x = object_x,
+                                 .y = object_y,
+                                 .width = object_width,
+                                 .height = object_height}
+                            );
+                        }
+                    } else if (layer_name == "creatures") {
+                        if (property_name == "type" && property_value == "player") {
+                            Creature player(
+                                CreatureType::PLAYER,
+                                CreatureState::IDLE,
+                                resources.get_sprite_sheet_animator("0"),
+                                {.x = object_x, .y = object_y},
+                                true
+                            );
+                            this->creatures.push_back(player);
+                            this->camera.camera2d.target = player.position;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void update() {

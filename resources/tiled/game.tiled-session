@@ -1,0 +1,46 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "ground.json": {
+            "scaleInDock": 2,
+            "scaleInEditor": 4
+        },
+        "level_0.json": {
+            "scale": 2,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 142.5,
+                "y": 206.75
+            }
+        },
+        "walls.json": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "/home/akarnachev/src/game/resources/tile_maps/pixel_castle_2d",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+    ],
+    "project": "game.tiled-project",
+    "property.type": "string",
+    "recentFiles": [
+        "walls.json",
+        "ground.json",
+        "level_0.json"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
