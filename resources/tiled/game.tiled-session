@@ -3,8 +3,9 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "level_0.json",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
         "ground.json": {
@@ -13,10 +14,10 @@
         },
         "level_0.json": {
             "scale": 2,
-            "selectedLayer": 2,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 142.5,
-                "y": 206.75
+                "x": 141,
+                "y": 275.25
             }
         },
         "walls.json": {
@@ -30,12 +31,15 @@
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
+        "ground.json",
+        "walls.json",
+        "level_0.json"
     ],
     "project": "game.tiled-project",
     "property.type": "string",
     "recentFiles": [
-        "walls.json",
         "ground.json",
+        "walls.json",
         "level_0.json"
     ],
     "tileset.lastUsedFormat": "json",

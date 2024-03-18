@@ -32,6 +32,32 @@ json load_json(std::string file_path) {
     return data;
 }
 
+std::string load_shader_src(const std::string &file_name) {
+    const std::string version_src = "#version 460 core";
+    std::ifstream common_file("resources/shaders/common.glsl");
+    std::ifstream shader_file("resources/shaders/" + file_name);
+
+    std::stringstream common_stream, shader_stream;
+    common_stream << common_file.rdbuf();
+    shader_stream << shader_file.rdbuf();
+
+    std::string common_src = common_stream.str();
+    std::string shader_src = shader_stream.str();
+
+    std::string full_src = version_src + "\n" + common_src + "\n" + shader_src;
+
+    return full_src;
+}
+
+Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_name) {
+    std::string vs, fs;
+
+    vs = load_shader_src(vs_file_name);
+    fs = load_shader_src(fs_file_name);
+    Shader shader = LoadShaderFromMemory(vs.c_str(), fs.c_str());
+    return shader;
+}
+
 // -----------------------------------------------------------------------
 // collisions
 Vector2 get_aabb_mtv(Rectangle r1, Rectangle r2) {
@@ -202,7 +228,7 @@ class SpriteSheetAnimator {
 };
 
 // -----------------------------------------------------------------------
-// tile
+// tiled level
 class TileSheet {
   private:
     Texture2D texture;
@@ -232,66 +258,32 @@ class TileSheet {
     }
 };
 
-// -----------------------------------------------------------------------
-// resources
-std::string load_shader_src(const std::string &file_name) {
-    const std::string version_src = "#version 460 core";
-    std::ifstream common_file("resources/shaders/common.glsl");
-    std::ifstream shader_file("resources/shaders/" + file_name);
-
-    std::stringstream common_stream, shader_stream;
-    common_stream << common_file.rdbuf();
-    shader_stream << shader_file.rdbuf();
-
-    std::string common_src = common_stream.str();
-    std::string shader_src = shader_stream.str();
-
-    std::string full_src = version_src + "\n" + common_src + "\n" + shader_src;
-
-    return full_src;
-}
-
-Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_name) {
-    std::string vs, fs;
-
-    vs = load_shader_src(vs_file_name);
-    fs = load_shader_src(fs_file_name);
-    Shader shader = LoadShaderFromMemory(vs.c_str(), fs.c_str());
-    return shader;
-}
-
-class Resources {
-  public:
-    std::unordered_map<std::string, SpriteSheet> sprite_sheets;
-    std::unordered_map<std::string, json> level_jsons;
+class TiledLevel {
+  private:
     std::unordered_map<std::string, TileSheet> tile_sheets;
 
-    Resources() {
-        sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
+  public:
+    json meta;
 
-        level_jsons["0"] = load_json("./resources/tiled/level_0.json");
-        for (auto [_, level_json] : level_jsons) {
-            for (auto tileset_json : level_json["tilesets"]) {
-                std::string name = tileset_json["source"];
-                std::string meta_file_path = "./resources/tiled/" + std::string(name);
-                auto tile_sheet = TileSheet(meta_file_path);
-                if (!HASHMAP_GET_OR_NULL(tile_sheets, name)) {
-                    tile_sheets[name] = tile_sheet;
-                }
+    TiledLevel() {}
+
+    TiledLevel(std::string dir_path, std::string name) {
+        this->meta = load_json(fs::path(dir_path) / fs::path(name + ".json"));
+        for (auto tileset_json : meta["tilesets"]) {
+            std::string name = tileset_json["source"];
+            std::string meta_file_path = fs::path(dir_path) / std::string(name);
+            auto tile_sheet = TileSheet(meta_file_path);
+            if (!HASHMAP_GET_OR_NULL(this->tile_sheets, name)) {
+                this->tile_sheets[name] = tile_sheet;
             }
         }
     }
 
-    ~Resources() {
-        for (auto &pair : sprite_sheets)
-            pair.second.unload();
-        for (auto &pair : tile_sheets)
-            pair.second.unload();
-    }
-
-    SpriteSheetAnimator get_sprite_sheet_animator(std::string sprite_sheet_name) {
-        SpriteSheetAnimator animator(&sprite_sheets[sprite_sheet_name]);
-        return animator;
+    void unload() {
+        for (auto &item : this->tile_sheets) {
+            item.second.unload();
+        }
+        this->tile_sheets.clear();
     }
 };
 
@@ -357,18 +349,34 @@ class Creature {
 };
 
 // -----------------------------------------------------------------------
-// world
-class World {
+// game
+class Game {
   public:
+    std::unordered_map<std::string, Shader> shaders;
+    std::unordered_map<std::string, SpriteSheet> sprite_sheets;
+    TiledLevel tiled_level;
+
     std::vector<Creature> creatures;
     std::vector<Rectangle> colliders;
 
     GameCamera camera;
     float gravity = 400.0;
 
-    World(Resources &resources) {
-        auto level_json = resources.level_jsons["0"];
-        for (auto layer_json : level_json["layers"]) {
+    Game() {
+        SetConfigFlags(FLAG_MSAA_4X_HINT);
+        SetTargetFPS(60);
+        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
+
+        this->shaders["sprite"] = load_shader("base.vert", "sprite.frag");
+        this->sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
+        this->load_level("./resources/tiled/", "level_0");
+    }
+
+    void load_level(std::string dir_path, std::string name) {
+        this->tiled_level.unload();
+        this->tiled_level = TiledLevel(dir_path, name);
+
+        for (auto layer_json : this->tiled_level.meta["layers"]) {
             std::string layer_name = std::string(layer_json["name"]);
             for (auto object : layer_json["objects"]) {
                 for (auto property : object["properties"]) {
@@ -394,7 +402,7 @@ class World {
                             Creature player(
                                 CreatureType::PLAYER,
                                 CreatureState::IDLE,
-                                resources.get_sprite_sheet_animator("0"),
+                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 {.x = object_x, .y = object_y},
                                 true
                             );
@@ -405,6 +413,17 @@ class World {
                 }
             }
         }
+    }
+
+    ~Game() {
+        tiled_level.unload();
+
+        for (auto &pair : shaders)
+            UnloadShader(pair.second);
+        for (auto &pair : this->sprite_sheets)
+            pair.second.unload();
+
+        CloseWindow();
     }
 
     void update() {
@@ -461,40 +480,17 @@ class World {
             creature.animator.update(dt);
         }
     }
-};
 
-// -----------------------------------------------------------------------
-// renderer
-class Renderer {
-  private:
-    std::unordered_map<std::string, Shader> shaders;
-
-  public:
-    Renderer() {
-        SetConfigFlags(FLAG_MSAA_4X_HINT);
-        SetTargetFPS(60);
-        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
-
-        shaders["sprite"] = load_shader("base.vert", "sprite.frag");
-    }
-
-    ~Renderer() {
-        for (auto &pair : shaders)
-            UnloadShader(pair.second);
-
-        CloseWindow();
-    }
-
-    void draw_world(World &world) {
+    void draw() {
         BeginDrawing();
         ClearBackground(BLACK);
 
-        BeginMode2D(world.camera.camera2d);
+        BeginMode2D(this->camera.camera2d);
 
         // ---------------------------------------------------------------
         // draw sprites
         BeginShaderMode(this->shaders["sprite"]);
-        for (auto &creature : world.creatures) {
+        for (auto &creature : this->creatures) {
             Sprite sprite = creature.animator.get_sprite(
                 creature.position, creature.is_hflip
             );
@@ -504,7 +500,7 @@ class Renderer {
 
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &creature : world.creatures) {
+        for (auto &creature : this->creatures) {
             Sprite sprite = creature.animator.get_sprite(
                 creature.position, creature.is_hflip
             );
@@ -516,7 +512,7 @@ class Renderer {
 
         // ---------------------------------------------------------------
         // draw colliders
-        for (auto &collider : world.colliders) {
+        for (auto &collider : this->colliders) {
             DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
         }
 
@@ -529,12 +525,10 @@ class Renderer {
 // -----------------------------------------------------------------------
 // main loop
 int main() {
-    Renderer renderer;
-    Resources resources;
-    World world(resources);
+    Game game;
 
     while (!WindowShouldClose()) {
-        world.update();
-        renderer.draw_world(world);
+        game.update();
+        game.draw();
     }
 }
