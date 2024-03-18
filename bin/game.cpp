@@ -97,6 +97,8 @@ class Sprite {
     std::unordered_map<std::string, Rectangle> masks;
 
   public:
+    Sprite() {}
+
     Sprite(
         Texture2D texture,
         Rectangle src,
@@ -233,25 +235,45 @@ class TileSheet {
   private:
     Texture2D texture;
     json meta;
+    int tile_width;
+    int tile_height;
 
   public:
+    int n_tiles;
     TileSheet(){};
 
     TileSheet(std::string meta_file_path) {
         meta = load_json(meta_file_path);
 
-        std::string texture_file_path = "./resources/tiled/" + std::string(meta["image"]);
-        texture = LoadTexture(texture_file_path.c_str());
-        SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
+        this->tile_width = meta["tilewidth"];
+        this->tile_height = meta["tileheight"];
+        this->n_tiles = meta["tilecount"];
 
-        // {"columns":32,"image":"tile_sheets/pixel_castle_2d/walls.png","imageheight":512,"imagewidth":512,"margin":0,"name":"walls","spacing":0,"tilecount":1024,"tiledversion":"1.10.2","tileheight":16,"tilewidth":16,"type":"tileset","version":"1.10"}
+        std::string texture_file_path = "./resources/tiled/" + std::string(meta["image"]);
+        this->texture = LoadTexture(texture_file_path.c_str());
+        SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
     }
 
-    // Sprite get_sprite(std::string &name, int idx, Vector2 position, bool is_hflip) {
-    //     json frame_json = meta["frames"][name][idx];
-    //     Sprite sprite(frame_json, this->texture, position, is_hflip);
-    //     return sprite;
-    // }
+    Sprite get_sprite(int idx, Vector2 position) {
+        int n_cols = this->texture.width / this->tile_width;
+        int n_rows = this->texture.height / this->tile_height;
+        int i_row = idx / n_cols;
+        int i_col = idx % n_cols;
+        float src_x = i_col * this->tile_width;
+        float src_y = i_row * this->tile_height;
+        float src_width = this->tile_width;
+        float src_height = this->tile_height;
+        float dst_x = position.x;
+        float dst_y = position.y;
+        float dst_width = this->tile_width;
+        float dst_height = this->tile_height;
+        Rectangle src = {
+            .x = src_x, .y = src_y, .width = src_width, .height = src_height};
+        Rectangle dst = {
+            .x = dst_x, .y = dst_y, .width = dst_width, .height = dst_height};
+        Sprite sprite(this->texture, src, dst, {});
+        return sprite;
+    }
 
     void unload() {
         UnloadTexture(texture);
@@ -277,6 +299,21 @@ class TiledLevel {
                 this->tile_sheets[name] = tile_sheet;
             }
         }
+    }
+
+    Sprite get_sprite(int tile_id, Vector2 position) {
+        for (auto &tileset_json : this->meta["tilesets"]) {
+            int tile_first_id = tileset_json["firstgid"];
+            if (tile_id < tile_first_id) continue;
+
+            TileSheet tile_sheet = this->tile_sheets[tileset_json["source"]];
+            int tile_last_id = tile_sheet.n_tiles + tile_first_id - 1;
+            if (tile_id > tile_last_id) continue;
+
+            return tile_sheet.get_sprite(tile_id - tile_first_id, position);
+        }
+
+        return Sprite();
     }
 
     void unload() {
@@ -429,6 +466,8 @@ class Game {
     void update() {
         float dt = GetFrameTime();
 
+        this->camera.camera2d.target.x += 0.025;
+
         for (auto &creature : this->creatures) {
             if (creature.has_weight) {
                 creature.velocity.y += dt * this->gravity;
@@ -488,6 +527,38 @@ class Game {
         BeginMode2D(this->camera.camera2d);
 
         // ---------------------------------------------------------------
+        // draw tiled level
+        int tile_width = this->tiled_level.meta["tilewidth"];
+        int tile_height = this->tiled_level.meta["tileheight"];
+
+        BeginShaderMode(this->shaders["sprite"]);
+        for (auto &layer_json : this->tiled_level.meta["layers"]) {
+            for (auto &chunk_json : layer_json["chunks"]) {
+                int chunk_width = chunk_json["width"];
+                int chunk_height = chunk_json["height"];
+                int chunk_x = chunk_json["x"];
+                int chunk_y = chunk_json["y"];
+
+                auto &tile_ids = chunk_json["data"];
+                for (int i = 0; i < tile_ids.size(); ++i) {
+                    int tile_id = tile_ids[i];
+                    if (tile_id == 0) continue;
+
+                    int i_row = i / chunk_width;
+                    int i_col = i % chunk_width;
+                    float x = i_col * tile_width;
+                    float y = i_row * tile_height;
+
+                    Vector2 position = {.x = x, .y = y};
+
+                    Sprite sprite = this->tiled_level.get_sprite(tile_id, position);
+                    sprite.draw();
+                }
+            }
+        }
+        EndShaderMode();
+
+        // ---------------------------------------------------------------
         // draw sprites
         BeginShaderMode(this->shaders["sprite"]);
         for (auto &creature : this->creatures) {
@@ -500,21 +571,21 @@ class Game {
 
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &creature : this->creatures) {
-            Sprite sprite = creature.animator.get_sprite(
-                creature.position, creature.is_hflip
-            );
-            Rectangle *mask = sprite.get_mask("rigid");
-            if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-            }
-        }
+        // for (auto &creature : this->creatures) {
+        //     Sprite sprite = creature.animator.get_sprite(
+        //         creature.position, creature.is_hflip
+        //     );
+        //     Rectangle *mask = sprite.get_mask("rigid");
+        //     if (mask) {
+        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+        //     }
+        // }
 
-        // ---------------------------------------------------------------
-        // draw colliders
-        for (auto &collider : this->colliders) {
-            DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
-        }
+        // // ---------------------------------------------------------------
+        // // draw colliders
+        // for (auto &collider : this->colliders) {
+        //     DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
+        // }
 
         EndMode2D();
 
