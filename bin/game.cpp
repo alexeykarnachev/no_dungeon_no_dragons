@@ -328,7 +328,7 @@ class TiledLevel {
 // game camera
 class GameCamera {
   private:
-    float zoom = 3.0;
+    float zoom = 4.0;
 
   public:
     Camera2D camera2d;
@@ -466,7 +466,8 @@ class Game {
     void update() {
         float dt = GetFrameTime();
 
-        this->camera.camera2d.target.x += 0.025;
+        // this->camera.camera2d.target.x += 0.025;
+        this->camera.camera2d.target = this->creatures[0].position;
 
         for (auto &creature : this->creatures) {
             if (creature.has_weight) {
