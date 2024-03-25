@@ -349,8 +349,6 @@ class GameCamera {
 // -----------------------------------------------------------------------
 // creatures
 
-class Game;
-
 enum class CreatureState {
     IDLE,
     MOVING,
@@ -396,8 +394,6 @@ class Creature {
     Rectangle *get_rigid_collider() {
         return this->animator.get_sprite(position, is_hflip).get_mask("rigid");
     }
-
-    void update(Game* game);
 };
 
 // -----------------------------------------------------------------------
@@ -413,7 +409,6 @@ class Game {
 
     GameCamera camera;
     float gravity = 400.0;
-    float dt = 0.0;
 
     Game() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -482,12 +477,128 @@ class Game {
     }
 
     void update() {
-        this->dt = GetFrameTime();
+        float dt = GetFrameTime();
 
         this->camera.camera2d.target = this->creatures[0].position;
 
         for (auto &creature : this->creatures) {
-            creature.update(this);
+            // -----------------------------------------------------------
+            // compute immediate velocity and position steps
+            Vector2 velocity_step = Vector2Zero();
+            Vector2 position_step = Vector2Zero();
+
+            // gravity
+            if (creature.has_weight) {
+                velocity_step.y += dt * this->gravity;
+            }
+
+            // player inputs
+            if (creature.type == CreatureType::PLAYER) {
+                if (creature.state != CreatureState::LANDING) {
+                    if (IsKeyDown(KEY_A)) {
+                        position_step.x -= creature.move_speed * dt;
+                    }
+                    if (IsKeyDown(KEY_D)) {
+                        position_step.x += creature.move_speed * dt;
+                    }
+                    if (IsKeyDown(KEY_W) && creature.is_grounded) {
+                        velocity_step.y -= 250.0;
+                    }
+                }
+            }
+
+            // -----------------------------------------------------------
+            // apply immediate velocity and position steps
+            creature.velocity = Vector2Add(velocity_step, creature.velocity);
+            position_step = Vector2Add(
+                position_step, Vector2Scale(creature.velocity, dt)
+            );
+            creature.position = Vector2Add(creature.position, position_step);
+            if (fabs(position_step.x) > EPSILON) {
+                creature.is_hflip = position_step.x < 0.0;
+            }
+
+            // -----------------------------------------------------------
+            // compute collisions mtv and resolve it
+            Rectangle *my_collider = creature.get_rigid_collider();
+            float landed_at_speed = 0.0;
+            if (my_collider) {
+
+                // compute mtv
+                Vector2 mtv = Vector2Zero();
+                for (auto &collider : this->colliders) {
+                    Vector2 collider_mtv = get_aabb_mtv(*my_collider, collider);
+
+                    if (fabs(mtv.x) < fabs(collider_mtv.x)) {
+                        mtv.x = collider_mtv.x;
+                    }
+
+                    if (fabs(mtv.y) < fabs(collider_mtv.y)) {
+                        mtv.y = collider_mtv.y;
+                    }
+                }
+
+                // resolve mtv
+                creature.position = Vector2Add(creature.position, mtv);
+
+                if (mtv.y < -EPSILON && creature.velocity.y > EPSILON) {
+                    // hit the ground
+                    landed_at_speed = creature.velocity.y;
+                    creature.velocity.y = 0.0;
+                    creature.is_grounded = true;
+                } else if (mtv.y > EPSILON && creature.velocity.y < -EPSILON) {
+                    // hit the ceil
+                    creature.velocity.y = 0.0;
+                } else {
+                    creature.is_grounded = false;
+                }
+
+                if (fabs(mtv.x) > EPSILON) {
+                    creature.velocity.x = 0.0;
+                }
+            }
+
+            // -----------------------------------------------------------
+            // update state and animation
+            if (creature.type == CreatureType::PLAYER) {
+                if (creature.state != CreatureState::LANDING) {
+                    if (creature.is_grounded) {
+                        if (creature.state == CreatureState::FALLING
+                            && landed_at_speed > 300.0) {
+                            creature.state = CreatureState::LANDING;
+                        } else if (fabs(position_step.x) > EPSILON) {
+                            creature.state = CreatureState::MOVING;
+                        } else {
+                            creature.state = CreatureState::IDLE;
+                        }
+                    } else {
+                        if (creature.velocity.y < -EPSILON) {
+                            creature.state = CreatureState::JUMPING;
+                        } else if (creature.velocity.y > EPSILON) {
+                            creature.state = CreatureState::FALLING;
+                        }
+                    }
+                }
+
+                if (creature.state == CreatureState::MOVING) {
+                    creature.animator.play("knight_run", 0.1, true);
+                } else if (creature.state == CreatureState::IDLE) {
+                    creature.animator.play("knight_idle", 0.1, true);
+                } else if (creature.state == CreatureState::JUMPING) {
+                    creature.animator.play("knight_jump", 0.1, false);
+                } else if (creature.state == CreatureState::FALLING) {
+                    creature.animator.play("knight_fall", 0.1, false);
+                } else if (creature.state == CreatureState::LANDING) {
+                    creature.animator.play("knight_landing", 0.1, false);
+                }
+
+                if (creature.state == CreatureState::LANDING
+                    && creature.animator.is_finished()) {
+                    creature.state = CreatureState::IDLE;
+                }
+            }
+
+            creature.animator.update(dt);
         }
     }
 
@@ -565,121 +676,6 @@ class Game {
         EndDrawing();
     }
 };
-
-void Creature::update(Game* game) {
-    // -----------------------------------------------------------
-    // compute immediate velocity and position steps
-    Vector2 velocity_step = Vector2Zero();
-    Vector2 position_step = Vector2Zero();
-
-    // gravity
-    if (this->has_weight) {
-        velocity_step.y += game->dt * game->gravity;
-    }
-
-    // player inputs
-    if (this->type == CreatureType::PLAYER) {
-        if (this->state != CreatureState::LANDING) {
-            if (IsKeyDown(KEY_A)) {
-                position_step.x -= this->move_speed * game->dt;
-            }
-            if (IsKeyDown(KEY_D)) {
-                position_step.x += this->move_speed * game->dt;
-            }
-            if (IsKeyDown(KEY_W) && this->is_grounded) {
-                velocity_step.y -= 250.0;
-            }
-        }
-    }
-
-    // -----------------------------------------------------------
-    // apply immediate velocity and position steps
-    this->velocity = Vector2Add(velocity_step, this->velocity);
-    position_step = Vector2Add(
-        position_step, Vector2Scale(this->velocity, game->dt)
-    );
-    this->position = Vector2Add(this->position, position_step);
-    if (fabs(position_step.x) > EPSILON) {
-        this->is_hflip = position_step.x < 0.0;
-    }
-
-    // -----------------------------------------------------------
-    // compute collisions mtv and resolve it
-    Rectangle *my_collider = this->get_rigid_collider();
-    float landed_at_speed = 0.0;
-    if (my_collider) {
-
-        // compute mtv
-        Vector2 mtv = Vector2Zero();
-        for (auto &collider : game->colliders) {
-            Vector2 collider_mtv = get_aabb_mtv(*my_collider, collider);
-
-            if (fabs(mtv.x) < fabs(collider_mtv.x)) {
-                mtv.x = collider_mtv.x;
-            }
-
-            if (fabs(mtv.y) < fabs(collider_mtv.y)) {
-                mtv.y = collider_mtv.y;
-            }
-        }
-
-        // resolve mtv
-        this->position = Vector2Add(this->position, mtv);
-
-        if (mtv.y < -EPSILON && this->velocity.y > EPSILON) {
-            landed_at_speed = this->velocity.y;
-            this->velocity.y = 0.0;
-            this->is_grounded = true;
-        } else {
-            this->is_grounded = false;
-        }
-
-        if (fabs(mtv.x) > EPSILON) {
-            this->velocity.x = 0.0;
-        }
-    }
-
-    if (this->type == CreatureType::PLAYER) {
-        if (this->state != CreatureState::LANDING) {
-
-            if (this->is_grounded) {
-                if (this->state == CreatureState::FALLING
-                    && landed_at_speed > 300.0) {
-                    this->state = CreatureState::LANDING;
-                } else if (fabs(position_step.x) > EPSILON) {
-                    this->state = CreatureState::MOVING;
-                } else {
-                    this->state = CreatureState::IDLE;
-                }
-            } else {
-                if (this->velocity.y < -EPSILON) {
-                    this->state = CreatureState::JUMPING;
-                } else if (this->velocity.y > EPSILON) {
-                    this->state = CreatureState::FALLING;
-                }
-            }
-        }
-
-        if (this->state == CreatureState::MOVING) {
-            this->animator.play("knight_run", 0.1, true);
-        } else if (this->state == CreatureState::IDLE) {
-            this->animator.play("knight_idle", 0.1, true);
-        } else if (this->state == CreatureState::JUMPING) {
-            this->animator.play("knight_jump", 0.1, false);
-        } else if (this->state == CreatureState::FALLING) {
-            this->animator.play("knight_fall", 0.1, false);
-        } else if (this->state == CreatureState::LANDING) {
-            this->animator.play("knight_landing", 0.1, false);
-        }
-
-        if (this->state == CreatureState::LANDING
-            && this->animator.is_finished()) {
-            this->state = CreatureState::IDLE;
-        }
-    }
-
-    this->animator.update(game->dt);
-}
 
 // -----------------------------------------------------------------------
 // main loop
