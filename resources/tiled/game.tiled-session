@@ -14,10 +14,10 @@
         },
         "level_0.json": {
             "scale": 4,
-            "selectedLayer": 3,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 115.625,
-                "y": 209.875
+                "x": 81.875,
+                "y": 210.375
             }
         },
         "walls.json": {

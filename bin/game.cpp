@@ -348,13 +348,13 @@ class GameCamera {
 
 // -----------------------------------------------------------------------
 // creatures
-
 enum class CreatureState {
     IDLE,
     MOVING,
     JUMPING,
     FALLING,
     LANDING,
+    DASHING,
 };
 
 enum class CreatureType {
@@ -375,6 +375,7 @@ class Creature {
     bool is_hflip = false;
     bool is_grounded = false;
     bool has_weight = false;
+    int dash_direction = 0;
 
     Creature(
         CreatureType type,
@@ -494,7 +495,8 @@ class Game {
 
             // player inputs
             if (creature.type == CreatureType::PLAYER) {
-                if (creature.state != CreatureState::LANDING) {
+                if (creature.state != CreatureState::LANDING
+                    && creature.state != CreatureState::DASHING) {
                     if (IsKeyDown(KEY_A)) {
                         position_step.x -= creature.move_speed * dt;
                     }
@@ -504,15 +506,19 @@ class Game {
                     if (IsKeyDown(KEY_W) && creature.is_grounded) {
                         velocity_step.y -= 250.0;
                     }
-                    // if (IsKeyDown(KEY_LEFT_CONTROL) && creature.is_grounded) {
+                }
 
-                    // }
+                if (creature.state == CreatureState::MOVING) {
+                    if (IsKeyDown(KEY_LEFT_CONTROL) && creature.is_grounded) {
+                        creature.dash_direction = position_step.x < 0.0 ? -1 : 1;
+                    }
                 }
             }
 
             // -----------------------------------------------------------
             // apply immediate velocity and position steps
             creature.velocity = Vector2Add(velocity_step, creature.velocity);
+            position_step.x += creature.dash_direction * creature.move_speed * dt;
             position_step = Vector2Add(
                 position_step, Vector2Scale(creature.velocity, dt)
             );
@@ -563,7 +569,9 @@ class Game {
             // -----------------------------------------------------------
             // update state and animation
             if (creature.type == CreatureType::PLAYER) {
-                if (creature.state != CreatureState::LANDING) {
+                if (creature.dash_direction != 0) {
+                    creature.state = CreatureState::DASHING;
+                } else if (creature.state != CreatureState::LANDING && creature.state != CreatureState::DASHING) {
                     if (creature.is_grounded) {
                         if (creature.state == CreatureState::FALLING
                             && landed_at_speed > 300.0) {
@@ -592,10 +600,18 @@ class Game {
                     creature.animator.play("knight_fall", 0.1, false);
                 } else if (creature.state == CreatureState::LANDING) {
                     creature.animator.play("knight_landing", 0.1, false);
+                } else if (creature.state == CreatureState::DASHING) {
+                    creature.animator.play("knight_roll", 0.1, false);
                 }
 
                 if (creature.state == CreatureState::LANDING
                     && creature.animator.is_finished()) {
+                    creature.state = CreatureState::IDLE;
+                }
+
+                if (creature.state == CreatureState::DASHING
+                    && creature.animator.is_finished()) {
+                    creature.dash_direction = 0;
                     creature.state = CreatureState::IDLE;
                 }
             }
@@ -653,7 +669,7 @@ class Game {
         }
         EndShaderMode();
 
-#if 0
+#if 1
         // ---------------------------------------------------------------
         // draw masks
         for (auto &creature : this->creatures) {
