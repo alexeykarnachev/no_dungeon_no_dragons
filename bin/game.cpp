@@ -16,8 +16,8 @@ namespace fs = std::filesystem;
 #define HASHMAP_GET_OR_NULL(map, key) \
     ((map).find(key) != (map).end() ? &((map)[key]) : nullptr)
 
-#define SCREEN_WIDTH 1024
-#define SCREEN_HEIGHT 768
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
 
 // -----------------------------------------------------------------------
 // utils
@@ -213,6 +213,10 @@ class SpriteSheetAnimator {
         else this->progress = std::fmin(this->progress, 1.0);
     }
 
+    bool is_finished() {
+        return this->progress == 1.0 && !this->is_repeat;
+    }
+
     Sprite get_sprite(Vector2 position, bool is_hflip) {
         if (this->name.empty()) {
             throw std::runtime_error(
@@ -345,9 +349,14 @@ class GameCamera {
 // -----------------------------------------------------------------------
 // creatures
 
+class Game;
+
 enum class CreatureState {
     IDLE,
     MOVING,
+    JUMPING,
+    FALLING,
+    LANDING,
 };
 
 enum class CreatureType {
@@ -360,6 +369,8 @@ class Creature {
     CreatureState state;
     SpriteSheetAnimator animator;
 
+    float move_speed;
+
     Vector2 position = {0.0, 0.0};
     Vector2 velocity = {0.0, 0.0};
 
@@ -371,18 +382,22 @@ class Creature {
         CreatureType type,
         CreatureState state,
         SpriteSheetAnimator animator,
+        float move_speed,
         Vector2 position,
         bool has_weight
     )
         : type(type)
         , state(state)
         , position(position)
+        , move_speed(move_speed)
         , animator(animator)
         , has_weight(has_weight) {}
 
     Rectangle *get_rigid_collider() {
         return this->animator.get_sprite(position, is_hflip).get_mask("rigid");
     }
+
+    void update(Game* game);
 };
 
 // -----------------------------------------------------------------------
@@ -398,6 +413,7 @@ class Game {
 
     GameCamera camera;
     float gravity = 400.0;
+    float dt = 0.0;
 
     Game() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -440,9 +456,11 @@ class Game {
                                 CreatureType::PLAYER,
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                                90.0,
                                 {.x = object_x, .y = object_y},
                                 true
                             );
+                            player.animator.play("knight_idle", 0.1, false);
                             this->creatures.push_back(player);
                             this->camera.camera2d.target = player.position;
                         }
@@ -464,60 +482,12 @@ class Game {
     }
 
     void update() {
-        float dt = GetFrameTime();
+        this->dt = GetFrameTime();
 
-        // this->camera.camera2d.target.x += 0.025;
         this->camera.camera2d.target = this->creatures[0].position;
 
         for (auto &creature : this->creatures) {
-            if (creature.has_weight) {
-                creature.velocity.y += dt * this->gravity;
-            }
-
-            Vector2 step = Vector2Scale(creature.velocity, dt);
-            if (creature.type == CreatureType::PLAYER) {
-                creature.state = CreatureState::IDLE;
-                if (IsKeyDown(KEY_A)) {
-                    step.x -= 90.0 * dt;
-                    creature.is_hflip = true;
-                    creature.state = CreatureState::MOVING;
-                }
-                if (IsKeyDown(KEY_D)) {
-                    step.x += 90.0 * dt;
-                    creature.is_hflip = false;
-                    creature.state = CreatureState::MOVING;
-                }
-                if (IsKeyDown(KEY_W)) {
-                    step.y -= 90.0 * dt;
-                    creature.state = CreatureState::MOVING;
-                }
-                if (IsKeyDown(KEY_S)) {
-                    step.y += 90.0 * dt;
-                    creature.state = CreatureState::MOVING;
-                }
-
-                if (creature.state == CreatureState::MOVING) {
-                    creature.animator.play("knight_run", 0.1, true);
-                } else if (creature.state == CreatureState::IDLE) {
-                    creature.animator.play("knight_idle", 0.1, true);
-                }
-            }
-
-            creature.position = Vector2Add(creature.position, step);
-
-            Rectangle *my_collider = creature.get_rigid_collider();
-            if (my_collider) {
-                creature.is_grounded = false;
-                for (auto &collider : this->colliders) {
-                    Vector2 mtv = get_aabb_mtv(*my_collider, collider);
-                    creature.position = Vector2Add(creature.position, mtv);
-                    if (fabs(mtv.y) > EPSILON) creature.velocity.y = 0.0;
-                    if (fabs(mtv.x) > EPSILON) creature.velocity.x = 0.0;
-                    creature.is_grounded |= mtv.y > EPSILON;
-                }
-            }
-
-            creature.animator.update(dt);
+            creature.update(this);
         }
     }
 
@@ -570,29 +540,146 @@ class Game {
         }
         EndShaderMode();
 
+#if 0
         // ---------------------------------------------------------------
         // draw masks
-        // for (auto &creature : this->creatures) {
-        //     Sprite sprite = creature.animator.get_sprite(
-        //         creature.position, creature.is_hflip
-        //     );
-        //     Rectangle *mask = sprite.get_mask("rigid");
-        //     if (mask) {
-        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-        //     }
-        // }
+        for (auto &creature : this->creatures) {
+            Sprite sprite = creature.animator.get_sprite(
+                creature.position, creature.is_hflip
+            );
+            Rectangle *mask = sprite.get_mask("rigid");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+            }
+        }
 
-        // // ---------------------------------------------------------------
-        // // draw colliders
-        // for (auto &collider : this->colliders) {
-        //     DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
-        // }
+        // ---------------------------------------------------------------
+        // draw colliders
+        for (auto &collider : this->colliders) {
+            DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
+        }
+#endif
 
         EndMode2D();
 
         EndDrawing();
     }
 };
+
+void Creature::update(Game* game) {
+    // -----------------------------------------------------------
+    // compute immediate velocity and position steps
+    Vector2 velocity_step = Vector2Zero();
+    Vector2 position_step = Vector2Zero();
+
+    // gravity
+    if (this->has_weight) {
+        velocity_step.y += game->dt * game->gravity;
+    }
+
+    // player inputs
+    if (this->type == CreatureType::PLAYER) {
+        if (this->state != CreatureState::LANDING) {
+            if (IsKeyDown(KEY_A)) {
+                position_step.x -= this->move_speed * game->dt;
+            }
+            if (IsKeyDown(KEY_D)) {
+                position_step.x += this->move_speed * game->dt;
+            }
+            if (IsKeyDown(KEY_W) && this->is_grounded) {
+                velocity_step.y -= 250.0;
+            }
+        }
+    }
+
+    // -----------------------------------------------------------
+    // apply immediate velocity and position steps
+    this->velocity = Vector2Add(velocity_step, this->velocity);
+    position_step = Vector2Add(
+        position_step, Vector2Scale(this->velocity, game->dt)
+    );
+    this->position = Vector2Add(this->position, position_step);
+    if (fabs(position_step.x) > EPSILON) {
+        this->is_hflip = position_step.x < 0.0;
+    }
+
+    // -----------------------------------------------------------
+    // compute collisions mtv and resolve it
+    Rectangle *my_collider = this->get_rigid_collider();
+    float landed_at_speed = 0.0;
+    if (my_collider) {
+
+        // compute mtv
+        Vector2 mtv = Vector2Zero();
+        for (auto &collider : game->colliders) {
+            Vector2 collider_mtv = get_aabb_mtv(*my_collider, collider);
+
+            if (fabs(mtv.x) < fabs(collider_mtv.x)) {
+                mtv.x = collider_mtv.x;
+            }
+
+            if (fabs(mtv.y) < fabs(collider_mtv.y)) {
+                mtv.y = collider_mtv.y;
+            }
+        }
+
+        // resolve mtv
+        this->position = Vector2Add(this->position, mtv);
+
+        if (mtv.y < -EPSILON && this->velocity.y > EPSILON) {
+            landed_at_speed = this->velocity.y;
+            this->velocity.y = 0.0;
+            this->is_grounded = true;
+        } else {
+            this->is_grounded = false;
+        }
+
+        if (fabs(mtv.x) > EPSILON) {
+            this->velocity.x = 0.0;
+        }
+    }
+
+    if (this->type == CreatureType::PLAYER) {
+        if (this->state != CreatureState::LANDING) {
+
+            if (this->is_grounded) {
+                if (this->state == CreatureState::FALLING
+                    && landed_at_speed > 300.0) {
+                    this->state = CreatureState::LANDING;
+                } else if (fabs(position_step.x) > EPSILON) {
+                    this->state = CreatureState::MOVING;
+                } else {
+                    this->state = CreatureState::IDLE;
+                }
+            } else {
+                if (this->velocity.y < -EPSILON) {
+                    this->state = CreatureState::JUMPING;
+                } else if (this->velocity.y > EPSILON) {
+                    this->state = CreatureState::FALLING;
+                }
+            }
+        }
+
+        if (this->state == CreatureState::MOVING) {
+            this->animator.play("knight_run", 0.1, true);
+        } else if (this->state == CreatureState::IDLE) {
+            this->animator.play("knight_idle", 0.1, true);
+        } else if (this->state == CreatureState::JUMPING) {
+            this->animator.play("knight_jump", 0.1, false);
+        } else if (this->state == CreatureState::FALLING) {
+            this->animator.play("knight_fall", 0.1, false);
+        } else if (this->state == CreatureState::LANDING) {
+            this->animator.play("knight_landing", 0.1, false);
+        }
+
+        if (this->state == CreatureState::LANDING
+            && this->animator.is_finished()) {
+            this->state = CreatureState::IDLE;
+        }
+    }
+
+    this->animator.update(game->dt);
+}
 
 // -----------------------------------------------------------------------
 // main loop

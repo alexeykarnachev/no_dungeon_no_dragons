@@ -1,0 +1,14 @@
+{ "columns":20,
+ "image":"tile_sheets\/pixel_castle_2d\/wood_env.png",
+ "imageheight":256,
+ "imagewidth":320,
+ "margin":0,
+ "name":"wood_env",
+ "spacing":0,
+ "tilecount":320,
+ "tiledversion":"1.10.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}
