@@ -1,0 +1,213 @@
+{ "frames": [
+   {
+    "filename": "knight_roll.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..1",
+    "frame": { "x": 41, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..2",
+    "frame": { "x": 81, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..3",
+    "frame": { "x": 121, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..4",
+    "frame": { "x": 161, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..5",
+    "frame": { "x": 201, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..6",
+    "frame": { "x": 241, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..7",
+    "frame": { "x": 281, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..8",
+    "frame": { "x": 321, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..9",
+    "frame": { "x": 361, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.sprite..10",
+    "frame": { "x": 401, "y": 1, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..0",
+    "frame": { "x": 1, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..1",
+    "frame": { "x": 41, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..2",
+    "frame": { "x": 81, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..3",
+    "frame": { "x": 121, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..4",
+    "frame": { "x": 161, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..5",
+    "frame": { "x": 201, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..6",
+    "frame": { "x": 241, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..7",
+    "frame": { "x": 281, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..8",
+    "frame": { "x": 321, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..9",
+    "frame": { "x": 361, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_roll.mask_rigid..10",
+    "frame": { "x": 401, "y": 34, "w": 38, "h": 31 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 38, "h": 31 },
+    "sourceSize": { "w": 38, "h": 31 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "knight_roll.png",
+  "format": "RGBA8888",
+  "size": { "w": 440, "h": 66 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

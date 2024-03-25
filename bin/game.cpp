@@ -504,6 +504,9 @@ class Game {
                     if (IsKeyDown(KEY_W) && creature.is_grounded) {
                         velocity_step.y -= 250.0;
                     }
+                    // if (IsKeyDown(KEY_LEFT_CONTROL) && creature.is_grounded) {
+
+                    // }
                 }
             }
 
@@ -523,7 +526,6 @@ class Game {
             Rectangle *my_collider = creature.get_rigid_collider();
             float landed_at_speed = 0.0;
             if (my_collider) {
-
                 // compute mtv
                 Vector2 mtv = Vector2Zero();
                 for (auto &collider : this->colliders) {
