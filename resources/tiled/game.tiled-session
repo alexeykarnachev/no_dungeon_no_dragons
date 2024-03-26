@@ -13,11 +13,11 @@
             "scaleInEditor": 4
         },
         "level_0.json": {
-            "scale": 4,
-            "selectedLayer": 2,
+            "scale": 1.5,
+            "selectedLayer": 1,
             "viewCenter": {
-                "x": 81.875,
-                "y": 210.375
+                "x": 210.99999999999994,
+                "y": 16.333333333333314
             }
         },
         "walls.json": {

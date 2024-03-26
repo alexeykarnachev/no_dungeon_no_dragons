@@ -630,8 +630,8 @@ class Game {
 
                     int i_row = i / chunk_width;
                     int i_col = i % chunk_width;
-                    float x = i_col * tile_width;
-                    float y = i_row * tile_height;
+                    float x = tile_width * (chunk_x + i_col);
+                    float y = tile_height * (chunk_y + i_row);
 
                     Vector2 position = {.x = x, .y = y};
 
