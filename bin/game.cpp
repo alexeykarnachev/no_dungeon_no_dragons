@@ -514,64 +514,39 @@ class Game {
                     }
                 }
 
-                if (creature.state == CreatureState::MOVING) {
-                    if (IsKeyDown(KEY_LEFT_CONTROL) && creature.is_grounded) {
-                        creature.dash_direction = position_step.x < 0.0 ? -1 : 1;
-                    }
-                }
-
                 // update state
-                if (creature.dash_direction != 0) {
+                if (creature.state == CreatureState::MOVING && IsKeyDown(KEY_LEFT_CONTROL)
+                    && creature.is_grounded) {
+                    creature.dash_direction = position_step.x < 0.0 ? -1 : 1;
                     creature.state = CreatureState::DASHING;
+                    creature.animator.play("knight_roll", 0.1, false);
+                } else if (creature.state == CreatureState::DASHING && creature.animator.is_finished()) {
+                    creature.dash_direction = 0;
+                    creature.state = CreatureState::IDLE;
+                    creature.animator.play("knight_idle", 0.1, true);
                 } else if (creature.state != CreatureState::LANDING && creature.state != CreatureState::DASHING) {
                     if (creature.is_grounded) {
                         if (creature.state == CreatureState::FALLING
                             && creature.landed_at_speed > 300.0) {
                             creature.state = CreatureState::LANDING;
+                            creature.animator.play("knight_landing", 0.1, false);
                         } else if (fabs(position_step.x) > EPSILON) {
                             creature.state = CreatureState::MOVING;
+                            creature.animator.play("knight_run", 0.1, true);
                         } else {
                             creature.state = CreatureState::IDLE;
+                            creature.animator.play("knight_idle", 0.1, true);
                         }
                     } else {
                         if (creature.velocity.y < -EPSILON) {
                             creature.state = CreatureState::JUMPING;
+                            creature.animator.play("knight_jump", 0.1, false);
                         } else if (creature.velocity.y > EPSILON) {
                             creature.state = CreatureState::FALLING;
+                            creature.animator.play("knight_fall", 0.1, false);
                         }
                     }
-                }
-
-                // update animation
-                switch (creature.state) {
-                    case CreatureState::IDLE:
-                        creature.animator.play("knight_idle", 0.1, true);
-                        break;
-                    case CreatureState::MOVING:
-                        creature.animator.play("knight_run", 0.1, true);
-                        break;
-                    case CreatureState::JUMPING:
-                        creature.animator.play("knight_jump", 0.1, false);
-                        break;
-                    case CreatureState::FALLING:
-                        creature.animator.play("knight_fall", 0.1, false);
-                        break;
-                    case CreatureState::LANDING:
-                        creature.animator.play("knight_landing", 0.1, false);
-                        break;
-                    case CreatureState::DASHING:
-                        creature.animator.play("knight_roll", 0.1, false);
-                        break;
-                };
-
-                if (creature.state == CreatureState::LANDING
-                    && creature.animator.is_finished()) {
-                    creature.state = CreatureState::IDLE;
-                }
-
-                if (creature.state == CreatureState::DASHING
-                    && creature.animator.is_finished()) {
-                    creature.dash_direction = 0;
+                } else if (creature.state == CreatureState::LANDING && creature.animator.is_finished()) {
                     creature.state = CreatureState::IDLE;
                 }
             }
