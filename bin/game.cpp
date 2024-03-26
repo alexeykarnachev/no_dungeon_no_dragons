@@ -375,7 +375,6 @@ class Creature {
     bool is_hflip = false;
     bool is_grounded = false;
     bool has_weight = false;
-    int dash_direction = 0;
     float landed_at_speed = 0.0;
 
     Creature(
@@ -517,11 +516,12 @@ class Game {
                 // update state
                 if (creature.state == CreatureState::MOVING && IsKeyDown(KEY_LEFT_CONTROL)
                     && creature.is_grounded) {
-                    creature.dash_direction = position_step.x < 0.0 ? -1 : 1;
+                    creature.velocity.x = position_step.x < 0.0 ? -creature.move_speed
+                                                                : creature.move_speed;
                     creature.state = CreatureState::DASHING;
                     creature.animator.play("knight_roll", 0.1, false);
                 } else if (creature.state == CreatureState::DASHING && creature.animator.is_finished()) {
-                    creature.dash_direction = 0;
+                    creature.velocity.x = 0.0;
                     creature.state = CreatureState::IDLE;
                     creature.animator.play("knight_idle", 0.1, true);
                 } else if (creature.state != CreatureState::LANDING && creature.state != CreatureState::DASHING) {
@@ -548,13 +548,13 @@ class Game {
                     }
                 } else if (creature.state == CreatureState::LANDING && creature.animator.is_finished()) {
                     creature.state = CreatureState::IDLE;
+                    creature.animator.play("knight_idle", 0.1, true);
                 }
             }
 
             // -----------------------------------------------------------
             // apply immediate velocity and position steps
             creature.velocity = Vector2Add(velocity_step, creature.velocity);
-            position_step.x += creature.dash_direction * creature.move_speed * dt;
             position_step = Vector2Add(
                 position_step, Vector2Scale(creature.velocity, dt)
             );
