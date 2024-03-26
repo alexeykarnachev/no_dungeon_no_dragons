@@ -355,6 +355,7 @@ enum class CreatureState {
     FALLING,
     LANDING,
     DASHING,
+    ATTACK_0,
 };
 
 enum class CreatureType {
@@ -499,33 +500,53 @@ class Game {
             // -----------------------------------------------------------
             // update player
             if (creature.type == CreatureType::PLAYER) {
-                // update user inputs
-                if (creature.state != CreatureState::LANDING
-                    && creature.state != CreatureState::DASHING) {
+
+                bool is_attack_0_started = IsKeyPressed(KEY_SPACE)
+                                           && (creature.state == CreatureState::IDLE
+                                               || creature.state == CreatureState::MOVING
+                                           );
+                bool is_attack_0_finished = creature.state == CreatureState::ATTACK_0
+                                            && creature.animator.is_finished();
+                bool is_dashing_started = creature.state == CreatureState::MOVING
+                                          && IsKeyDown(KEY_LEFT_CONTROL)
+                                          && (IsKeyDown(KEY_A) || IsKeyDown(KEY_D))
+                                          && creature.is_grounded;
+                bool is_dashing_finished = creature.state == CreatureState::DASHING
+                                           && creature.animator.is_finished();
+                bool can_receive_input = creature.state != CreatureState::LANDING
+                                         && creature.state != CreatureState::DASHING
+                                         && creature.state != CreatureState::ATTACK_0;
+                bool is_landing_finished = creature.state == CreatureState::LANDING
+                                           && creature.animator.is_finished();
+
+                if (is_attack_0_started) {
+                    creature.state = CreatureState::ATTACK_0;
+                    creature.animator.play("knight_attack_0", 0.1, false);
+                } else if (is_attack_0_finished) {
+                    creature.state = CreatureState::IDLE;
+                    creature.animator.play("knight_idle", 0.1, true);
+                } else if (is_dashing_started) {
+                    creature.velocity.x = creature.move_speed;
+                    if (IsKeyDown(KEY_A)) creature.velocity.x *= -1.0;
+                    creature.state = CreatureState::DASHING;
+                    creature.animator.play("knight_roll", 0.1, false);
+                } else if (is_dashing_finished) {
+                    creature.velocity.x = 0.0;
+                    creature.state = CreatureState::IDLE;
+                    creature.animator.play("knight_idle", 0.1, true);
+                } else if (can_receive_input) {
                     if (IsKeyDown(KEY_A)) {
                         position_step.x -= creature.move_speed * dt;
                     }
                     if (IsKeyDown(KEY_D)) {
                         position_step.x += creature.move_speed * dt;
                     }
-                    if (IsKeyDown(KEY_W) && creature.is_grounded) {
-                        velocity_step.y -= 250.0;
-                    }
-                }
 
-                // update state
-                if (creature.state == CreatureState::MOVING && IsKeyDown(KEY_LEFT_CONTROL)
-                    && creature.is_grounded) {
-                    creature.velocity.x = position_step.x < 0.0 ? -creature.move_speed
-                                                                : creature.move_speed;
-                    creature.state = CreatureState::DASHING;
-                    creature.animator.play("knight_roll", 0.1, false);
-                } else if (creature.state == CreatureState::DASHING && creature.animator.is_finished()) {
-                    creature.velocity.x = 0.0;
-                    creature.state = CreatureState::IDLE;
-                    creature.animator.play("knight_idle", 0.1, true);
-                } else if (creature.state != CreatureState::LANDING && creature.state != CreatureState::DASHING) {
                     if (creature.is_grounded) {
+                        if (IsKeyPressed(KEY_W)) {
+                            velocity_step.y -= 250.0;
+                        }
+
                         if (creature.state == CreatureState::FALLING
                             && creature.landed_at_speed > 300.0) {
                             creature.state = CreatureState::LANDING;
@@ -546,7 +567,7 @@ class Game {
                             creature.animator.play("knight_fall", 0.1, false);
                         }
                     }
-                } else if (creature.state == CreatureState::LANDING && creature.animator.is_finished()) {
+                } else if (is_landing_finished) {
                     creature.state = CreatureState::IDLE;
                     creature.animator.play("knight_idle", 0.1, true);
                 }
