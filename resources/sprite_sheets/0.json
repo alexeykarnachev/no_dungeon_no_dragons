@@ -18,9 +18,9 @@
                     "rigid": {
                         "name": "knight_fall",
                         "x": 11,
-                        "y": 1,
+                        "y": 7,
                         "w": 14,
-                        "h": 27,
+                        "h": 25,
                         "frame_idx": 0
                     }
                 }
@@ -38,7 +38,7 @@
                     "rigid": {
                         "name": "knight_fall",
                         "x": 9,
-                        "y": 3,
+                        "y": 5,
                         "w": 15,
                         "h": 27,
                         "frame_idx": 1
@@ -58,9 +58,9 @@
                     "rigid": {
                         "name": "knight_fall",
                         "x": 10,
-                        "y": 6,
+                        "y": 8,
                         "w": 15,
-                        "h": 26,
+                        "h": 24,
                         "frame_idx": 2
                     }
                 }

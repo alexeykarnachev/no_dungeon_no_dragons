@@ -500,76 +500,137 @@ class Game {
             // -----------------------------------------------------------
             // update player
             if (creature.type == CreatureType::PLAYER) {
+                switch (creature.state) {
+                    case CreatureState::IDLE:
+                        // -> IDLE, MOVING, JUMPING, FALLING, ATTACK_0
+                        creature.animator.play("knight_idle", 0.1, true);
 
-                bool is_attack_0_started = IsKeyPressed(KEY_SPACE)
-                                           && (creature.state == CreatureState::IDLE
-                                               || creature.state == CreatureState::MOVING
-                                           );
-                bool is_attack_0_finished = creature.state == CreatureState::ATTACK_0
-                                            && creature.animator.is_finished();
-                bool is_dashing_started = creature.state == CreatureState::MOVING
-                                          && IsKeyDown(KEY_LEFT_CONTROL)
-                                          && (IsKeyDown(KEY_A) || IsKeyDown(KEY_D))
-                                          && creature.is_grounded;
-                bool is_dashing_finished = creature.state == CreatureState::DASHING
-                                           && creature.animator.is_finished();
-                bool can_receive_input = creature.state != CreatureState::LANDING
-                                         && creature.state != CreatureState::DASHING
-                                         && creature.state != CreatureState::ATTACK_0;
-                bool is_landing_finished = creature.state == CreatureState::LANDING
-                                           && creature.animator.is_finished();
+                        // move
+                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
+                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
 
-                if (is_attack_0_started) {
-                    creature.state = CreatureState::ATTACK_0;
-                    creature.animator.play("knight_attack_0", 0.1, false);
-                } else if (is_attack_0_finished) {
-                    creature.state = CreatureState::IDLE;
-                    creature.animator.play("knight_idle", 0.1, true);
-                } else if (is_dashing_started) {
-                    creature.velocity.x = creature.move_speed;
-                    if (IsKeyDown(KEY_A)) creature.velocity.x *= -1.0;
-                    creature.state = CreatureState::DASHING;
-                    creature.animator.play("knight_roll", 0.1, false);
-                } else if (is_dashing_finished) {
-                    creature.velocity.x = 0.0;
-                    creature.state = CreatureState::IDLE;
-                    creature.animator.play("knight_idle", 0.1, true);
-                } else if (can_receive_input) {
-                    if (IsKeyDown(KEY_A)) {
-                        position_step.x -= creature.move_speed * dt;
-                    }
-                    if (IsKeyDown(KEY_D)) {
-                        position_step.x += creature.move_speed * dt;
-                    }
+                        // -> FALLING
+                        if (!creature.is_grounded) {
+                            creature.state = CreatureState::FALLING;
+                            break;
+                        }
 
-                    if (creature.is_grounded) {
+                        // -> MOVING
+                        if (position_step.x) {
+                            creature.state = CreatureState::MOVING;
+                        }
+
+                        // -> JUMPING
                         if (IsKeyPressed(KEY_W)) {
                             velocity_step.y -= 250.0;
+                            creature.state = CreatureState::JUMPING;
                         }
 
-                        if (creature.state == CreatureState::FALLING
-                            && creature.landed_at_speed > 300.0) {
-                            creature.state = CreatureState::LANDING;
-                            creature.animator.play("knight_landing", 0.1, false);
-                        } else if (fabs(position_step.x) > EPSILON) {
-                            creature.state = CreatureState::MOVING;
-                            creature.animator.play("knight_run", 0.1, true);
-                        } else {
+                        break;
+                    case CreatureState::MOVING:
+                        // -> IDLE, MOVING, JUMPING, FALLING, DASHING, ATTACK_0
+                        creature.animator.play("knight_run", 0.1, true);
+
+                        // move
+                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
+                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+
+                        // -> IDLE
+                        if (!position_step.x) {
                             creature.state = CreatureState::IDLE;
-                            creature.animator.play("knight_idle", 0.1, true);
                         }
-                    } else {
-                        if (creature.velocity.y < -EPSILON) {
+
+                        // -> JUMPING
+                        if (IsKeyPressed(KEY_W)) {
+                            velocity_step.y -= 250.0;
                             creature.state = CreatureState::JUMPING;
-                            creature.animator.play("knight_jump", 0.1, false);
-                        } else if (creature.velocity.y > EPSILON) {
-                            creature.state = CreatureState::FALLING;
-                            creature.animator.play("knight_fall", 0.1, false);
                         }
-                    }
-                } else if (is_landing_finished) {
-                    creature.state = CreatureState::IDLE;
-                    creature.animator.play("knight_idle", 0.1, true);
+
+                        // -> FALLING
+                        if (!creature.is_grounded) {
+                            creature.state = CreatureState::FALLING;
+                        }
+
+                        // -> DASHING
+                        if (position_step.x && creature.is_grounded
+                            && IsKeyPressed(KEY_LEFT_CONTROL)) {
+                            float dir = position_step.x > 0.0 ? 1.0 : -1.0;
+                            creature.velocity.x = dir * creature.move_speed;
+                            creature.state = CreatureState::DASHING;
+                        }
+
+                        break;
+                    case CreatureState::JUMPING:
+                        // -> FALLING
+                        creature.animator.play("knight_jump", 0.1, false);
+
+                        // move
+                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
+                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+
+                        // -> FALLING
+                        if (creature.velocity.y > EPSILON) {
+                            creature.state = CreatureState::FALLING;
+                        }
+
+                        break;
+                    case CreatureState::FALLING:
+                        // -> IDLE, MOVING, LANDING
+                        creature.animator.play("knight_fall", 0.1, false);
+
+                        // move
+                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
+                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+
+                        if (creature.landed_at_speed == 0.0) break;
+
+                        // -> IDLE
+                        if (!position_step.x) {
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        // -> MOVING
+                        if (position_step.x) {
+                            creature.state = CreatureState::MOVING;
+                        }
+
+                        // -> LANDING
+                        if (creature.landed_at_speed > 260.0) {
+                            creature.state = CreatureState::LANDING;
+                        }
+
+                        break;
+                    case CreatureState::LANDING:
+                        // -> IDLE
+                        creature.animator.play("knight_landing", 0.1, false);
+
+                        // -> IDLE
+                        if (creature.animator.is_finished()) {
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        break;
+                    case CreatureState::DASHING:
+                        // -> IDLE, FALLING
+                        creature.animator.play("knight_roll", 0.1, false);
+
+                        if (!creature.animator.is_finished()) break;
+                        creature.velocity.x = 0.0;
+
+                        // -> IDLE
+                        if (creature.is_grounded) {
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        // -> FALLING
+                        if (!creature.is_grounded) {
+                            creature.state = CreatureState::FALLING;
+                        }
+
+                        break;
+                    case CreatureState::ATTACK_0:
+                        // -> IDLE
+                        break;
                 }
             }
 
@@ -616,10 +677,6 @@ class Game {
                     creature.velocity.y = 0.0;
                 } else {
                     creature.is_grounded = false;
-                }
-
-                if (fabs(mtv.x) > EPSILON) {
-                    creature.velocity.x = 0.0;
                 }
             }
         }
