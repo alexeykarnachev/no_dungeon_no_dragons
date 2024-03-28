@@ -185,10 +185,10 @@ class SpriteSheetAnimator {
     SpriteSheet *sprite_sheet;
     std::string name = "";
     float frame_duration = 0.0;
-    float progress = 0.0;
     bool is_repeat = true;
 
   public:
+    float progress = 0.0;
     SpriteSheetAnimator() {}
     SpriteSheetAnimator(SpriteSheet *sprite_sheet)
         : sprite_sheet(sprite_sheet) {}
@@ -552,9 +552,8 @@ class Game {
                         }
 
                         // -> DASHING
-                        if (position_step.x && creature.is_grounded
-                            && IsKeyPressed(KEY_LEFT_CONTROL)) {
-                            float dir = position_step.x > 0.0 ? 1.0 : -1.0;
+                        if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+                            float dir = creature.is_hflip ? -1.0 : 1.0;
                             creature.velocity.x = dir * creature.move_speed;
                             creature.state = CreatureState::DASHING;
                         }
@@ -601,12 +600,20 @@ class Game {
 
                         break;
                     case CreatureState::LANDING:
-                        // -> IDLE
+                        // -> IDLE, DASHING
                         creature.animator.play("knight_landing", 0.1, false);
 
                         // -> IDLE
                         if (creature.animator.is_finished()) {
                             creature.state = CreatureState::IDLE;
+                        }
+
+                        // -> DASHING
+                        if (creature.animator.progress < 0.5
+                            && IsKeyPressed(KEY_LEFT_CONTROL)) {
+                            float dir = creature.is_hflip ? -1.0 : 1.0;
+                            creature.velocity.x = dir * creature.move_speed;
+                            creature.state = CreatureState::DASHING;
                         }
 
                         break;
