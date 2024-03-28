@@ -356,6 +356,7 @@ enum class CreatureState {
     LANDING,
     DASHING,
     ATTACK_0,
+    DEATH,
 };
 
 enum class CreatureType {
@@ -424,6 +425,9 @@ class Game {
 
     void load_level(std::string dir_path, std::string name) {
         this->tiled_level.unload();
+        this->colliders.clear();
+        this->creatures.clear();
+
         this->tiled_level = TiledLevel(dir_path, name);
 
         for (auto layer_json : this->tiled_level.meta["layers"]) {
@@ -479,6 +483,11 @@ class Game {
     }
 
     void update() {
+        if (IsKeyPressed(KEY_R)) {
+            this->load_level("./resources/tiled/", "level_0");
+            return;
+        }
+
         float dt = GetFrameTime();
 
         this->camera.camera2d.target = this->creatures[0].position;
@@ -600,12 +609,17 @@ class Game {
 
                         break;
                     case CreatureState::LANDING:
-                        // -> IDLE, DASHING
+                        // -> IDLE, DASHING, DEATH
                         creature.animator.play("knight_landing", 0.1, false);
 
                         // -> IDLE
+                        // if (creature.animator.is_finished()) {
+                        //     creature.state = CreatureState::IDLE;
+                        // }
+
+                        // -> DEATH
                         if (creature.animator.is_finished()) {
-                            creature.state = CreatureState::IDLE;
+                            creature.state = CreatureState::DEATH;
                         }
 
                         // -> DASHING
@@ -637,6 +651,10 @@ class Game {
                         break;
                     case CreatureState::ATTACK_0:
                         // -> IDLE
+                        break;
+                    case CreatureState::DEATH:
+                        creature.animator.play("knight_death", 0.1, false);
+
                         break;
                 }
             }
@@ -741,15 +759,15 @@ class Game {
 #if 1
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &creature : this->creatures) {
-            Sprite sprite = creature.animator.get_sprite(
-                creature.position, creature.is_hflip
-            );
-            Rectangle *mask = sprite.get_mask("rigid");
-            if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-            }
-        }
+        // for (auto &creature : this->creatures) {
+        //     Sprite sprite = creature.animator.get_sprite(
+        //         creature.position, creature.is_hflip
+        //     );
+        //     Rectangle *mask = sprite.get_mask("rigid");
+        //     if (mask) {
+        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+        //     }
+        // }
 
         // ---------------------------------------------------------------
         // draw colliders

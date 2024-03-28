@@ -1389,6 +1389,168 @@
                     }
                 }
             }
+        ],
+        "knight_death": [
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 679,
+                    "y": 173,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 12,
+                        "y": 2,
+                        "w": 17,
+                        "h": 29,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 719,
+                    "y": 139,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 11,
+                        "y": 5,
+                        "w": 13,
+                        "h": 26,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 702,
+                    "y": 105,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 12,
+                        "y": 5,
+                        "w": 13,
+                        "h": 26,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 742,
+                    "y": 71,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 12,
+                        "y": 5,
+                        "w": 13,
+                        "h": 26,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 285,
+                    "y": 316,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 12,
+                        "y": 5,
+                        "w": 13,
+                        "h": 26,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 325,
+                    "y": 282,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 13,
+                        "y": 9,
+                        "w": 12,
+                        "h": 22,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 470,
+                    "y": 1,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 10,
+                        "y": 26,
+                        "w": 15,
+                        "h": 5,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "knight_death",
+                    "x": 476,
+                    "y": 36,
+                    "w": 38,
+                    "h": 31,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "knight_death",
+                        "x": 11,
+                        "y": 24,
+                        "w": 13,
+                        "h": 7,
+                        "frame_idx": 7
+                    }
+                }
+            }
         ]
     }
 }
