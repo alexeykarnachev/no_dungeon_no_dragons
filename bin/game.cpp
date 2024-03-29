@@ -20,6 +20,7 @@ namespace fs = std::filesystem;
 #define SCREEN_HEIGHT 1080
 
 #define LANDING_MIN_SPEED 260
+#define LANDING_DAMAGE_FACTOR 1.0
 #define SAFE_DASHING_HEIGHT 24
 
 // -----------------------------------------------------------------------
@@ -373,6 +374,8 @@ class Creature {
     SpriteSheetAnimator animator;
 
     float move_speed;
+    float max_health;
+    float health;
 
     Vector2 position = {0.0, 0.0};
     Vector2 velocity = {0.0, 0.0};
@@ -387,6 +390,7 @@ class Creature {
         CreatureState state,
         SpriteSheetAnimator animator,
         float move_speed,
+        float max_health,
         Vector2 position,
         bool has_weight
     )
@@ -394,6 +398,8 @@ class Creature {
         , state(state)
         , position(position)
         , move_speed(move_speed)
+        , max_health(max_health)
+        , health(max_health)
         , animator(animator)
         , has_weight(has_weight) {}
 
@@ -461,6 +467,7 @@ class Game {
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 90.0,
+                                100.0,
                                 {.x = object_x, .y = object_y},
                                 true
                             );
@@ -603,6 +610,9 @@ class Game {
                             creature.state = CreatureState::DASHING;
                         } else if (creature.landed_at_speed > LANDING_MIN_SPEED) {
                             // -> LANDING
+                            creature.health -= LANDING_DAMAGE_FACTOR
+                                               * (creature.landed_at_speed
+                                                  - LANDING_MIN_SPEED);
                             creature.state = CreatureState::LANDING;
                         } else if (position_step.x) {
                             // -> MOVING
@@ -617,26 +627,13 @@ class Game {
 
                         break;
                     case CreatureState::LANDING:
-                        // -> IDLE, DEATH
+                        // -> IDLE
                         creature.animator.play("knight_landing", 0.1, false);
 
                         // -> IDLE
                         if (creature.animator.is_finished()) {
                             creature.state = CreatureState::IDLE;
                         }
-
-                        // -> DEATH
-                        // if (creature.animator.is_finished()) {
-                        //     creature.state = CreatureState::DEATH;
-                        // }
-
-                        // -> DASHING
-                        // if (creature.animator.progress < 0.5
-                        //     && IsKeyPressed(KEY_LEFT_CONTROL)) {
-                        //     float dir = creature.is_hflip ? -1.0 : 1.0;
-                        //     creature.velocity.x = dir * creature.move_speed;
-                        //     creature.state = CreatureState::DASHING;
-                        // }
 
                         break;
                     case CreatureState::DASHING:
@@ -664,6 +661,11 @@ class Game {
                         creature.animator.play("knight_death", 0.1, false);
 
                         break;
+                }
+
+                // -> DEATH
+                if (creature.health <= 0.0) {
+                    creature.state = CreatureState::DEATH;
                 }
             }
 
@@ -767,15 +769,15 @@ class Game {
 #if 1
         // ---------------------------------------------------------------
         // draw masks
-        // for (auto &creature : this->creatures) {
-        //     Sprite sprite = creature.animator.get_sprite(
-        //         creature.position, creature.is_hflip
-        //     );
-        //     Rectangle *mask = sprite.get_mask("rigid");
-        //     if (mask) {
-        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-        //     }
-        // }
+        for (auto &creature : this->creatures) {
+            Sprite sprite = creature.animator.get_sprite(
+                creature.position, creature.is_hflip
+            );
+            Rectangle *mask = sprite.get_mask("rigid");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+            }
+        }
 
         // ---------------------------------------------------------------
         // draw colliders
@@ -785,6 +787,16 @@ class Game {
 #endif
 
         EndMode2D();
+
+        // ---------------------------------------------------------------
+        // draw ui
+        Creature &player = this->creatures[0];
+
+        // healthbar
+        float health_ratio = player.health / player.max_health;
+        int max_bar_width = 300;
+        int bar_width = health_ratio * max_bar_width;
+        DrawRectangle(5, 5, bar_width, 30, RED);
 
         EndDrawing();
     }
