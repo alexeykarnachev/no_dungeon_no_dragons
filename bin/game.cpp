@@ -22,6 +22,9 @@ namespace fs = std::filesystem;
 #define LANDING_MIN_SPEED 260
 #define LANDING_DAMAGE_FACTOR 1.0
 #define SAFE_DASHING_HEIGHT 24
+#define ATTACK_0_AFTER_DASH_MIN_PROGRESS 0.5
+#define ATTACK_1_AFTER_ATTACK_0_MIN_PROGRESS 0.5
+#define ATTACK_2_AFTER_ATTACK_1_MIN_PROGRESS 0.5
 
 // -----------------------------------------------------------------------
 // utils
@@ -360,6 +363,8 @@ enum class CreatureState {
     LANDING,
     DASHING,
     ATTACK_0,
+    ATTACK_1,
+    ATTACK_2,
     DEATH,
 };
 
@@ -535,6 +540,9 @@ class Game {
                             // -> JUMPING
                             velocity_step.y -= 250.0;
                             creature.state = CreatureState::JUMPING;
+                        } else if (IsKeyPressed(KEY_SPACE)) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
                         } else if (position_step.x) {
                             // -> MOVING
                             creature.state = CreatureState::MOVING;
@@ -561,6 +569,9 @@ class Game {
                             float dir = creature.is_hflip ? -1.0 : 1.0;
                             creature.velocity.x = dir * creature.move_speed;
                             creature.state = CreatureState::DASHING;
+                        } else if (IsKeyPressed(KEY_SPACE)) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
                         } else if (!position_step.x) {
                             // -> IDLE
                             creature.state = CreatureState::IDLE;
@@ -591,7 +602,7 @@ class Game {
                         if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
                         if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
 
-                        // check if dash is pressed while falling
+                        // check if DASHING is pressed while FALLING
                         if (IsKeyPressed(KEY_LEFT_CONTROL)
                             && dash_pressed_at_y == -INFINITY) {
                             dash_pressed_at_y = creature.position.y;
@@ -637,25 +648,115 @@ class Game {
 
                         break;
                     case CreatureState::DASHING:
-                        // -> IDLE, FALLING
+                        // -> IDLE, FALLING, ATTACK_0
                         creature.animator.play("knight_roll", 0.1, false);
+
+                        static float attack_0_pressed_at_progress = -INFINITY;
+
+                        // check if ATTACK_0 is pressed while DASHING
+                        if (IsKeyPressed(KEY_SPACE)
+                            && attack_0_pressed_at_progress == -INFINITY) {
+                            attack_0_pressed_at_progress = creature.animator.progress;
+                        }
 
                         // continue DASHING if the animation is not finished yet
                         if (!creature.animator.is_finished()) break;
 
-                        creature.velocity.x = 0.0;
-
                         if (!creature.is_grounded) {
                             // -> FALLING
                             creature.state = CreatureState::FALLING;
-                        } else if (creature.is_grounded) {
+                        } else if (attack_0_pressed_at_progress >= ATTACK_0_AFTER_DASH_MIN_PROGRESS) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else {
                             // -> IDLE
                             creature.state = CreatureState::IDLE;
                         }
 
+                        // reset attack_0 pressing event after finishing DASHING
+                        attack_0_pressed_at_progress = -INFINITY;
+
+                        // reset horizontal velocity after finishing DASHING
+                        creature.velocity.x = 0.0;
+
                         break;
                     case CreatureState::ATTACK_0:
-                        // -> IDLE
+                        // -> IDLE, FALLING, ATTACK_1
+                        creature.animator.play("knight_attack_0", 0.1, false);
+
+                        static float attack_1_pressed_at_progress = -INFINITY;
+
+                        // check if ATTACK_1 is pressed while ATTACK_0
+                        if (IsKeyPressed(KEY_SPACE)
+                            && attack_1_pressed_at_progress == -INFINITY) {
+                            attack_1_pressed_at_progress = creature.animator.progress;
+                        }
+
+                        // continue ATTACK_0 if the animation is not finished yet
+                        if (!creature.animator.is_finished()) break;
+
+                        if (attack_1_pressed_at_progress
+                            >= ATTACK_1_AFTER_ATTACK_0_MIN_PROGRESS) {
+                            // -> ATTACK_1
+                            creature.state = CreatureState::ATTACK_1;
+                        } else if (!creature.is_grounded) {
+                            // -> FALLING
+                            creature.state = CreatureState::FALLING;
+                        } else {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        // reset attack_1 pressing event after finishing ATTACK_0
+                        attack_1_pressed_at_progress = -INFINITY;
+
+                        break;
+                    case CreatureState::ATTACK_1:
+                        // -> IDLE, FALLING, ATTACK_2
+                        creature.animator.play("knight_attack_1", 0.1, false);
+
+                        static float attack_2_pressed_at_progress = -INFINITY;
+
+                        // check if ATTACK_2 is pressed while ATTACK_1
+                        if (IsKeyPressed(KEY_SPACE)
+                            && attack_2_pressed_at_progress == -INFINITY) {
+                            attack_2_pressed_at_progress = creature.animator.progress;
+                        }
+
+                        // continue ATTACK_1 if the animation is not finished yet
+                        if (!creature.animator.is_finished()) break;
+
+                        if (attack_2_pressed_at_progress
+                            >= ATTACK_2_AFTER_ATTACK_1_MIN_PROGRESS) {
+                            // -> ATTACK_2
+                            creature.state = CreatureState::ATTACK_2;
+                        } else if (!creature.is_grounded) {
+                            // -> FALLING
+                            creature.state = CreatureState::FALLING;
+                        } else {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        // reset attack_2 pressing event after finishing ATTACK_1
+                        attack_2_pressed_at_progress = -INFINITY;
+
+                        break;
+                    case CreatureState::ATTACK_2:
+                        // -> IDLE, FALLING
+                        creature.animator.play("knight_attack_2", 0.1, false);
+
+                        // continue ATTACK_2 if the animation is not finished yet
+                        if (!creature.animator.is_finished()) break;
+
+                        if (!creature.is_grounded) {
+                            // -> FALLING
+                            creature.state = CreatureState::FALLING;
+                        } else {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        }
+
                         break;
                     case CreatureState::DEATH:
                         creature.animator.play("knight_death", 0.1, false);
@@ -776,6 +877,11 @@ class Game {
             Rectangle *mask = sprite.get_mask("rigid");
             if (mask) {
                 DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+            }
+
+            mask = sprite.get_mask("attack");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
             }
         }
 
