@@ -370,6 +370,7 @@ enum class CreatureState {
 
 enum class CreatureType {
     PLAYER,
+    BAT,
 };
 
 class Creature {
@@ -447,26 +448,26 @@ class Game {
         for (auto layer_json : this->tiled_level.meta["layers"]) {
             std::string layer_name = std::string(layer_json["name"]);
             for (auto object : layer_json["objects"]) {
+                auto object_x = object["x"];
+                auto object_y = object["y"];
+                auto object_width = object["width"];
+                auto object_height = object["height"];
+
                 for (auto property : object["properties"]) {
 
                     auto property_name = property["name"];
                     auto property_value = property["value"];
-                    auto object_x = object["x"];
-                    auto object_y = object["y"];
-                    auto object_width = object["width"];
-                    auto object_height = object["height"];
 
-                    if (layer_name == "colliders") {
-                        if (property_name == "is_rigid" && property_value) {
-                            this->colliders.push_back(
-                                {.x = object_x,
-                                 .y = object_y,
-                                 .width = object_width,
-                                 .height = object_height}
-                            );
-                        }
-                    } else if (layer_name == "creatures") {
-                        if (property_name == "type" && property_value == "player") {
+                    if (layer_name == "colliders" && property_name == "is_rigid"
+                        && property_value) {
+                        this->colliders.push_back(
+                            {.x = object_x,
+                             .y = object_y,
+                             .width = object_width,
+                             .height = object_height}
+                        );
+                    } else if (layer_name == "creatures" && property_name == "type") {
+                        if (property_value == "player") {
                             Creature player(
                                 CreatureType::PLAYER,
                                 CreatureState::IDLE,
@@ -476,9 +477,21 @@ class Game {
                                 {.x = object_x, .y = object_y},
                                 true
                             );
-                            player.animator.play("knight_idle", 0.1, false);
+                            player.animator.play("knight_idle", 0.1, true);
                             this->creatures.push_back(player);
                             this->camera.camera2d.target = player.position;
+                        } else if (property_value == "bat") {
+                            Creature bat(
+                                CreatureType::BAT,
+                                CreatureState::IDLE,
+                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                                100.0,
+                                100.0,
+                                {.x = object_x, .y = object_y},
+                                false
+                            );
+                            bat.animator.play("bat_flight", 0.1, true);
+                            this->creatures.push_back(bat);
                         }
                     }
                 }
