@@ -191,9 +191,12 @@ class Collider {
   public:
     Rectangle mask;
     uint32_t id;
+    void *owner = NULL;
+
     Collider()
         : mask()
         , id(0) {}
+
     Collider(Rectangle mask, int id)
         : mask(mask)
         , id(id) {}
@@ -407,6 +410,7 @@ class Creature {
     float move_speed;
     float max_health;
     float health;
+    float damage;
 
     Vector2 position = {0.0, 0.0};
     Vector2 velocity = {0.0, 0.0};
@@ -416,12 +420,15 @@ class Creature {
     bool has_weight = false;
     float landed_at_speed = 0.0;
 
+    uint32_t prev_received_attack_id = 0;
+
     Creature(
         CreatureType type,
         CreatureState state,
         SpriteSheetAnimator animator,
         float move_speed,
         float max_health,
+        float damage,
         Vector2 position,
         bool has_weight
     )
@@ -431,15 +438,20 @@ class Creature {
         , move_speed(move_speed)
         , max_health(max_health)
         , health(max_health)
+        , damage(damage)
         , animator(animator)
         , has_weight(has_weight) {}
 
     Collider get_rigid_collider() {
-        return this->animator.get_collider("rigid", position, is_hflip);
+        Collider collider = this->animator.get_collider("rigid", position, is_hflip);
+        collider.owner = this;
+        return collider;
     }
 
     Collider get_attack_collider() {
-        return this->animator.get_collider("attack", position, is_hflip);
+        Collider collider = this->animator.get_collider("attack", position, is_hflip);
+        collider.owner = this;
+        return collider;
     }
 };
 
@@ -452,7 +464,9 @@ class Game {
     TiledLevel tiled_level;
 
     std::vector<Creature> creatures;
-    std::vector<Rectangle> colliders;
+    std::vector<Collider> attack_colliders;
+    std::vector<Collider> rigid_colliders;
+    std::vector<Rectangle> static_rigid_rects;
 
     GameCamera camera;
     float gravity = 400.0;
@@ -469,7 +483,7 @@ class Game {
 
     void load_level(std::string dir_path, std::string name) {
         this->tiled_level.unload();
-        this->colliders.clear();
+        this->static_rigid_rects.clear();
         this->creatures.clear();
 
         this->tiled_level = TiledLevel(dir_path, name);
@@ -489,7 +503,7 @@ class Game {
 
                     if (layer_name == "colliders" && property_name == "is_rigid"
                         && property_value) {
-                        this->colliders.push_back(
+                        this->static_rigid_rects.push_back(
                             {.x = object_x,
                              .y = object_y,
                              .width = object_width,
@@ -503,6 +517,7 @@ class Game {
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 90.0,
                                 100.0,
+                                50.0,
                                 {.x = object_x, .y = object_y},
                                 true
                             );
@@ -516,6 +531,7 @@ class Game {
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 100.0,
                                 100.0,
+                                50.0,
                                 {.x = object_x, .y = object_y},
                                 false
                             );
@@ -548,6 +564,8 @@ class Game {
         float dt = GetFrameTime();
 
         this->camera.camera2d.target = this->creatures[0].position;
+        this->attack_colliders.clear();
+        this->rigid_colliders.clear();
 
         for (auto &creature : this->creatures) {
             creature.animator.update(dt);
@@ -819,6 +837,10 @@ class Game {
             }
 
             // -----------------------------------------------------------
+            // reset single-frame values
+            creature.landed_at_speed = 0.0;
+
+            // -----------------------------------------------------------
             // apply immediate velocity and position steps
             creature.velocity = Vector2Add(velocity_step, creature.velocity);
             position_step = Vector2Add(
@@ -830,42 +852,72 @@ class Game {
             }
 
             // -----------------------------------------------------------
-            // compute collisions mtv and resolve it
-            Collider rigid_collider = creature.get_rigid_collider();
-            creature.landed_at_speed = 0.0;
-            if (rigid_collider.id) {
-                // compute mtv
-                Vector2 mtv = Vector2Zero();
-                for (auto &collider : this->colliders) {
-                    Vector2 collider_mtv = get_aabb_mtv(rigid_collider.mask, collider);
+            // push colliders
+            this->attack_colliders.push_back(creature.get_attack_collider());
+            this->rigid_colliders.push_back(creature.get_rigid_collider());
+        }
 
-                    if (fabs(mtv.x) < fabs(collider_mtv.x)) {
-                        mtv.x = collider_mtv.x;
-                    }
+        // -----------------------------------------------------------
+        // resolve colliders
+        for (Collider &rigid_collider : this->rigid_colliders) {
+            if (!rigid_collider.id) continue;
 
-                    if (fabs(mtv.y) < fabs(collider_mtv.y)) {
-                        mtv.y = collider_mtv.y;
-                    }
+            Creature *rigid_creature = (Creature *)rigid_collider.owner;
+
+            // compute mtv
+            Vector2 mtv = Vector2Zero();
+            for (auto &rect : this->static_rigid_rects) {
+                Vector2 collider_mtv = get_aabb_mtv(rigid_collider.mask, rect);
+
+                if (fabs(mtv.x) < fabs(collider_mtv.x)) {
+                    mtv.x = collider_mtv.x;
                 }
 
-                // resolve mtv
-                creature.position = Vector2Add(creature.position, mtv);
-
-                if (mtv.y < -EPSILON && creature.velocity.y > EPSILON) {
-                    // hit the ground
-                    creature.landed_at_speed = creature.velocity.y;
-                    creature.velocity.y = 0.0;
-                    creature.is_grounded = true;
-                } else if (mtv.y > EPSILON && creature.velocity.y < -EPSILON) {
-                    // hit the ceil
-                    creature.velocity.y = 0.0;
-                } else {
-                    creature.is_grounded = false;
+                if (fabs(mtv.y) < fabs(collider_mtv.y)) {
+                    mtv.y = collider_mtv.y;
                 }
             }
 
-            // -----------------------------------------------------------
-            //
+            // resolve mtv
+            rigid_creature->position = Vector2Add(rigid_creature->position, mtv);
+
+            if (mtv.y < -EPSILON && rigid_creature->velocity.y > EPSILON) {
+                // hit the ground
+                rigid_creature->landed_at_speed = rigid_creature->velocity.y;
+                rigid_creature->velocity.y = 0.0;
+                rigid_creature->is_grounded = true;
+            } else if (mtv.y > EPSILON && rigid_creature->velocity.y < -EPSILON) {
+                // hit the ceil
+                rigid_creature->velocity.y = 0.0;
+            } else {
+                rigid_creature->is_grounded = false;
+            }
+
+            // resolve against attack colliders
+            for (Collider &attack_collider : this->attack_colliders) {
+                if (!attack_collider.id) continue;
+
+                Creature *attacker_creature = (Creature *)attack_collider.owner;
+
+                // creature can't attack itself
+                if (attacker_creature == rigid_creature) continue;
+
+                // one of the creatures must be the PLAYER
+                if (rigid_creature->type != CreatureType::PLAYER
+                    && attacker_creature->type != CreatureType::PLAYER)
+                    continue;
+
+                // ignore already received attack
+                if (rigid_creature->prev_received_attack_id == attack_collider.id)
+                    continue;
+
+                // colliders must overlap
+                if (!CheckCollisionRecs(rigid_collider.mask, attack_collider.mask))
+                    continue;
+
+                std::cout << "hit: " << attack_collider.id << "\n";
+                rigid_creature->prev_received_attack_id = attack_collider.id;
+            }
         }
     }
 
@@ -938,7 +990,7 @@ class Game {
 
         // ---------------------------------------------------------------
         // draw colliders
-        for (auto &collider : this->colliders) {
+        for (auto &collider : this->static_rigid_rects) {
             DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
         }
 #endif
