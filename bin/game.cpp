@@ -187,8 +187,22 @@ class SpriteSheet {
     }
 };
 
+class Collider {
+  public:
+    Rectangle mask;
+    uint32_t id;
+    Collider()
+        : mask()
+        , id(0) {}
+    Collider(Rectangle mask, int id)
+        : mask(mask)
+        , id(id) {}
+};
+
 class SpriteSheetAnimator {
   private:
+    static uint32_t animation_id;
+
     SpriteSheet *sprite_sheet;
     std::string name = "";
     float frame_duration = 0.0;
@@ -207,6 +221,7 @@ class SpriteSheetAnimator {
         if (this->name != name) {
             this->name = name;
             this->progress = 0.0;
+            this->animation_id += 1;
         }
     }
 
@@ -238,7 +253,17 @@ class SpriteSheetAnimator {
         );
         return sprite;
     }
+
+    Collider get_collider(std::string name, Vector2 position, bool is_hflip) {
+        Sprite sprite = this->get_sprite(position, is_hflip);
+        Rectangle *mask = sprite.get_mask(name);
+        if (!mask) return Collider();
+
+        return Collider(*mask, this->animation_id);
+    }
 };
+
+uint32_t SpriteSheetAnimator::animation_id = 0;
 
 // -----------------------------------------------------------------------
 // tiled level
@@ -409,8 +434,12 @@ class Creature {
         , animator(animator)
         , has_weight(has_weight) {}
 
-    Rectangle *get_rigid_collider() {
-        return this->animator.get_sprite(position, is_hflip).get_mask("rigid");
+    Collider get_rigid_collider() {
+        return this->animator.get_collider("rigid", position, is_hflip);
+    }
+
+    Collider get_attack_collider() {
+        return this->animator.get_collider("attack", position, is_hflip);
     }
 };
 
@@ -535,7 +564,7 @@ class Game {
             }
 
             // -----------------------------------------------------------
-            // update player
+            // update creature
             if (creature.type == CreatureType::PLAYER) {
                 switch (creature.state) {
                     case CreatureState::IDLE:
@@ -775,11 +804,17 @@ class Game {
                         creature.animator.play("knight_death", 0.1, false);
 
                         break;
+                    default: break;
                 }
 
                 // -> DEATH
                 if (creature.health <= 0.0) {
                     creature.state = CreatureState::DEATH;
+                }
+            } else if (creature.type == CreatureType::BAT) {
+                switch (creature.state) {
+                    case CreatureState::IDLE: break;
+                    default: break;
                 }
             }
 
@@ -796,13 +831,13 @@ class Game {
 
             // -----------------------------------------------------------
             // compute collisions mtv and resolve it
-            Rectangle *my_collider = creature.get_rigid_collider();
+            Collider rigid_collider = creature.get_rigid_collider();
             creature.landed_at_speed = 0.0;
-            if (my_collider) {
+            if (rigid_collider.id) {
                 // compute mtv
                 Vector2 mtv = Vector2Zero();
                 for (auto &collider : this->colliders) {
-                    Vector2 collider_mtv = get_aabb_mtv(*my_collider, collider);
+                    Vector2 collider_mtv = get_aabb_mtv(rigid_collider.mask, collider);
 
                     if (fabs(mtv.x) < fabs(collider_mtv.x)) {
                         mtv.x = collider_mtv.x;
@@ -828,6 +863,9 @@ class Game {
                     creature.is_grounded = false;
                 }
             }
+
+            // -----------------------------------------------------------
+            //
         }
     }
 
