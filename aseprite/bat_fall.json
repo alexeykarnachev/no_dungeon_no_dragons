@@ -1,0 +1,87 @@
+{ "frames": [
+   {
+    "filename": "bat_fall.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.sprite..1",
+    "frame": { "x": 38, "y": 1, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.sprite..2",
+    "frame": { "x": 75, "y": 1, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.sprite..3",
+    "frame": { "x": 112, "y": 1, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.mask_rigid..0",
+    "frame": { "x": 1, "y": 31, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.mask_rigid..1",
+    "frame": { "x": 38, "y": 31, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.mask_rigid..2",
+    "frame": { "x": 75, "y": 31, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   },
+   {
+    "filename": "bat_fall.mask_rigid..3",
+    "frame": { "x": 112, "y": 31, "w": 35, "h": 28 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 35, "h": 28 },
+    "sourceSize": { "w": 35, "h": 28 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "bat_fall.png",
+  "format": "RGBA8888",
+  "size": { "w": 148, "h": 60 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

@@ -417,10 +417,11 @@ class Creature {
 
     bool is_hflip = false;
     bool is_grounded = false;
-    bool has_weight = false;
+    bool is_apply_gravity = false;
+    bool can_see_player = false;
     float landed_at_speed = 0.0;
 
-    uint32_t prev_received_attack_id = 0;
+    uint32_t last_received_attack_id = 0;
 
     Creature(
         CreatureType type,
@@ -430,7 +431,7 @@ class Creature {
         float max_health,
         float damage,
         Vector2 position,
-        bool has_weight
+        bool is_apply_gravity
     )
         : type(type)
         , state(state)
@@ -440,7 +441,7 @@ class Creature {
         , health(max_health)
         , damage(damage)
         , animator(animator)
-        , has_weight(has_weight) {}
+        , is_apply_gravity(is_apply_gravity) {}
 
     Collider get_rigid_collider() {
         Collider collider = this->animator.get_collider("rigid", position, is_hflip);
@@ -577,7 +578,7 @@ class Game {
             Vector2 position_step = Vector2Zero();
 
             // gravity
-            if (creature.has_weight) {
+            if (creature.is_apply_gravity) {
                 velocity_step.y += dt * this->gravity;
             }
 
@@ -826,13 +827,45 @@ class Game {
                 }
 
                 // -> DEATH
-                if (creature.health <= 0.0) {
+                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
                     creature.state = CreatureState::DEATH;
                 }
             } else if (creature.type == CreatureType::BAT) {
                 switch (creature.state) {
-                    case CreatureState::IDLE: break;
+                    case CreatureState::IDLE:
+                        // -> ATTACK_0
+                        creature.animator.play("bat_flight", 0.1, true);
+
+                        break;
+                    case CreatureState::ATTACK_0:
+                        // -> IDLE
+                        creature.animator.play("bat_attack", 0.1, true);
+
+                        break;
+                    case CreatureState::FALLING:
+                        // -> DEATH
+                        creature.animator.play("bat_fall", 0.1, false);
+
+                        // continue FALLING if the animation is not finished yet
+                        // or the BAT is not grounded yet
+                        if (!creature.animator.is_finished() || !creature.is_grounded)
+                            break;
+
+                        // -> DEATH
+                        creature.state = CreatureState::DEATH;
+
+                        break;
+                    case CreatureState::DEATH:
+                        creature.animator.play("bat_death", 0.1, false);
+
+                        break;
                     default: break;
+                }
+
+                // -> FALLING (pre-death)
+                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
+                    creature.is_apply_gravity = true;
+                    creature.state = CreatureState::FALLING;
                 }
             }
 
@@ -902,13 +935,16 @@ class Game {
                 // creature can't attack itself
                 if (attacker_creature == rigid_creature) continue;
 
+                // creature is already dead
+                if (rigid_creature->health <= 0.0) continue;
+
                 // one of the creatures must be the PLAYER
                 if (rigid_creature->type != CreatureType::PLAYER
                     && attacker_creature->type != CreatureType::PLAYER)
                     continue;
 
                 // ignore already received attack
-                if (rigid_creature->prev_received_attack_id == attack_collider.id)
+                if (rigid_creature->last_received_attack_id == attack_collider.id)
                     continue;
 
                 // colliders must overlap
@@ -916,7 +952,19 @@ class Game {
                     continue;
 
                 std::cout << "hit: " << attack_collider.id << "\n";
-                rigid_creature->prev_received_attack_id = attack_collider.id;
+                rigid_creature->health -= attacker_creature->damage;
+                rigid_creature->last_received_attack_id = attack_collider.id;
+            }
+        }
+
+        // -----------------------------------------------------------
+        // update can_see_player
+        Creature &player = this->creatures[0];
+        for (Creature &creature : this->creatures) {
+            if (creature.type == CreatureType::PLAYER) continue;
+
+            creature.can_see_player = false;
+            for (auto &rect : this->static_rigid_rects) {
             }
         }
     }

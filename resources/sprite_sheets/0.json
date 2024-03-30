@@ -1,7 +1,7 @@
 {
     "size": [
-        552,
-        371
+        616,
+        370
     ],
     "frames": {
         "knight_fall": [
@@ -508,12 +508,196 @@
                 }
             }
         ],
+        "bat_death": [
+            {
+                "sprite": {
+                    "name": "bat_death",
+                    "x": 36,
+                    "y": 62,
+                    "w": 62,
+                    "h": 5,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_death",
+                        "x": 5,
+                        "y": 2,
+                        "w": 52,
+                        "h": 3,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_death",
+                    "x": 130,
+                    "y": 71,
+                    "w": 62,
+                    "h": 5,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_death",
+                        "x": 5,
+                        "y": 2,
+                        "w": 52,
+                        "h": 3,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_death",
+                    "x": 87,
+                    "y": 171,
+                    "w": 62,
+                    "h": 5,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_death",
+                        "x": 5,
+                        "y": 2,
+                        "w": 52,
+                        "h": 3,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_death",
+                    "x": 153,
+                    "y": 168,
+                    "w": 62,
+                    "h": 5,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_death",
+                        "x": 5,
+                        "y": 2,
+                        "w": 52,
+                        "h": 3,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_death",
+                    "x": 130,
+                    "y": 79,
+                    "w": 62,
+                    "h": 5,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_death",
+                        "x": 5,
+                        "y": 2,
+                        "w": 52,
+                        "h": 3,
+                        "frame_idx": 4
+                    }
+                }
+            }
+        ],
+        "bat_fall": [
+            {
+                "sprite": {
+                    "name": "bat_fall",
+                    "x": 214,
+                    "y": 36,
+                    "w": 35,
+                    "h": 28,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_fall",
+                        "x": 9,
+                        "y": 8,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_fall",
+                    "x": 218,
+                    "y": 168,
+                    "w": 35,
+                    "h": 28,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_fall",
+                        "x": 9,
+                        "y": 8,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_fall",
+                    "x": 214,
+                    "y": 67,
+                    "w": 35,
+                    "h": 28,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_fall",
+                        "x": 9,
+                        "y": 8,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_fall",
+                    "x": 1,
+                    "y": 197,
+                    "w": 35,
+                    "h": 28,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_fall",
+                        "x": 9,
+                        "y": 8,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 3
+                    }
+                }
+            }
+        ],
         "knight_landing": [
             {
                 "sprite": {
                     "name": "knight_landing",
-                    "x": 214,
-                    "y": 36,
+                    "x": 265,
+                    "y": 97,
                     "w": 31,
                     "h": 32,
                     "frame_idx": 0
@@ -532,8 +716,8 @@
             {
                 "sprite": {
                     "name": "knight_landing",
-                    "x": 1,
-                    "y": 197,
+                    "x": 245,
+                    "y": 134,
                     "w": 31,
                     "h": 32,
                     "frame_idx": 1
@@ -552,8 +736,8 @@
             {
                 "sprite": {
                     "name": "knight_landing",
-                    "x": 87,
-                    "y": 171,
+                    "x": 252,
+                    "y": 1,
                     "w": 31,
                     "h": 32,
                     "frame_idx": 2
@@ -574,8 +758,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 153,
-                    "y": 168,
+                    "x": 87,
+                    "y": 179,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 0
@@ -594,8 +778,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 265,
-                    "y": 97,
+                    "x": 153,
+                    "y": 176,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 1
@@ -614,8 +798,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 199,
-                    "y": 168,
+                    "x": 252,
+                    "y": 36,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 2
@@ -634,8 +818,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 245,
-                    "y": 134,
+                    "x": 256,
+                    "y": 168,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 3
@@ -656,8 +840,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 252,
-                    "y": 1,
+                    "x": 1,
+                    "y": 228,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 0
@@ -676,8 +860,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 248,
-                    "y": 36,
+                    "x": 299,
+                    "y": 97,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 1
@@ -696,8 +880,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 35,
-                    "y": 197,
+                    "x": 279,
+                    "y": 134,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 2
@@ -716,8 +900,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 234,
-                    "y": 168,
+                    "x": 286,
+                    "y": 1,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 3
@@ -736,8 +920,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 1,
-                    "y": 232,
+                    "x": 87,
+                    "y": 214,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 4
@@ -756,8 +940,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 87,
-                    "y": 206,
+                    "x": 153,
+                    "y": 211,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 5
@@ -776,8 +960,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 153,
-                    "y": 203,
+                    "x": 287,
+                    "y": 36,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 6
@@ -796,8 +980,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 300,
-                    "y": 97,
+                    "x": 256,
+                    "y": 203,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 7
@@ -816,8 +1000,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 199,
-                    "y": 203,
+                    "x": 291,
+                    "y": 168,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 8
@@ -836,8 +1020,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 280,
-                    "y": 134,
+                    "x": 42,
+                    "y": 228,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 9
@@ -856,8 +1040,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 293,
-                    "y": 1,
+                    "x": 194,
+                    "y": 211,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 10
@@ -878,8 +1062,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 240,
-                    "y": 203,
+                    "x": 1,
+                    "y": 262,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 0
@@ -898,8 +1082,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 289,
-                    "y": 36,
+                    "x": 340,
+                    "y": 97,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 1
@@ -918,8 +1102,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 1,
-                    "y": 266,
+                    "x": 327,
+                    "y": 1,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 2
@@ -938,8 +1122,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 341,
-                    "y": 97,
+                    "x": 153,
+                    "y": 245,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 3
@@ -958,8 +1142,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 321,
-                    "y": 134,
+                    "x": 256,
+                    "y": 237,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 4
@@ -986,8 +1170,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 240,
-                    "y": 240,
+                    "x": 332,
+                    "y": 168,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 5
@@ -1014,8 +1198,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 340,
-                    "y": 203,
+                    "x": 327,
+                    "y": 38,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 6
@@ -1034,8 +1218,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 101,
-                    "y": 266,
+                    "x": 440,
+                    "y": 97,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 7
@@ -1054,8 +1238,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 340,
-                    "y": 240,
+                    "x": 427,
+                    "y": 1,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 8
@@ -1076,8 +1260,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 275,
-                    "y": 168,
+                    "x": 320,
+                    "y": 134,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 0
@@ -1096,8 +1280,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 42,
-                    "y": 232,
+                    "x": 1,
+                    "y": 299,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 1
@@ -1116,8 +1300,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 334,
-                    "y": 1,
+                    "x": 101,
+                    "y": 262,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 2
@@ -1136,8 +1320,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 389,
-                    "y": 36,
+                    "x": 153,
+                    "y": 282,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 3
@@ -1156,8 +1340,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 201,
-                    "y": 266,
+                    "x": 256,
+                    "y": 274,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 4
@@ -1176,8 +1360,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 374,
-                    "y": 1,
+                    "x": 356,
+                    "y": 237,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 5
@@ -1196,8 +1380,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 441,
-                    "y": 97,
+                    "x": 432,
+                    "y": 168,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 6
@@ -1216,8 +1400,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 421,
-                    "y": 134,
+                    "x": 427,
+                    "y": 38,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 7
@@ -1236,8 +1420,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 240,
-                    "y": 277,
+                    "x": 440,
+                    "y": 134,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 8
@@ -1256,8 +1440,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 440,
-                    "y": 203,
+                    "x": 360,
+                    "y": 134,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 9
@@ -1276,8 +1460,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 340,
-                    "y": 277,
+                    "x": 41,
+                    "y": 299,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 10
@@ -1296,8 +1480,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 440,
-                    "y": 240,
+                    "x": 101,
+                    "y": 296,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 11
@@ -1316,8 +1500,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 429,
-                    "y": 36,
+                    "x": 193,
+                    "y": 282,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 12
@@ -1336,8 +1520,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 201,
-                    "y": 300,
+                    "x": 296,
+                    "y": 274,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 13
@@ -1356,8 +1540,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 414,
-                    "y": 1,
+                    "x": 356,
+                    "y": 271,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 14
@@ -1374,12 +1558,222 @@
                 }
             }
         ],
+        "bat_attack": [
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 39,
+                    "y": 197,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 14,
+                        "y": 4,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 252,
+                    "y": 71,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 332,
+                    "y": 205,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 256,
+                    "y": 308,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 396,
+                    "y": 237,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 432,
+                    "y": 202,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 472,
+                    "y": 168,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 427,
+                    "y": 72,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 7
+                    },
+                    "attack": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 4,
+                        "w": 28,
+                        "h": 17,
+                        "frame_idx": 7
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 467,
+                    "y": 38,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 8
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 8
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "bat_attack",
+                    "x": 480,
+                    "y": 134,
+                    "w": 41,
+                    "h": 21,
+                    "frame_idx": 9
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "bat_attack",
+                        "x": 13,
+                        "y": 3,
+                        "w": 16,
+                        "h": 16,
+                        "frame_idx": 9
+                    }
+                }
+            }
+        ],
         "knight_attack_0": [
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 380,
-                    "y": 277,
+                    "x": 396,
+                    "y": 271,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 0
@@ -1398,8 +1792,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 1,
-                    "y": 303,
+                    "x": 476,
+                    "y": 202,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 1
@@ -1418,8 +1812,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 101,
-                    "y": 303,
+                    "x": 464,
+                    "y": 271,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 2
@@ -1446,7 +1840,7 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 481,
+                    "x": 540,
                     "y": 97,
                     "w": 65,
                     "h": 34,
@@ -1474,8 +1868,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 461,
-                    "y": 134,
+                    "x": 527,
+                    "y": 1,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 4
@@ -1496,8 +1890,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 421,
-                    "y": 168,
+                    "x": 1,
+                    "y": 333,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 0
@@ -1516,8 +1910,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 240,
-                    "y": 311,
+                    "x": 153,
+                    "y": 316,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 1
@@ -1536,8 +1930,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 280,
-                    "y": 277,
+                    "x": 400,
+                    "y": 134,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 2
@@ -1556,8 +1950,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 480,
-                    "y": 203,
+                    "x": 41,
+                    "y": 333,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 3
@@ -1576,8 +1970,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 340,
-                    "y": 311,
+                    "x": 101,
+                    "y": 330,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 4
@@ -1596,8 +1990,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 480,
-                    "y": 240,
+                    "x": 193,
+                    "y": 316,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 5
@@ -1616,8 +2010,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 469,
-                    "y": 36,
+                    "x": 356,
+                    "y": 305,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 6
@@ -1636,8 +2030,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 454,
-                    "y": 1,
+                    "x": 256,
+                    "y": 332,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 7
