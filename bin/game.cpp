@@ -656,8 +656,6 @@ class Game {
                             creature.state = CreatureState::JUMPING;
                         } else if (IsKeyPressed(KEY_LEFT_CONTROL)) {
                             // -> DASHING
-                            float dir = creature.is_hflip ? -1.0 : 1.0;
-                            creature.velocity.x = dir * creature.move_speed;
                             creature.state = CreatureState::DASHING;
                         } else if (IsKeyPressed(KEY_SPACE)) {
                             // -> ATTACK_0
@@ -709,9 +707,6 @@ class Game {
                             && creature.position.y - dash_pressed_at_y
                                    < SAFE_DASHING_HEIGHT) {
                             // -> DASHING
-
-                            float dir = creature.is_hflip ? -1.0 : 1.0;
-                            creature.velocity.x = dir * creature.move_speed;
                             creature.state = CreatureState::DASHING;
                         } else if (creature.landed_at_speed > LANDING_MIN_SPEED) {
                             // -> LANDING
@@ -745,6 +740,14 @@ class Game {
                         // -> IDLE, FALLING, ATTACK_0
                         creature.animator.play("knight_roll", 0.1, false);
 
+                        if (!creature.animator.is_finished()) {
+                            float dir = creature.is_hflip ? -1.0 : 1.0;
+                            position_step.x += dir * creature.move_speed * this->dt;
+
+                            // continue DASHING if the animation is not finished yet
+                            break;
+                        }
+
                         static float attack_0_pressed_at_progress = -INFINITY;
 
                         // check if ATTACK_0 is pressed while DASHING
@@ -752,9 +755,6 @@ class Game {
                             && attack_0_pressed_at_progress == -INFINITY) {
                             attack_0_pressed_at_progress = creature.animator.progress;
                         }
-
-                        // continue DASHING if the animation is not finished yet
-                        if (!creature.animator.is_finished()) break;
 
                         if (!creature.is_grounded) {
                             // -> FALLING
@@ -769,9 +769,6 @@ class Game {
 
                         // reset attack_0 pressing event after finishing DASHING
                         attack_0_pressed_at_progress = -INFINITY;
-
-                        // reset horizontal velocity after finishing DASHING
-                        creature.velocity.x = 0.0;
 
                         break;
                     case CreatureState::ATTACK_0:
@@ -867,7 +864,7 @@ class Game {
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
-                        creature.animator.play("bat_flight", 0.1, true);
+                        creature.animator.play("bat_flight", 0.04, true);
 
                         if (creature.can_see_player && creature.can_attack_player) {
                             // -> ATTACK_0
@@ -880,7 +877,7 @@ class Game {
                         break;
                     case CreatureState::MOVING:
                         // -> IDLE, ATTACK_0
-                        creature.animator.play("bat_flight", 0.1, true);
+                        creature.animator.play("bat_flight", 0.04, true);
 
                         if (creature.can_attack_player && creature.can_see_player) {
                             // -> ATTACK_0
