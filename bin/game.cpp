@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -85,6 +86,19 @@ Vector2 get_aabb_mtv(Rectangle r1, Rectangle r2) {
     else mtv.y = 0.0;
 
     return mtv;
+}
+
+bool check_collision_rect_line(Rectangle rect, Vector2 start, Vector2 end) {
+    Vector2 rect_tl = {rect.x, rect.y};
+    Vector2 rect_tr = {rect.x + rect.width, rect.y};
+    Vector2 rect_br = {rect.x + rect.width, rect.y + rect.height};
+    Vector2 rect_bl = {rect.x, rect.y + rect.height};
+
+    Vector2 point;
+    return CheckCollisionLines(start, end, rect_tl, rect_tr, &point)
+           || CheckCollisionLines(start, end, rect_tr, rect_br, &point)
+           || CheckCollisionLines(start, end, rect_br, rect_bl, &point)
+           || CheckCollisionLines(start, end, rect_bl, rect_tl, &point);
 }
 
 // -----------------------------------------------------------------------
@@ -960,11 +974,34 @@ class Game {
         // -----------------------------------------------------------
         // update can_see_player
         Creature &player = this->creatures[0];
+
         for (Creature &creature : this->creatures) {
             if (creature.type == CreatureType::PLAYER) continue;
 
-            creature.can_see_player = false;
+            Vector2 view_line_start = creature.position;
+            Vector2 view_line_end = player.position;
+
+            // creatures positions usually touches the ground, so
+            // I offset them to prevent the view ray always collid with
+            // the ground.
+            // TODO: I could compute the middle point of the colliders,
+            // but they may be not present. Or I can factor out this
+            // offset into a separate creature parameter (e.g eyes_offset).
+            view_line_start.y -= 16.0;
+            view_line_end.y -= 16.0;
+
+            creature.can_see_player = true;
             for (auto &rect : this->static_rigid_rects) {
+                creature.can_see_player = !check_collision_rect_line(
+                    rect, view_line_start, view_line_end
+                );
+                if (!creature.can_see_player) break;
+            }
+
+            if (creature.can_see_player) {
+                printf("CAN SEE\n");
+            } else {
+                printf("CAN'T SEE\n");
             }
         }
     }
