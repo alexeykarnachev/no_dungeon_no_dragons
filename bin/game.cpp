@@ -218,7 +218,8 @@ class Collider {
 
 class SpriteSheetAnimator {
   private:
-    static uint32_t animation_id;
+    static uint32_t global_animation_id;
+    uint32_t animation_id;
 
     SpriteSheet *sprite_sheet;
     std::string name = "";
@@ -238,7 +239,7 @@ class SpriteSheetAnimator {
         if (this->name != name) {
             this->name = name;
             this->progress = 0.0;
-            this->animation_id += 1;
+            this->animation_id = ++this->global_animation_id;
         }
     }
 
@@ -248,8 +249,14 @@ class SpriteSheetAnimator {
         int n_frames = this->sprite_sheet->count_frames(this->name);
 
         this->progress += dt / (n_frames * this->frame_duration);
-        if (this->is_repeat) this->progress -= std::floor(this->progress);
-        else this->progress = std::fmin(this->progress, 1.0);
+        if (this->is_repeat) {
+            if (this->progress >= 1.0) {
+                this->animation_id = ++this->global_animation_id;
+            }
+            this->progress -= std::floor(this->progress);
+        } else {
+            this->progress = std::fmin(this->progress, 1.0);
+        }
     }
 
     bool is_finished() {
@@ -280,7 +287,7 @@ class SpriteSheetAnimator {
     }
 };
 
-uint32_t SpriteSheetAnimator::animation_id = 0;
+uint32_t SpriteSheetAnimator::global_animation_id = 0;
 
 // -----------------------------------------------------------------------
 // tiled level
@@ -432,6 +439,8 @@ class Creature {
     bool is_hflip = false;
     bool is_grounded = false;
     bool is_apply_gravity = false;
+    bool can_see_player = false;
+    bool can_attack_player = false;
     float landed_at_speed = 0.0;
 
     uint32_t last_received_attack_id = 0;
@@ -860,7 +869,10 @@ class Game {
                         // -> MOVING, ATTACK_0
                         creature.animator.play("bat_flight", 0.1, true);
 
-                        if (this->check_if_creature_can_see_player(creature)) {
+                        if (creature.can_see_player && creature.can_attack_player) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else if (creature.can_see_player) {
                             // -> MOVING
                             creature.state = CreatureState::MOVING;
                         }
@@ -870,17 +882,27 @@ class Game {
                         // -> IDLE, ATTACK_0
                         creature.animator.play("bat_flight", 0.1, true);
 
-                        if (this->check_if_creature_can_see_player(creature)) {
+                        if (creature.can_attack_player && creature.can_see_player) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else if (creature.can_see_player) {
                             position_step = this->get_step_towards_player(creature);
                         } else {
-                            // -> IDLE
                             creature.state = CreatureState::IDLE;
                         };
 
                         break;
                     case CreatureState::ATTACK_0:
-                        // -> IDLE
+                        // -> IDLE, MOVING
                         creature.animator.play("bat_attack", 0.1, true);
+
+                        if (!creature.can_see_player) {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        } else if (!creature.can_attack_player && creature.animator.progress < 0.3) {
+                            // -> MOVING
+                            creature.state = CreatureState::IDLE;
+                        }
 
                         break;
                     case CreatureState::FALLING:
@@ -997,6 +1019,49 @@ class Game {
                 rigid_creature->last_received_attack_id = attack_collider.id;
             }
         }
+
+        // -----------------------------------------------------------
+        // update can_see_player, can_attack_player
+        for (Creature &creature : this->creatures) {
+            creature.can_see_player = false;
+            creature.can_attack_player = false;
+
+            // Can't see and can't attack the dead player.
+            // TODO: maybe factor out into is_dead getter?
+            if (player.health <= 0.0) continue;
+
+            if (creature.type == CreatureType::PLAYER) continue;
+
+            Vector2 view_line_start = creature.position;
+            Vector2 view_line_end = player.position;
+            float dist = Vector2Distance(view_line_start, view_line_end);
+
+            // TODO: factor out into a creature parameter (e.g view_distance)
+            if (dist > 200) continue;
+
+            // creatures positions usually touches the ground, so
+            // I offset them to prevent the view ray always collid with
+            // the ground.
+            // TODO: I could compute the middle point of the colliders,
+            // but they may be not present. Or I can factor out this
+            // offset into a separate creature parameter (e.g eyes_offset).
+            view_line_start.y -= 16.0;
+            view_line_end.y -= 16.0;
+
+            // can_see_player
+            for (auto &rect : this->static_rigid_rects) {
+                creature.can_see_player = !check_collision_rect_line(
+                    rect, view_line_start, view_line_end
+                );
+                if (!creature.can_see_player) break;
+            }
+
+            // can_attack_player
+            if (creature.can_see_player) {
+                // TODO: factor out into a creature parameter (e.g attack_distance)
+                creature.can_attack_player = dist < 25;
+            }
+        }
     }
 
     void draw() {
@@ -1051,20 +1116,20 @@ class Game {
 #if 1
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &creature : this->creatures) {
-            Sprite sprite = creature.animator.get_sprite(
-                creature.position, creature.is_hflip
-            );
-            Rectangle *mask = sprite.get_mask("rigid");
-            if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-            }
+        // for (auto &creature : this->creatures) {
+        //     Sprite sprite = creature.animator.get_sprite(
+        //         creature.position, creature.is_hflip
+        //     );
+        //     Rectangle *mask = sprite.get_mask("rigid");
+        //     if (mask) {
+        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+        //     }
 
-            mask = sprite.get_mask("attack");
-            if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
-            }
-        }
+        //     mask = sprite.get_mask("attack");
+        //     if (mask) {
+        //         DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
+        //     }
+        // }
 
         // ---------------------------------------------------------------
         // draw colliders
@@ -1086,30 +1151,6 @@ class Game {
         DrawRectangle(5, 5, bar_width, 30, RED);
 
         EndDrawing();
-    }
-
-    bool check_if_creature_can_see_player(Creature &creature) {
-        Creature &player = this->creatures[0];
-        if (&creature == &player) return false;
-
-        Vector2 view_line_start = creature.position;
-        Vector2 view_line_end = player.position;
-
-        // creatures positions usually touches the ground, so
-        // I offset them to prevent the view ray always collide with the ground.
-        // TODO: I could compute the middle point of the colliders,
-        // but they may be not present. Or I can factor out this
-        // offset into a separate creature parameter (e.g eyes_offset).
-        view_line_start.y -= 16.0;
-        view_line_end.y -= 16.0;
-
-        bool can_see = true;
-        for (auto &rect : this->static_rigid_rects) {
-            can_see = !check_collision_rect_line(rect, view_line_start, view_line_end);
-            if (!can_see) break;
-        }
-
-        return can_see;
     }
 
     Vector2 get_step_towards_player(Creature &creature) {

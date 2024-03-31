@@ -254,6 +254,42 @@
                  "width":0,
                  "x":295,
                  "y":135
+                }, 
+                {
+                 "height":0,
+                 "id":15,
+                 "name":"bat",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"bat"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":181.25,
+                 "y":223.5
+                }, 
+                {
+                 "height":0,
+                 "id":16,
+                 "name":"bat",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"bat"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":376.25,
+                 "y":218.25
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -262,7 +298,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":15,
+ "nextobjectid":17,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
