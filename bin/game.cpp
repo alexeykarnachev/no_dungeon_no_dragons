@@ -432,7 +432,6 @@ class Creature {
     bool is_hflip = false;
     bool is_grounded = false;
     bool is_apply_gravity = false;
-    bool can_see_player = false;
     float landed_at_speed = 0.0;
 
     uint32_t last_received_attack_id = 0;
@@ -486,6 +485,8 @@ class Game {
     GameCamera camera;
     float gravity = 400.0;
 
+    float dt = 0.0;
+
     Game() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         SetTargetFPS(60);
@@ -530,7 +531,7 @@ class Game {
                                 CreatureType::PLAYER,
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                                90.0,
+                                100.0,
                                 100.0,
                                 50.0,
                                 {.x = object_x, .y = object_y},
@@ -544,7 +545,7 @@ class Game {
                                 CreatureType::BAT,
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                                100.0,
+                                50.0,
                                 100.0,
                                 50.0,
                                 {.x = object_x, .y = object_y},
@@ -576,14 +577,15 @@ class Game {
             return;
         }
 
-        float dt = GetFrameTime();
+        this->dt = GetFrameTime();
 
         this->camera.camera2d.target = this->creatures[0].position;
         this->attack_colliders.clear();
         this->rigid_colliders.clear();
 
+        Creature &player = this->creatures[0];
         for (auto &creature : this->creatures) {
-            creature.animator.update(dt);
+            creature.animator.update(this->dt);
 
             // -----------------------------------------------------------
             // immediate velocity and position needs to be computed by
@@ -593,7 +595,7 @@ class Game {
 
             // gravity
             if (creature.is_apply_gravity) {
-                velocity_step.y += dt * this->gravity;
+                velocity_step.y += this->dt * this->gravity;
             }
 
             // -----------------------------------------------------------
@@ -605,8 +607,10 @@ class Game {
                         creature.animator.play("knight_idle", 0.1, true);
 
                         // move
-                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
-                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+                        if (IsKeyDown(KEY_D))
+                            position_step.x += creature.move_speed * this->dt;
+                        if (IsKeyDown(KEY_A))
+                            position_step.x -= creature.move_speed * this->dt;
 
                         if (!creature.is_grounded) {
                             // -> FALLING
@@ -629,8 +633,10 @@ class Game {
                         creature.animator.play("knight_run", 0.1, true);
 
                         // move
-                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
-                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+                        if (IsKeyDown(KEY_D))
+                            position_step.x += creature.move_speed * this->dt;
+                        if (IsKeyDown(KEY_A))
+                            position_step.x -= creature.move_speed * this->dt;
 
                         if (!creature.is_grounded) {
                             // -> FALLING
@@ -658,8 +664,10 @@ class Game {
                         creature.animator.play("knight_jump", 0.1, false);
 
                         // move
-                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
-                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+                        if (IsKeyDown(KEY_D))
+                            position_step.x += creature.move_speed * this->dt;
+                        if (IsKeyDown(KEY_A))
+                            position_step.x -= creature.move_speed * this->dt;
 
                         // -> FALLING
                         if (creature.velocity.y > EPSILON) {
@@ -674,8 +682,10 @@ class Game {
                         static float dash_pressed_at_y = -INFINITY;
 
                         // move
-                        if (IsKeyDown(KEY_D)) position_step.x += creature.move_speed * dt;
-                        if (IsKeyDown(KEY_A)) position_step.x -= creature.move_speed * dt;
+                        if (IsKeyDown(KEY_D))
+                            position_step.x += creature.move_speed * this->dt;
+                        if (IsKeyDown(KEY_A))
+                            position_step.x -= creature.move_speed * this->dt;
 
                         // check if DASHING is pressed while FALLING
                         if (IsKeyPressed(KEY_LEFT_CONTROL)
@@ -847,8 +857,25 @@ class Game {
             } else if (creature.type == CreatureType::BAT) {
                 switch (creature.state) {
                     case CreatureState::IDLE:
-                        // -> ATTACK_0
+                        // -> MOVING, ATTACK_0
                         creature.animator.play("bat_flight", 0.1, true);
+
+                        if (this->check_if_creature_can_see_player(creature)) {
+                            // -> MOVING
+                            creature.state = CreatureState::MOVING;
+                        }
+
+                        break;
+                    case CreatureState::MOVING:
+                        // -> IDLE, ATTACK_0
+                        creature.animator.play("bat_flight", 0.1, true);
+
+                        if (this->check_if_creature_can_see_player(creature)) {
+                            position_step = this->get_step_towards_player(creature);
+                        } else {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        };
 
                         break;
                     case CreatureState::ATTACK_0:
@@ -891,7 +918,7 @@ class Game {
             // apply immediate velocity and position steps
             creature.velocity = Vector2Add(velocity_step, creature.velocity);
             position_step = Vector2Add(
-                position_step, Vector2Scale(creature.velocity, dt)
+                position_step, Vector2Scale(creature.velocity, this->dt)
             );
             creature.position = Vector2Add(creature.position, position_step);
             if (fabs(position_step.x) > EPSILON) {
@@ -968,40 +995,6 @@ class Game {
                 std::cout << "hit: " << attack_collider.id << "\n";
                 rigid_creature->health -= attacker_creature->damage;
                 rigid_creature->last_received_attack_id = attack_collider.id;
-            }
-        }
-
-        // -----------------------------------------------------------
-        // update can_see_player
-        Creature &player = this->creatures[0];
-
-        for (Creature &creature : this->creatures) {
-            if (creature.type == CreatureType::PLAYER) continue;
-
-            Vector2 view_line_start = creature.position;
-            Vector2 view_line_end = player.position;
-
-            // creatures positions usually touches the ground, so
-            // I offset them to prevent the view ray always collid with
-            // the ground.
-            // TODO: I could compute the middle point of the colliders,
-            // but they may be not present. Or I can factor out this
-            // offset into a separate creature parameter (e.g eyes_offset).
-            view_line_start.y -= 16.0;
-            view_line_end.y -= 16.0;
-
-            creature.can_see_player = true;
-            for (auto &rect : this->static_rigid_rects) {
-                creature.can_see_player = !check_collision_rect_line(
-                    rect, view_line_start, view_line_end
-                );
-                if (!creature.can_see_player) break;
-            }
-
-            if (creature.can_see_player) {
-                printf("CAN SEE\n");
-            } else {
-                printf("CAN'T SEE\n");
             }
         }
     }
@@ -1093,6 +1086,42 @@ class Game {
         DrawRectangle(5, 5, bar_width, 30, RED);
 
         EndDrawing();
+    }
+
+    bool check_if_creature_can_see_player(Creature &creature) {
+        Creature &player = this->creatures[0];
+        if (&creature == &player) return false;
+
+        Vector2 view_line_start = creature.position;
+        Vector2 view_line_end = player.position;
+
+        // creatures positions usually touches the ground, so
+        // I offset them to prevent the view ray always collide with the ground.
+        // TODO: I could compute the middle point of the colliders,
+        // but they may be not present. Or I can factor out this
+        // offset into a separate creature parameter (e.g eyes_offset).
+        view_line_start.y -= 16.0;
+        view_line_end.y -= 16.0;
+
+        bool can_see = true;
+        for (auto &rect : this->static_rigid_rects) {
+            can_see = !check_collision_rect_line(rect, view_line_start, view_line_end);
+            if (!can_see) break;
+        }
+
+        return can_see;
+    }
+
+    Vector2 get_step_towards_player(Creature &creature) {
+        Creature &player = this->creatures[0];
+        if (&creature == &player) return {0.0, 0.0};
+
+        Vector2 start = creature.position;
+        Vector2 end = player.position;
+        Vector2 dir = Vector2Normalize(Vector2Subtract(end, start));
+        Vector2 step = Vector2Scale(dir, creature.move_speed * this->dt);
+
+        return step;
     }
 };
 
