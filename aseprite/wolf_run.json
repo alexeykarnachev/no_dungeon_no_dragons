@@ -1,0 +1,159 @@
+{ "frames": [
+   {
+    "filename": "wolf_run.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..1",
+    "frame": { "x": 44, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..2",
+    "frame": { "x": 87, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..3",
+    "frame": { "x": 130, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..4",
+    "frame": { "x": 173, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..5",
+    "frame": { "x": 216, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..6",
+    "frame": { "x": 259, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.sprite..7",
+    "frame": { "x": 302, "y": 1, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..0",
+    "frame": { "x": 1, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..1",
+    "frame": { "x": 44, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..2",
+    "frame": { "x": 87, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..3",
+    "frame": { "x": 130, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..4",
+    "frame": { "x": 173, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..5",
+    "frame": { "x": 216, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..6",
+    "frame": { "x": 259, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   },
+   {
+    "filename": "wolf_run.mask_rigid..7",
+    "frame": { "x": 302, "y": 26, "w": 41, "h": 23 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 41, "h": 23 },
+    "sourceSize": { "w": 41, "h": 23 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "wolf_run.png",
+  "format": "RGBA8888",
+  "size": { "w": 344, "h": 50 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

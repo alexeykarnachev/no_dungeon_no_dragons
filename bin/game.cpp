@@ -20,12 +20,17 @@ namespace fs = std::filesystem;
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
+#define VIEW_LINE_Y_OFFSET -16
+
 #define LANDING_MIN_SPEED 260
 #define LANDING_DAMAGE_FACTOR 1.0
 #define SAFE_DASHING_HEIGHT 24
 #define ATTACK_0_AFTER_DASH_MIN_PROGRESS 0.5
 #define ATTACK_1_AFTER_ATTACK_0_MIN_PROGRESS 0.5
 #define ATTACK_2_AFTER_ATTACK_1_MIN_PROGRESS 0.5
+
+#define CREATURE_VIEW_DISTANCE 200
+#define CREATURE_MAX_VIEW_ANGLE 20
 
 // -----------------------------------------------------------------------
 // utils
@@ -67,7 +72,22 @@ Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_n
 }
 
 // -----------------------------------------------------------------------
-// collisions
+// geometry and collisions
+float get_line_angle(Vector2 start, Vector2 end) {
+    float dx = end.x - start.x;
+    float dy = end.y - start.y;
+    float slope = dy / dx;
+
+    float angle_radians = atanf(fabsf(slope));
+    float angle_degrees = angle_radians * (180.0f / M_PI);
+
+    if (angle_degrees > 90.0f) {
+        angle_degrees = 90.0f - (angle_degrees - 90.0f);
+    }
+
+    return angle_degrees;
+}
+
 Vector2 get_aabb_mtv(Rectangle r1, Rectangle r2) {
     Vector2 mtv = Vector2Zero();
     if (!CheckCollisionRecs(r1, r2)) return mtv;
@@ -420,6 +440,7 @@ enum class CreatureState {
 enum class CreatureType {
     PLAYER,
     BAT,
+    WOLF,
 };
 
 class Creature {
@@ -432,6 +453,8 @@ class Creature {
     float max_health;
     float health;
     float damage;
+    float attack_distance;
+    bool can_view_vertically;
 
     Vector2 position = {0.0, 0.0};
     Vector2 velocity = {0.0, 0.0};
@@ -442,8 +465,9 @@ class Creature {
     bool can_see_player = false;
     bool can_attack_player = false;
     float landed_at_speed = 0.0;
-
     uint32_t last_received_attack_id = 0;
+
+    Creature() {}
 
     Creature(
         CreatureType type,
@@ -452,18 +476,22 @@ class Creature {
         float move_speed,
         float max_health,
         float damage,
+        float attack_distance,
+        bool can_view_vertically,
         Vector2 position,
         bool is_apply_gravity
     )
         : type(type)
         , state(state)
-        , position(position)
+        , animator(animator)
         , move_speed(move_speed)
         , max_health(max_health)
-        , health(max_health)
         , damage(damage)
-        , animator(animator)
-        , is_apply_gravity(is_apply_gravity) {}
+        , attack_distance(attack_distance)
+        , can_view_vertically(can_view_vertically)
+        , position(position)
+        , is_apply_gravity(is_apply_gravity)
+        , health(max_health) {}
 
     Collider get_rigid_collider() {
         Collider collider = this->animator.get_collider("rigid", position, is_hflip);
@@ -535,34 +563,50 @@ class Game {
                              .height = object_height}
                         );
                     } else if (layer_name == "creatures" && property_name == "type") {
+                        Creature creature;
                         if (property_value == "player") {
-                            Creature player(
+                            creature = Creature(
                                 CreatureType::PLAYER,
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 100.0,
                                 100.0,
                                 50.0,
+                                0.0,
+                                true,
                                 {.x = object_x, .y = object_y},
                                 true
                             );
-                            player.animator.play("knight_idle", 0.1, true);
-                            this->creatures.push_back(player);
-                            this->camera.camera2d.target = player.position;
+                            this->camera.camera2d.target = creature.position;
                         } else if (property_value == "bat") {
-                            Creature bat(
+                            creature = Creature(
                                 CreatureType::BAT,
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 50.0,
                                 100.0,
                                 50.0,
+                                25.0,
+                                true,
                                 {.x = object_x, .y = object_y},
                                 false
                             );
-                            bat.animator.play("bat_flight", 0.1, true);
-                            this->creatures.push_back(bat);
+                        } else if (property_value == "wolf") {
+                            creature = Creature(
+                                CreatureType::WOLF,
+                                CreatureState::IDLE,
+                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                                80.0,
+                                100.0,
+                                50.0,
+                                35.0,
+                                false,
+                                {.x = object_x, .y = object_y},
+                                true
+                            );
                         }
+
+                        this->creatures.push_back(creature);
                     }
                 }
             }
@@ -866,7 +910,7 @@ class Game {
                         // -> MOVING, ATTACK_0
                         creature.animator.play("bat_flight", 0.04, true);
 
-                        if (creature.can_see_player && creature.can_attack_player) {
+                        if (creature.can_attack_player) {
                             // -> ATTACK_0
                             creature.state = CreatureState::ATTACK_0;
                         } else if (creature.can_see_player) {
@@ -879,7 +923,7 @@ class Game {
                         // -> IDLE, ATTACK_0
                         creature.animator.play("bat_flight", 0.04, true);
 
-                        if (creature.can_attack_player && creature.can_see_player) {
+                        if (creature.can_attack_player) {
                             // -> ATTACK_0
                             creature.state = CreatureState::ATTACK_0;
                         } else if (creature.can_see_player) {
@@ -926,6 +970,59 @@ class Game {
                 if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
                     creature.is_apply_gravity = true;
                     creature.state = CreatureState::FALLING;
+                }
+            } else if (creature.type == CreatureType::WOLF) {
+                switch (creature.state) {
+                    case CreatureState::IDLE:
+                        // -> MOVING, ATTACK_0
+                        creature.animator.play("wolf_idle", 0.1, true);
+
+                        if (creature.can_attack_player) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else if (creature.can_see_player) {
+                            // -> MOVING
+                            creature.state = CreatureState::MOVING;
+                        }
+
+                        break;
+                    case CreatureState::MOVING:
+                        // -> IDLE, ATTACK_0
+                        creature.animator.play("wolf_run", 0.1, true);
+
+                        if (creature.can_attack_player) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else if (creature.can_see_player) {
+                            position_step = this->get_step_towards_player(creature);
+                        } else {
+                            creature.state = CreatureState::IDLE;
+                        };
+
+                        break;
+                    case CreatureState::ATTACK_0:
+                        // -> IDLE, MOVING
+                        creature.animator.play("wolf_attack", 0.1, true);
+
+                        if (!creature.can_see_player) {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        } else if (!creature.can_attack_player && creature.animator.progress < 0.3) {
+                            // -> MOVING
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        break;
+                    case CreatureState::DEATH:
+                        creature.animator.play("wolf_death", 0.1, false);
+
+                        break;
+                    default: break;
+                }
+
+                // -> DEATH
+                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
+                    creature.state = CreatureState::DEATH;
                 }
             }
 
@@ -1011,7 +1108,6 @@ class Game {
                 if (!CheckCollisionRecs(rigid_collider.mask, attack_collider.mask))
                     continue;
 
-                std::cout << "hit: " << attack_collider.id << "\n";
                 rigid_creature->health -= attacker_creature->damage;
                 rigid_creature->last_received_attack_id = attack_collider.id;
             }
@@ -1023,18 +1119,28 @@ class Game {
             creature.can_see_player = false;
             creature.can_attack_player = false;
 
-            // Can't see and can't attack the dead player.
-            // TODO: maybe factor out into is_dead getter?
-            if (player.health <= 0.0) continue;
-
-            if (creature.type == CreatureType::PLAYER) continue;
-
             Vector2 view_line_start = creature.position;
             Vector2 view_line_end = player.position;
             float dist = Vector2Distance(view_line_start, view_line_end);
 
-            // TODO: factor out into a creature parameter (e.g view_distance)
-            if (dist > 200) continue;
+            // can't see and can't attack the dead player.
+            // TODO: maybe factor out into is_dead getter?
+            if (player.health <= 0.0) continue;
+
+            // PLAYER can't see or attack himself
+            if (creature.type == CreatureType::PLAYER) continue;
+
+            // creature can't see or attack the PLAYER if its allowed view angle
+            // is restricted (can_view_vertically = false) and the actual
+            // view angle is too large
+            if (!creature.can_view_vertically
+                && get_line_angle(view_line_start, view_line_end)
+                       > CREATURE_MAX_VIEW_ANGLE) {
+                continue;
+            }
+
+            // creature can't see the PLAYER if the PLAYER is too far away
+            if (dist > CREATURE_VIEW_DISTANCE) continue;
 
             // creatures positions usually touches the ground, so
             // I offset them to prevent the view ray always collid with
@@ -1042,8 +1148,8 @@ class Game {
             // TODO: I could compute the middle point of the colliders,
             // but they may be not present. Or I can factor out this
             // offset into a separate creature parameter (e.g eyes_offset).
-            view_line_start.y -= 16.0;
-            view_line_end.y -= 16.0;
+            view_line_start.y += VIEW_LINE_Y_OFFSET;
+            view_line_end.y += VIEW_LINE_Y_OFFSET;
 
             // can_see_player
             for (auto &rect : this->static_rigid_rects) {
@@ -1055,8 +1161,7 @@ class Game {
 
             // can_attack_player
             if (creature.can_see_player) {
-                // TODO: factor out into a creature parameter (e.g attack_distance)
-                creature.can_attack_player = dist < 25;
+                creature.can_attack_player = dist < creature.attack_distance;
             }
         }
     }
@@ -1113,20 +1218,20 @@ class Game {
 #if 1
         // ---------------------------------------------------------------
         // draw masks
-        // for (auto &creature : this->creatures) {
-        //     Sprite sprite = creature.animator.get_sprite(
-        //         creature.position, creature.is_hflip
-        //     );
-        //     Rectangle *mask = sprite.get_mask("rigid");
-        //     if (mask) {
-        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-        //     }
+        for (auto &creature : this->creatures) {
+            Sprite sprite = creature.animator.get_sprite(
+                creature.position, creature.is_hflip
+            );
+            Rectangle *mask = sprite.get_mask("rigid");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+            }
 
-        //     mask = sprite.get_mask("attack");
-        //     if (mask) {
-        //         DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
-        //     }
-        // }
+            mask = sprite.get_mask("attack");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
+            }
+        }
 
         // ---------------------------------------------------------------
         // draw colliders
