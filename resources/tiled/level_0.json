@@ -252,12 +252,30 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":295,
-                 "y":135
+                 "x":239.75,
+                 "y":140.5
                 }, 
                 {
                  "height":0,
                  "id":17,
+                 "name":"golem",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"golem"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":155.75,
+                 "y":220.5
+                }, 
+                {
+                 "height":0,
+                 "id":18,
                  "name":"wolf",
                  "point":true,
                  "properties":[
@@ -270,8 +288,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":155.75,
-                 "y":220.5
+                 "x":207.5,
+                 "y":141
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -280,7 +298,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":18,
+ "nextobjectid":19,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

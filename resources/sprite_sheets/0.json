@@ -1,15 +1,157 @@
 {
     "size": [
-        708,
-        439
+        925,
+        596
     ],
     "frames": {
+        "golem_run": [
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 1,
+                    "y": 1,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 1,
+                    "y": 43,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 40,
+                    "y": 1,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 40,
+                    "y": 43,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 1,
+                    "y": 85,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 79,
+                    "y": 1,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_run",
+                    "x": 40,
+                    "y": 85,
+                    "w": 36,
+                    "h": 39,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_run",
+                        "x": 4,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 6
+                    }
+                }
+            }
+        ],
         "knight_fall": [
             {
                 "sprite": {
                     "name": "knight_fall",
-                    "x": 1,
-                    "y": 1,
+                    "x": 79,
+                    "y": 43,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 0
@@ -29,7 +171,7 @@
                 "sprite": {
                     "name": "knight_fall",
                     "x": 1,
-                    "y": 36,
+                    "y": 127,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 1
@@ -48,7 +190,7 @@
             {
                 "sprite": {
                     "name": "knight_fall",
-                    "x": 36,
+                    "x": 118,
                     "y": 1,
                     "w": 32,
                     "h": 32,
@@ -70,8 +212,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 1,
-                    "y": 71,
+                    "x": 40,
+                    "y": 127,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 0
@@ -90,8 +232,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 36,
-                    "y": 36,
+                    "x": 79,
+                    "y": 85,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 1
@@ -110,8 +252,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 44,
-                    "y": 71,
+                    "x": 83,
+                    "y": 127,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 2
@@ -130,8 +272,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 71,
-                    "y": 1,
+                    "x": 114,
+                    "y": 43,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 3
@@ -151,7 +293,7 @@
                 "sprite": {
                     "name": "bat_flight",
                     "x": 1,
-                    "y": 97,
+                    "y": 162,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 4
@@ -170,8 +312,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 79,
-                    "y": 36,
+                    "x": 122,
+                    "y": 85,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 5
@@ -190,8 +332,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 44,
-                    "y": 97,
+                    "x": 83,
+                    "y": 153,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 6
@@ -210,8 +352,8 @@
             {
                 "sprite": {
                     "name": "bat_flight",
-                    "x": 87,
-                    "y": 71,
+                    "x": 126,
+                    "y": 127,
                     "w": 40,
                     "h": 23,
                     "frame_idx": 7
@@ -232,8 +374,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 87,
-                    "y": 97,
+                    "x": 153,
+                    "y": 1,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 0
@@ -252,8 +394,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 114,
-                    "y": 1,
+                    "x": 44,
+                    "y": 162,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 1
@@ -272,8 +414,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 1,
-                    "y": 123,
+                    "x": 126,
+                    "y": 153,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 2
@@ -292,8 +434,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 122,
-                    "y": 36,
+                    "x": 157,
+                    "y": 43,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 3
@@ -312,8 +454,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 44,
-                    "y": 123,
+                    "x": 1,
+                    "y": 188,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 4
@@ -332,8 +474,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 130,
-                    "y": 71,
+                    "x": 165,
+                    "y": 85,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 5
@@ -352,8 +494,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 87,
-                    "y": 125,
+                    "x": 83,
+                    "y": 179,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 6
@@ -372,8 +514,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 130,
-                    "y": 99,
+                    "x": 169,
+                    "y": 127,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 7
@@ -392,8 +534,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 130,
-                    "y": 127,
+                    "x": 193,
+                    "y": 1,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 8
@@ -412,8 +554,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 154,
-                    "y": 1,
+                    "x": 126,
+                    "y": 181,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 9
@@ -432,8 +574,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 1,
-                    "y": 151,
+                    "x": 169,
+                    "y": 155,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 10
@@ -452,8 +594,8 @@
             {
                 "sprite": {
                     "name": "wolf_idle",
-                    "x": 162,
-                    "y": 36,
+                    "x": 169,
+                    "y": 183,
                     "w": 37,
                     "h": 25,
                     "frame_idx": 11
@@ -474,8 +616,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_1",
-                    "x": 170,
-                    "y": 71,
+                    "x": 197,
+                    "y": 43,
                     "w": 63,
                     "h": 34,
                     "frame_idx": 0
@@ -494,8 +636,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_1",
-                    "x": 130,
-                    "y": 155,
+                    "x": 1,
+                    "y": 216,
                     "w": 63,
                     "h": 34,
                     "frame_idx": 1
@@ -514,8 +656,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_1",
-                    "x": 1,
-                    "y": 179,
+                    "x": 205,
+                    "y": 85,
                     "w": 63,
                     "h": 34,
                     "frame_idx": 2
@@ -542,8 +684,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_1",
-                    "x": 170,
-                    "y": 108,
+                    "x": 209,
+                    "y": 127,
                     "w": 63,
                     "h": 34,
                     "frame_idx": 3
@@ -570,8 +712,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_1",
-                    "x": 196,
-                    "y": 155,
+                    "x": 233,
+                    "y": 1,
                     "w": 63,
                     "h": 34,
                     "frame_idx": 4
@@ -592,8 +734,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 194,
-                    "y": 1,
+                    "x": 169,
+                    "y": 211,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 0
@@ -612,8 +754,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 202,
-                    "y": 36,
+                    "x": 67,
+                    "y": 216,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 1
@@ -632,8 +774,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 236,
-                    "y": 71,
+                    "x": 209,
+                    "y": 164,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 2
@@ -652,8 +794,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 67,
-                    "y": 179,
+                    "x": 215,
+                    "y": 211,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 3
@@ -672,8 +814,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 236,
-                    "y": 108,
+                    "x": 113,
+                    "y": 216,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 4
@@ -692,8 +834,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 240,
-                    "y": 1,
+                    "x": 263,
+                    "y": 43,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 5
@@ -712,8 +854,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 130,
-                    "y": 192,
+                    "x": 271,
+                    "y": 85,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 6
@@ -732,8 +874,8 @@
             {
                 "sprite": {
                     "name": "knight_run",
-                    "x": 1,
-                    "y": 216,
+                    "x": 275,
+                    "y": 127,
                     "w": 43,
                     "h": 31,
                     "frame_idx": 7
@@ -750,12 +892,254 @@
                 }
             }
         ],
+        "golem_charge": [
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 255,
+                    "y": 164,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 261,
+                    "y": 211,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 1,
+                    "y": 253,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 169,
+                    "y": 245,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 67,
+                    "y": 250,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 215,
+                    "y": 245,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 113,
+                    "y": 250,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 321,
+                    "y": 127,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 7
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 261,
+                    "y": 255,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 8
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 8
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 308,
+                    "y": 211,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 9
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 9
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 308,
+                    "y": 255,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 10
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 10
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_charge",
+                    "x": 1,
+                    "y": 297,
+                    "w": 44,
+                    "h": 41,
+                    "frame_idx": 11
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_charge",
+                        "x": 11,
+                        "y": 1,
+                        "w": 23,
+                        "h": 40,
+                        "frame_idx": 11
+                    }
+                }
+            }
+        ],
         "bat_death": [
             {
                 "sprite": {
                     "name": "bat_death",
-                    "x": 36,
-                    "y": 62,
+                    "x": 79,
+                    "y": 78,
                     "w": 62,
                     "h": 5,
                     "frame_idx": 0
@@ -774,8 +1158,8 @@
             {
                 "sprite": {
                     "name": "bat_death",
-                    "x": 114,
-                    "y": 29,
+                    "x": 118,
+                    "y": 36,
                     "w": 62,
                     "h": 5,
                     "frame_idx": 1
@@ -794,8 +1178,8 @@
             {
                 "sprite": {
                     "name": "bat_death",
-                    "x": 122,
-                    "y": 64,
+                    "x": 79,
+                    "y": 111,
                     "w": 62,
                     "h": 5,
                     "frame_idx": 2
@@ -814,8 +1198,8 @@
             {
                 "sprite": {
                     "name": "bat_death",
-                    "x": 170,
-                    "y": 145,
+                    "x": 153,
+                    "y": 29,
                     "w": 62,
                     "h": 5,
                     "frame_idx": 3
@@ -834,8 +1218,8 @@
             {
                 "sprite": {
                     "name": "bat_death",
-                    "x": 196,
-                    "y": 192,
+                    "x": 299,
+                    "y": 1,
                     "w": 62,
                     "h": 5,
                     "frame_idx": 4
@@ -852,12 +1236,134 @@
                 }
             }
         ],
+        "golem_idle": [
+            {
+                "sprite": {
+                    "name": "golem_idle",
+                    "x": 309,
+                    "y": 43,
+                    "w": 40,
+                    "h": 39,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_idle",
+                        "x": 9,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_idle",
+                    "x": 317,
+                    "y": 85,
+                    "w": 40,
+                    "h": 39,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_idle",
+                        "x": 9,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_idle",
+                    "x": 169,
+                    "y": 289,
+                    "w": 40,
+                    "h": 39,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_idle",
+                        "x": 9,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_idle",
+                    "x": 67,
+                    "y": 294,
+                    "w": 40,
+                    "h": 39,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_idle",
+                        "x": 9,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_idle",
+                    "x": 215,
+                    "y": 289,
+                    "w": 40,
+                    "h": 39,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_idle",
+                        "x": 9,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_idle",
+                    "x": 113,
+                    "y": 294,
+                    "w": 40,
+                    "h": 39,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_idle",
+                        "x": 9,
+                        "y": 1,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 5
+                    }
+                }
+            }
+        ],
         "bat_fall": [
             {
                 "sprite": {
                     "name": "bat_fall",
                     "x": 44,
-                    "y": 151,
+                    "y": 190,
                     "w": 35,
                     "h": 23,
                     "frame_idx": 0
@@ -876,8 +1382,8 @@
             {
                 "sprite": {
                     "name": "bat_fall",
-                    "x": 87,
-                    "y": 153,
+                    "x": 321,
+                    "y": 171,
                     "w": 35,
                     "h": 23,
                     "frame_idx": 1
@@ -896,8 +1402,8 @@
             {
                 "sprite": {
                     "name": "bat_fall",
-                    "x": 262,
-                    "y": 155,
+                    "x": 368,
+                    "y": 127,
                     "w": 35,
                     "h": 23,
                     "frame_idx": 2
@@ -916,8 +1422,8 @@
             {
                 "sprite": {
                     "name": "bat_fall",
-                    "x": 248,
-                    "y": 36,
+                    "x": 261,
+                    "y": 299,
                     "w": 35,
                     "h": 23,
                     "frame_idx": 3
@@ -938,8 +1444,8 @@
             {
                 "sprite": {
                     "name": "knight_landing",
-                    "x": 282,
-                    "y": 71,
+                    "x": 355,
+                    "y": 211,
                     "w": 31,
                     "h": 32,
                     "frame_idx": 0
@@ -958,8 +1464,8 @@
             {
                 "sprite": {
                     "name": "knight_landing",
-                    "x": 67,
-                    "y": 213,
+                    "x": 308,
+                    "y": 299,
                     "w": 31,
                     "h": 32,
                     "frame_idx": 1
@@ -978,8 +1484,8 @@
             {
                 "sprite": {
                     "name": "knight_landing",
-                    "x": 282,
-                    "y": 108,
+                    "x": 355,
+                    "y": 255,
                     "w": 31,
                     "h": 32,
                     "frame_idx": 2
@@ -996,12 +1502,350 @@
                 }
             }
         ],
+        "golem_attack": [
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 169,
+                    "y": 331,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 1,
+                    "y": 341,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 364,
+                    "y": 1,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 352,
+                    "y": 43,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 360,
+                    "y": 85,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 359,
+                    "y": 171,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 406,
+                    "y": 127,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 389,
+                    "y": 211,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 7
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 308,
+                    "y": 334,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 8
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 8
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 355,
+                    "y": 290,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 9
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 9
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 411,
+                    "y": 334,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 10
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 10
+                    },
+                    "attack": {
+                        "name": "golem_attack",
+                        "x": 42,
+                        "y": 1,
+                        "w": 55,
+                        "h": 37,
+                        "frame_idx": 10
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 169,
+                    "y": 372,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 11
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 11
+                    },
+                    "attack": {
+                        "name": "golem_attack",
+                        "x": 42,
+                        "y": 1,
+                        "w": 55,
+                        "h": 37,
+                        "frame_idx": 11
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 1,
+                    "y": 382,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 12
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 12
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 467,
+                    "y": 1,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 13
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 13
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 455,
+                    "y": 43,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 14
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 14
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_attack",
+                    "x": 463,
+                    "y": 85,
+                    "w": 100,
+                    "h": 38,
+                    "frame_idx": 15
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_attack",
+                        "x": 39,
+                        "y": 1,
+                        "w": 23,
+                        "h": 37,
+                        "frame_idx": 15
+                    }
+                }
+            }
+        ],
         "knight_jump": [
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 286,
-                    "y": 1,
+                    "x": 299,
+                    "y": 9,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 0
@@ -1020,8 +1864,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 196,
-                    "y": 200,
+                    "x": 113,
+                    "y": 336,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 1
@@ -1040,8 +1884,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 261,
-                    "y": 192,
+                    "x": 389,
+                    "y": 255,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 2
@@ -1060,8 +1904,8 @@
             {
                 "sprite": {
                     "name": "knight_jump",
-                    "x": 286,
-                    "y": 36,
+                    "x": 272,
+                    "y": 331,
                     "w": 32,
                     "h": 32,
                     "frame_idx": 3
@@ -1082,8 +1926,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 130,
-                    "y": 226,
+                    "x": 462,
+                    "y": 171,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 0
@@ -1102,8 +1946,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 1,
-                    "y": 250,
+                    "x": 509,
+                    "y": 127,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 1
@@ -1122,8 +1966,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 300,
-                    "y": 155,
+                    "x": 492,
+                    "y": 211,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 2
@@ -1142,8 +1986,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 316,
-                    "y": 71,
+                    "x": 308,
+                    "y": 375,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 3
@@ -1162,8 +2006,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 67,
-                    "y": 248,
+                    "x": 458,
+                    "y": 290,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 4
@@ -1182,8 +2026,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 316,
-                    "y": 108,
+                    "x": 411,
+                    "y": 375,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 5
@@ -1202,8 +2046,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 321,
-                    "y": 1,
+                    "x": 514,
+                    "y": 334,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 6
@@ -1222,8 +2066,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 196,
-                    "y": 235,
+                    "x": 169,
+                    "y": 413,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 7
@@ -1242,8 +2086,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 261,
-                    "y": 227,
+                    "x": 104,
+                    "y": 382,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 8
@@ -1262,8 +2106,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 296,
-                    "y": 192,
+                    "x": 570,
+                    "y": 1,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 9
@@ -1282,8 +2126,8 @@
             {
                 "sprite": {
                     "name": "knight_roll",
-                    "x": 321,
-                    "y": 36,
+                    "x": 558,
+                    "y": 43,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 10
@@ -1304,8 +2148,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 302,
-                    "y": 227,
+                    "x": 566,
+                    "y": 85,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 0
@@ -1324,8 +2168,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 130,
-                    "y": 260,
+                    "x": 424,
+                    "y": 255,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 1
@@ -1344,8 +2188,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 341,
-                    "y": 155,
+                    "x": 503,
+                    "y": 171,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 2
@@ -1364,8 +2208,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 357,
-                    "y": 71,
+                    "x": 550,
+                    "y": 127,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 3
@@ -1384,8 +2228,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 67,
-                    "y": 282,
+                    "x": 492,
+                    "y": 245,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 4
@@ -1404,8 +2248,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 357,
-                    "y": 108,
+                    "x": 308,
+                    "y": 409,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 5
@@ -1424,8 +2268,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 362,
-                    "y": 1,
+                    "x": 499,
+                    "y": 290,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 6
@@ -1444,8 +2288,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 196,
-                    "y": 269,
+                    "x": 411,
+                    "y": 409,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 7
@@ -1464,8 +2308,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 337,
-                    "y": 192,
+                    "x": 514,
+                    "y": 368,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 8
@@ -1484,8 +2328,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 362,
-                    "y": 36,
+                    "x": 210,
+                    "y": 413,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 9
@@ -1504,8 +2348,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 302,
-                    "y": 263,
+                    "x": 104,
+                    "y": 416,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 10
@@ -1524,8 +2368,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 361,
-                    "y": 227,
+                    "x": 562,
+                    "y": 171,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 11
@@ -1544,8 +2388,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 361,
-                    "y": 263,
+                    "x": 551,
+                    "y": 245,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 12
@@ -1564,8 +2408,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 1,
-                    "y": 284,
+                    "x": 558,
+                    "y": 290,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 13
@@ -1584,8 +2428,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 130,
-                    "y": 296,
+                    "x": 470,
+                    "y": 409,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 14
@@ -1604,8 +2448,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 400,
-                    "y": 155,
+                    "x": 573,
+                    "y": 368,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 15
@@ -1624,8 +2468,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 416,
-                    "y": 71,
+                    "x": 562,
+                    "y": 207,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 16
@@ -1644,8 +2488,8 @@
             {
                 "sprite": {
                     "name": "wolf_death",
-                    "x": 67,
-                    "y": 318,
+                    "x": 558,
+                    "y": 326,
                     "w": 56,
                     "h": 33,
                     "frame_idx": 17
@@ -1666,8 +2510,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 196,
-                    "y": 305,
+                    "x": 529,
+                    "y": 409,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 0
@@ -1686,8 +2530,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 302,
-                    "y": 299,
+                    "x": 1,
+                    "y": 423,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 1
@@ -1706,8 +2550,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 416,
-                    "y": 108,
+                    "x": 611,
+                    "y": 1,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 2
@@ -1726,8 +2570,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 421,
-                    "y": 1,
+                    "x": 599,
+                    "y": 43,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 3
@@ -1746,8 +2590,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 420,
-                    "y": 227,
+                    "x": 625,
+                    "y": 85,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 4
@@ -1774,8 +2618,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 420,
-                    "y": 263,
+                    "x": 609,
+                    "y": 127,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 5
@@ -1802,8 +2646,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 400,
-                    "y": 191,
+                    "x": 308,
+                    "y": 445,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 6
@@ -1822,8 +2666,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 459,
-                    "y": 155,
+                    "x": 411,
+                    "y": 445,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 7
@@ -1842,8 +2686,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_2",
-                    "x": 475,
-                    "y": 71,
+                    "x": 621,
+                    "y": 171,
                     "w": 97,
                     "h": 34,
                     "frame_idx": 8
@@ -1864,8 +2708,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 67,
-                    "y": 354,
+                    "x": 210,
+                    "y": 449,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 0
@@ -1884,8 +2728,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 196,
-                    "y": 342,
+                    "x": 104,
+                    "y": 452,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 1
@@ -1904,8 +2748,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 302,
-                    "y": 336,
+                    "x": 610,
+                    "y": 245,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 2
@@ -1924,8 +2768,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 402,
-                    "y": 299,
+                    "x": 617,
+                    "y": 290,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 3
@@ -1944,8 +2788,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 421,
-                    "y": 38,
+                    "x": 632,
+                    "y": 368,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 4
@@ -1964,8 +2808,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 500,
-                    "y": 191,
+                    "x": 621,
+                    "y": 207,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 5
@@ -1984,8 +2828,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 381,
-                    "y": 336,
+                    "x": 617,
+                    "y": 326,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 6
@@ -2004,8 +2848,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 481,
-                    "y": 299,
+                    "x": 529,
+                    "y": 446,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 7
@@ -2024,8 +2868,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 500,
-                    "y": 38,
+                    "x": 629,
+                    "y": 409,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 8
@@ -2044,8 +2888,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 460,
-                    "y": 336,
+                    "x": 1,
+                    "y": 460,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 9
@@ -2072,8 +2916,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 516,
-                    "y": 108,
+                    "x": 608,
+                    "y": 446,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 10
@@ -2100,7 +2944,7 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 521,
+                    "x": 711,
                     "y": 1,
                     "w": 76,
                     "h": 25,
@@ -2120,8 +2964,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 520,
-                    "y": 227,
+                    "x": 699,
+                    "y": 43,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 12
@@ -2140,8 +2984,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 520,
-                    "y": 263,
+                    "x": 725,
+                    "y": 85,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 13
@@ -2160,8 +3004,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 559,
-                    "y": 155,
+                    "x": 709,
+                    "y": 127,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 14
@@ -2180,8 +3024,8 @@
             {
                 "sprite": {
                     "name": "wolf_attack",
-                    "x": 575,
-                    "y": 71,
+                    "x": 308,
+                    "y": 482,
                     "w": 76,
                     "h": 25,
                     "frame_idx": 15
@@ -2202,8 +3046,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 255,
-                    "y": 269,
+                    "x": 349,
+                    "y": 375,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 0
@@ -2222,8 +3066,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 1,
-                    "y": 320,
+                    "x": 452,
+                    "y": 375,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 1
@@ -2242,8 +3086,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 67,
-                    "y": 382,
+                    "x": 367,
+                    "y": 409,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 2
@@ -2262,8 +3106,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 146,
-                    "y": 354,
+                    "x": 411,
+                    "y": 482,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 3
@@ -2282,8 +3126,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 196,
-                    "y": 370,
+                    "x": 721,
+                    "y": 171,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 4
@@ -2302,8 +3146,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 302,
-                    "y": 364,
+                    "x": 210,
+                    "y": 477,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 5
@@ -2322,8 +3166,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 579,
-                    "y": 191,
+                    "x": 104,
+                    "y": 480,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 6
@@ -2342,8 +3186,8 @@
             {
                 "sprite": {
                     "name": "wolf_run",
-                    "x": 381,
-                    "y": 364,
+                    "x": 689,
+                    "y": 245,
                     "w": 41,
                     "h": 23,
                     "frame_idx": 7
@@ -2364,8 +3208,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 560,
-                    "y": 299,
+                    "x": 269,
+                    "y": 413,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 0
@@ -2384,8 +3228,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 579,
-                    "y": 38,
+                    "x": 696,
+                    "y": 290,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 1
@@ -2404,8 +3248,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 460,
-                    "y": 364,
+                    "x": 711,
+                    "y": 368,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 2
@@ -2424,8 +3268,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 539,
-                    "y": 336,
+                    "x": 700,
+                    "y": 207,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 3
@@ -2444,8 +3288,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 595,
-                    "y": 108,
+                    "x": 696,
+                    "y": 326,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 4
@@ -2464,8 +3308,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 600,
-                    "y": 1,
+                    "x": 529,
+                    "y": 474,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 5
@@ -2484,8 +3328,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 599,
-                    "y": 227,
+                    "x": 708,
+                    "y": 409,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 6
@@ -2504,8 +3348,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 599,
-                    "y": 263,
+                    "x": 608,
+                    "y": 474,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 7
@@ -2524,8 +3368,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 1,
-                    "y": 346,
+                    "x": 687,
+                    "y": 446,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 8
@@ -2544,8 +3388,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 111,
-                    "y": 382,
+                    "x": 765,
+                    "y": 171,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 9
@@ -2564,8 +3408,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 240,
-                    "y": 370,
+                    "x": 254,
+                    "y": 477,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 10
@@ -2584,8 +3428,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 623,
-                    "y": 191,
+                    "x": 148,
+                    "y": 480,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 11
@@ -2604,8 +3448,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 600,
-                    "y": 299,
+                    "x": 733,
+                    "y": 245,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 12
@@ -2624,8 +3468,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 619,
-                    "y": 38,
+                    "x": 736,
+                    "y": 290,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 13
@@ -2644,8 +3488,8 @@
             {
                 "sprite": {
                     "name": "knight_idle",
-                    "x": 500,
-                    "y": 364,
+                    "x": 751,
+                    "y": 368,
                     "w": 37,
                     "h": 31,
                     "frame_idx": 14
@@ -2666,8 +3510,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 302,
-                    "y": 390,
+                    "x": 1,
+                    "y": 488,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 0
@@ -2686,8 +3530,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 381,
-                    "y": 390,
+                    "x": 455,
+                    "y": 482,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 1
@@ -2706,8 +3550,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 539,
-                    "y": 370,
+                    "x": 740,
+                    "y": 207,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 2
@@ -2726,8 +3570,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 579,
-                    "y": 336,
+                    "x": 736,
+                    "y": 326,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 3
@@ -2746,8 +3590,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 1,
-                    "y": 380,
+                    "x": 748,
+                    "y": 409,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 4
@@ -2766,8 +3610,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 151,
-                    "y": 382,
+                    "x": 687,
+                    "y": 480,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 5
@@ -2786,8 +3630,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 583,
-                    "y": 370,
+                    "x": 727,
+                    "y": 446,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 6
@@ -2806,8 +3650,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 638,
-                    "y": 155,
+                    "x": 773,
+                    "y": 245,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 7
@@ -2834,8 +3678,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 654,
-                    "y": 71,
+                    "x": 45,
+                    "y": 488,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 8
@@ -2854,8 +3698,8 @@
             {
                 "sprite": {
                     "name": "bat_attack",
-                    "x": 67,
-                    "y": 408,
+                    "x": 731,
+                    "y": 480,
                     "w": 41,
                     "h": 21,
                     "frame_idx": 9
@@ -2876,8 +3720,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 460,
-                    "y": 398,
+                    "x": 790,
+                    "y": 1,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 0
@@ -2896,8 +3740,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 635,
-                    "y": 108,
+                    "x": 778,
+                    "y": 43,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 1
@@ -2916,8 +3760,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 640,
-                    "y": 1,
+                    "x": 804,
+                    "y": 85,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 2
@@ -2944,8 +3788,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 639,
-                    "y": 227,
+                    "x": 788,
+                    "y": 127,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 3
@@ -2972,8 +3816,8 @@
             {
                 "sprite": {
                     "name": "knight_attack_0",
-                    "x": 639,
-                    "y": 263,
+                    "x": 308,
+                    "y": 510,
                     "w": 65,
                     "h": 34,
                     "frame_idx": 4
@@ -2994,8 +3838,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 196,
-                    "y": 396,
+                    "x": 411,
+                    "y": 508,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 0
@@ -3014,8 +3858,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 240,
-                    "y": 404,
+                    "x": 210,
+                    "y": 503,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 1
@@ -3034,8 +3878,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 663,
-                    "y": 191,
+                    "x": 104,
+                    "y": 506,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 2
@@ -3054,8 +3898,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 640,
-                    "y": 299,
+                    "x": 529,
+                    "y": 508,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 3
@@ -3074,8 +3918,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 659,
-                    "y": 38,
+                    "x": 608,
+                    "y": 508,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 4
@@ -3094,8 +3938,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 539,
-                    "y": 394,
+                    "x": 805,
+                    "y": 171,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 5
@@ -3114,8 +3958,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 623,
-                    "y": 336,
+                    "x": 254,
+                    "y": 511,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 6
@@ -3134,8 +3978,8 @@
             {
                 "sprite": {
                     "name": "knight_death",
-                    "x": 1,
-                    "y": 404,
+                    "x": 148,
+                    "y": 514,
                     "w": 38,
                     "h": 31,
                     "frame_idx": 7
@@ -3148,6 +3992,568 @@
                         "w": 13,
                         "h": 7,
                         "frame_idx": 7
+                    }
+                }
+            }
+        ],
+        "golem_death": [
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 791,
+                    "y": 368,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 0
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 0
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 687,
+                    "y": 504,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 1
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 1
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 817,
+                    "y": 245,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 2
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 2
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 731,
+                    "y": 504,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 3
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 3
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 775,
+                    "y": 480,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 4
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 4
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 791,
+                    "y": 415,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 5
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 5
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 834,
+                    "y": 368,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 6
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 6
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 817,
+                    "y": 292,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 7
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 7
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 818,
+                    "y": 480,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 8
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 8
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 834,
+                    "y": 415,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 9
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 9
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 1,
+                    "y": 512,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 10
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 10
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 455,
+                    "y": 506,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 11
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 11
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 45,
+                    "y": 512,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 12
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 12
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 858,
+                    "y": 1,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 13
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 13
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 872,
+                    "y": 85,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 14
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 14
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 308,
+                    "y": 547,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 15
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 15
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 411,
+                    "y": 542,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 16
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 16
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 210,
+                    "y": 537,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 17
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 17
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 104,
+                    "y": 540,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 18
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 18
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 529,
+                    "y": 542,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 19
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 19
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 608,
+                    "y": 542,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 20
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 20
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 846,
+                    "y": 171,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 21
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 21
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 254,
+                    "y": 545,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 22
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 22
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 148,
+                    "y": 548,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 23
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 23
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 860,
+                    "y": 245,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 24
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 24
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 775,
+                    "y": 527,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 25
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 25
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 877,
+                    "y": 368,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 26
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 26
+                    }
+                }
+            },
+            {
+                "sprite": {
+                    "name": "golem_death",
+                    "x": 860,
+                    "y": 292,
+                    "w": 40,
+                    "h": 44,
+                    "frame_idx": 27
+                },
+                "masks": {
+                    "rigid": {
+                        "name": "golem_death",
+                        "x": 9,
+                        "y": 6,
+                        "w": 23,
+                        "h": 38,
+                        "frame_idx": 27
                     }
                 }
             }

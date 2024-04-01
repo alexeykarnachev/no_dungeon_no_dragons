@@ -443,6 +443,7 @@ enum class CreatureType {
     PLAYER,
     BAT,
     WOLF,
+    GOLEM,
 };
 
 class Creature {
@@ -598,6 +599,19 @@ class Game {
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 80.0,
+                                100.0,
+                                50.0,
+                                35.0,
+                                false,
+                                {.x = object_x, .y = object_y},
+                                true
+                            );
+                        } else if (property_value == "golem") {
+                            creature = Creature(
+                                CreatureType::GOLEM,
+                                CreatureState::IDLE,
+                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                                60.0,
                                 100.0,
                                 50.0,
                                 35.0,
@@ -1016,6 +1030,59 @@ class Game {
                         break;
                     case CreatureState::DEATH:
                         creature.animator.play("wolf_death", 0.1, false);
+
+                        break;
+                    default: break;
+                }
+
+                // -> DEATH
+                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
+                    creature.state = CreatureState::DEATH;
+                }
+            } else if (creature.type == CreatureType::GOLEM) {
+                switch (creature.state) {
+                    case CreatureState::IDLE:
+                        // -> MOVING, ATTACK_0
+                        creature.animator.play("golem_idle", 0.1, true);
+
+                        if (creature.can_attack_player) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else if (creature.can_see_player) {
+                            // -> MOVING
+                            creature.state = CreatureState::MOVING;
+                        }
+
+                        break;
+                    case CreatureState::MOVING:
+                        // -> IDLE, ATTACK_0
+                        creature.animator.play("golem_run", 0.1, true);
+
+                        if (creature.can_attack_player) {
+                            // -> ATTACK_0
+                            creature.state = CreatureState::ATTACK_0;
+                        } else if (creature.can_see_player) {
+                            position_step = this->get_step_towards_player(creature);
+                        } else {
+                            creature.state = CreatureState::IDLE;
+                        };
+
+                        break;
+                    case CreatureState::ATTACK_0:
+                        // -> IDLE, MOVING
+                        creature.animator.play("golem_attack", 0.1, true);
+
+                        if (!creature.can_see_player) {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        } else if (!creature.can_attack_player && creature.animator.progress < 0.3) {
+                            // -> MOVING
+                            creature.state = CreatureState::IDLE;
+                        }
+
+                        break;
+                    case CreatureState::DEATH:
+                        creature.animator.play("golem_death", 0.1, false);
 
                         break;
                     default: break;
