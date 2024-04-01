@@ -1099,17 +1099,15 @@ class Game {
 
             // -----------------------------------------------------------
             // apply gravity and x friction
+            creature.velocity.y += this->dt * GRAVITY;
             if (creature.is_flying) {
                 creature.velocity = Vector2Zero();
+            } else if (fabs(creature.velocity.x) < this->dt * X_FRICTION) {
+                creature.velocity.x = 0.0;
+            } else if (creature.velocity.x > 0.0) {
+                creature.velocity.x -= this->dt * X_FRICTION;
             } else {
-                creature.velocity.y += this->dt * GRAVITY;
-                if (fabs(creature.velocity.x) < this->dt * X_FRICTION) {
-                    creature.velocity.x = 0.0;
-                } else if (creature.velocity.x > 0.0) {
-                    creature.velocity.x -= this->dt * X_FRICTION;
-                } else {
-                    creature.velocity.x += this->dt * X_FRICTION;
-                }
+                creature.velocity.x += this->dt * X_FRICTION;
             }
 
             // don't apply immediate position step if creature is under
