@@ -1,0 +1,123 @@
+{ "frames": [
+   {
+    "filename": "golem_idle.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.sprite..1",
+    "frame": { "x": 43, "y": 1, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.sprite..2",
+    "frame": { "x": 85, "y": 1, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.sprite..3",
+    "frame": { "x": 127, "y": 1, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.sprite..4",
+    "frame": { "x": 169, "y": 1, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.sprite..5",
+    "frame": { "x": 211, "y": 1, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.mask_rigid..0",
+    "frame": { "x": 1, "y": 42, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.mask_rigid..1",
+    "frame": { "x": 43, "y": 42, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.mask_rigid..2",
+    "frame": { "x": 85, "y": 42, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.mask_rigid..3",
+    "frame": { "x": 127, "y": 42, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.mask_rigid..4",
+    "frame": { "x": 169, "y": 42, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_idle.mask_rigid..5",
+    "frame": { "x": 211, "y": 42, "w": 40, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 39 },
+    "sourceSize": { "w": 40, "h": 39 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "golem_idle.png",
+  "format": "RGBA8888",
+  "size": { "w": 252, "h": 82 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

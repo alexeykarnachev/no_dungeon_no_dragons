@@ -1,0 +1,448 @@
+{ "frames": [
+   {
+    "filename": "golem_attack.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..1",
+    "frame": { "x": 91, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..2",
+    "frame": { "x": 181, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..3",
+    "frame": { "x": 271, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..4",
+    "frame": { "x": 361, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..5",
+    "frame": { "x": 451, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..6",
+    "frame": { "x": 541, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..7",
+    "frame": { "x": 631, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..8",
+    "frame": { "x": 721, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..9",
+    "frame": { "x": 811, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..10",
+    "frame": { "x": 901, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..11",
+    "frame": { "x": 991, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..12",
+    "frame": { "x": 1081, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..13",
+    "frame": { "x": 1171, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..14",
+    "frame": { "x": 1261, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.sprite..15",
+    "frame": { "x": 1351, "y": 1, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..0",
+    "frame": { "x": 1, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..1",
+    "frame": { "x": 91, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..2",
+    "frame": { "x": 181, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..3",
+    "frame": { "x": 271, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..4",
+    "frame": { "x": 361, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..5",
+    "frame": { "x": 451, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..6",
+    "frame": { "x": 541, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..7",
+    "frame": { "x": 631, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..8",
+    "frame": { "x": 721, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..9",
+    "frame": { "x": 811, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..10",
+    "frame": { "x": 901, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..11",
+    "frame": { "x": 991, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..12",
+    "frame": { "x": 1081, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..13",
+    "frame": { "x": 1171, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..14",
+    "frame": { "x": 1261, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_rigid..15",
+    "frame": { "x": 1351, "y": 41, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..0",
+    "frame": { "x": 1, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..1",
+    "frame": { "x": 91, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..2",
+    "frame": { "x": 181, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..3",
+    "frame": { "x": 271, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..4",
+    "frame": { "x": 361, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..5",
+    "frame": { "x": 451, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..6",
+    "frame": { "x": 541, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..7",
+    "frame": { "x": 631, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..8",
+    "frame": { "x": 721, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..9",
+    "frame": { "x": 811, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..10",
+    "frame": { "x": 901, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..11",
+    "frame": { "x": 991, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..12",
+    "frame": { "x": 1081, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..13",
+    "frame": { "x": 1171, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..14",
+    "frame": { "x": 1261, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_attack.mask_attack..15",
+    "frame": { "x": 1351, "y": 81, "w": 88, "h": 38 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 88, "h": 38 },
+    "sourceSize": { "w": 88, "h": 38 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "golem_attack.png",
+  "format": "RGBA8888",
+  "size": { "w": 1440, "h": 120 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" },
+   { "name": "mask_attack", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

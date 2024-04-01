@@ -1,0 +1,141 @@
+{ "frames": [
+   {
+    "filename": "golem_run.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.sprite..1",
+    "frame": { "x": 39, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.sprite..2",
+    "frame": { "x": 77, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.sprite..3",
+    "frame": { "x": 115, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.sprite..4",
+    "frame": { "x": 153, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.sprite..5",
+    "frame": { "x": 191, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.sprite..6",
+    "frame": { "x": 229, "y": 1, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..0",
+    "frame": { "x": 1, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..1",
+    "frame": { "x": 39, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..2",
+    "frame": { "x": 77, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..3",
+    "frame": { "x": 115, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..4",
+    "frame": { "x": 153, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..5",
+    "frame": { "x": 191, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_run.mask_rigid..6",
+    "frame": { "x": 229, "y": 42, "w": 36, "h": 39 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 36, "h": 39 },
+    "sourceSize": { "w": 36, "h": 39 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "golem_run.png",
+  "format": "RGBA8888",
+  "size": { "w": 266, "h": 82 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

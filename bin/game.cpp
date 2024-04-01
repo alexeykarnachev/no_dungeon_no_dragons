@@ -22,6 +22,8 @@ namespace fs = std::filesystem;
 
 #define VIEW_LINE_Y_OFFSET -16
 
+#define GRAVITY 400
+
 #define LANDING_MIN_SPEED 260
 #define LANDING_DAMAGE_FACTOR 1.0
 #define SAFE_DASHING_HEIGHT 24
@@ -520,7 +522,6 @@ class Game {
     std::vector<Rectangle> static_rigid_rects;
 
     GameCamera camera;
-    float gravity = 400.0;
 
     float dt = 0.0;
 
@@ -648,7 +649,7 @@ class Game {
 
             // gravity
             if (creature.is_apply_gravity) {
-                velocity_step.y += this->dt * this->gravity;
+                velocity_step.y += this->dt * GRAVITY;
             }
 
             // -----------------------------------------------------------

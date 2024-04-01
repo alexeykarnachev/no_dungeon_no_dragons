@@ -1,0 +1,519 @@
+{ "frames": [
+   {
+    "filename": "golem_death.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..1",
+    "frame": { "x": 43, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..2",
+    "frame": { "x": 85, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..3",
+    "frame": { "x": 127, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..4",
+    "frame": { "x": 169, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..5",
+    "frame": { "x": 211, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..6",
+    "frame": { "x": 253, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..7",
+    "frame": { "x": 295, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..8",
+    "frame": { "x": 337, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..9",
+    "frame": { "x": 379, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..10",
+    "frame": { "x": 421, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..11",
+    "frame": { "x": 463, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..12",
+    "frame": { "x": 505, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..13",
+    "frame": { "x": 547, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..14",
+    "frame": { "x": 589, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..15",
+    "frame": { "x": 631, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..16",
+    "frame": { "x": 673, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..17",
+    "frame": { "x": 715, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..18",
+    "frame": { "x": 757, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..19",
+    "frame": { "x": 799, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..20",
+    "frame": { "x": 841, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..21",
+    "frame": { "x": 883, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..22",
+    "frame": { "x": 925, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..23",
+    "frame": { "x": 967, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..24",
+    "frame": { "x": 1009, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..25",
+    "frame": { "x": 1051, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..26",
+    "frame": { "x": 1093, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.sprite..27",
+    "frame": { "x": 1135, "y": 1, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..0",
+    "frame": { "x": 1, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..1",
+    "frame": { "x": 43, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..2",
+    "frame": { "x": 85, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..3",
+    "frame": { "x": 127, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..4",
+    "frame": { "x": 169, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..5",
+    "frame": { "x": 211, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..6",
+    "frame": { "x": 253, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..7",
+    "frame": { "x": 295, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..8",
+    "frame": { "x": 337, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..9",
+    "frame": { "x": 379, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..10",
+    "frame": { "x": 421, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..11",
+    "frame": { "x": 463, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..12",
+    "frame": { "x": 505, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..13",
+    "frame": { "x": 547, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..14",
+    "frame": { "x": 589, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..15",
+    "frame": { "x": 631, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..16",
+    "frame": { "x": 673, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..17",
+    "frame": { "x": 715, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..18",
+    "frame": { "x": 757, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..19",
+    "frame": { "x": 799, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..20",
+    "frame": { "x": 841, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..21",
+    "frame": { "x": 883, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..22",
+    "frame": { "x": 925, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..23",
+    "frame": { "x": 967, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..24",
+    "frame": { "x": 1009, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..25",
+    "frame": { "x": 1051, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..26",
+    "frame": { "x": 1093, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   },
+   {
+    "filename": "golem_death.mask_rigid..27",
+    "frame": { "x": 1135, "y": 47, "w": 40, "h": 44 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 40, "h": 44 },
+    "sourceSize": { "w": 40, "h": 44 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "golem_death.png",
+  "format": "RGBA8888",
+  "size": { "w": 1176, "h": 92 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}
