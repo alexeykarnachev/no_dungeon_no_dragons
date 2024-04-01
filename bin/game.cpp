@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <algorithm>
+#include <asm-generic/errno.h>
 #include <cmath>
 #include <cstdio>
 #include <filesystem>
@@ -23,6 +24,7 @@ namespace fs = std::filesystem;
 #define VIEW_LINE_Y_OFFSET -16
 
 #define GRAVITY 400
+#define X_FRICTION 100
 
 #define LANDING_MIN_SPEED 260
 #define LANDING_DAMAGE_FACTOR 1.0
@@ -287,9 +289,7 @@ class SpriteSheetAnimator {
 
     Sprite get_sprite(Vector2 position, bool is_hflip) {
         if (this->name.empty()) {
-            throw std::runtime_error(
-                "Failed to get the sprite, the animation is not playing"
-            );
+            return Sprite();
         }
 
         int n_frames = this->sprite_sheet->count_frames(this->name);
@@ -464,7 +464,7 @@ class Creature {
 
     bool is_hflip = false;
     bool is_grounded = false;
-    bool is_apply_gravity = false;
+    bool is_flying = false;
     bool can_see_player = false;
     bool can_attack_player = false;
     float landed_at_speed = 0.0;
@@ -482,7 +482,7 @@ class Creature {
         float attack_distance,
         bool can_view_vertically,
         Vector2 position,
-        bool is_apply_gravity
+        bool is_flying
     )
         : type(type)
         , state(state)
@@ -493,8 +493,12 @@ class Creature {
         , attack_distance(attack_distance)
         , can_view_vertically(can_view_vertically)
         , position(position)
-        , is_apply_gravity(is_apply_gravity)
+        , is_flying(is_flying)
         , health(max_health) {}
+
+    int get_view_dir() {
+        return this->is_hflip ? -1 : 1;
+    }
 
     Collider get_rigid_collider() {
         Collider collider = this->animator.get_collider("rigid", position, is_hflip);
@@ -577,7 +581,7 @@ class Game {
                                 0.0,
                                 true,
                                 {.x = object_x, .y = object_y},
-                                true
+                                false
                             );
                             this->camera.camera2d.target = creature.position;
                         } else if (property_value == "bat") {
@@ -591,7 +595,7 @@ class Game {
                                 25.0,
                                 true,
                                 {.x = object_x, .y = object_y},
-                                false
+                                true
                             );
                         } else if (property_value == "wolf") {
                             creature = Creature(
@@ -604,7 +608,7 @@ class Game {
                                 35.0,
                                 false,
                                 {.x = object_x, .y = object_y},
-                                true
+                                false
                             );
                         } else if (property_value == "golem") {
                             creature = Creature(
@@ -617,7 +621,7 @@ class Game {
                                 35.0,
                                 false,
                                 {.x = object_x, .y = object_y},
-                                true
+                                false
                             );
                         }
 
@@ -658,17 +662,16 @@ class Game {
             // -----------------------------------------------------------
             // immediate velocity and position needs to be computed by
             // the Character update logic
-            Vector2 velocity_step = Vector2Zero();
             Vector2 position_step = Vector2Zero();
-
-            // gravity
-            if (creature.is_apply_gravity) {
-                velocity_step.y += this->dt * GRAVITY;
-            }
 
             // -----------------------------------------------------------
             // update creature
             if (creature.type == CreatureType::PLAYER) {
+                // -> DEATH
+                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
+                    creature.state = CreatureState::DEATH;
+                }
+
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, JUMPING, FALLING, ATTACK_0
@@ -685,7 +688,7 @@ class Game {
                             creature.state = CreatureState::FALLING;
                         } else if (IsKeyPressed(KEY_W)) {
                             // -> JUMPING
-                            velocity_step.y -= 250.0;
+                            creature.velocity.y = -250.0;
                             creature.state = CreatureState::JUMPING;
                         } else if (IsKeyPressed(KEY_SPACE)) {
                             // -> ATTACK_0
@@ -711,7 +714,7 @@ class Game {
                             creature.state = CreatureState::FALLING;
                         } else if (IsKeyPressed(KEY_W)) {
                             // -> JUMPING
-                            velocity_step.y -= 250.0;
+                            creature.velocity.y = -250.0;
                             creature.state = CreatureState::JUMPING;
                         } else if (IsKeyPressed(KEY_LEFT_CONTROL)) {
                             // -> DASHING
@@ -800,8 +803,8 @@ class Game {
                         creature.animator.play("knight_roll", 0.1, false);
 
                         if (!creature.animator.is_finished()) {
-                            float dir = creature.is_hflip ? -1.0 : 1.0;
-                            position_step.x += dir * creature.move_speed * this->dt;
+                            position_step.x += creature.get_view_dir()
+                                               * creature.move_speed * this->dt;
 
                             // continue DASHING if the animation is not finished yet
                             break;
@@ -914,12 +917,15 @@ class Game {
                         break;
                     default: break;
                 }
-
-                // -> DEATH
-                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
-                    creature.state = CreatureState::DEATH;
-                }
             } else if (creature.type == CreatureType::BAT) {
+                creature.is_flying = creature.health > EPSILON
+                                     && fabs(creature.velocity.x) < EPSILON;
+
+                // -> FALLING (if not dead, always falls if gravity should be applied)
+                if (creature.state != CreatureState::DEATH && !creature.is_flying) {
+                    creature.state = CreatureState::FALLING;
+                }
+
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
@@ -957,21 +963,20 @@ class Game {
                             creature.state = CreatureState::IDLE;
                         } else if (!creature.can_attack_player && creature.animator.progress < 0.3) {
                             // -> MOVING
-                            creature.state = CreatureState::IDLE;
+                            creature.state = CreatureState::MOVING;
                         }
 
                         break;
                     case CreatureState::FALLING:
-                        // -> DEATH
+                        // -> IDLE, DEATH
                         creature.animator.play("bat_fall", 0.1, false);
 
-                        // continue FALLING if the animation is not finished yet
-                        // or the BAT is not grounded yet
-                        if (!creature.animator.is_finished() || !creature.is_grounded)
-                            break;
-
-                        // -> DEATH
-                        creature.state = CreatureState::DEATH;
+                        if (creature.health <= 0.0 && creature.animator.is_finished()
+                            && creature.is_grounded) {
+                            creature.state = CreatureState::DEATH;
+                        } else if (creature.is_flying) {
+                            creature.state = CreatureState::IDLE;
+                        }
 
                         break;
                     case CreatureState::DEATH:
@@ -980,13 +985,12 @@ class Game {
                         break;
                     default: break;
                 }
-
-                // -> FALLING (pre-death)
-                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
-                    creature.is_apply_gravity = true;
-                    creature.state = CreatureState::FALLING;
-                }
             } else if (creature.type == CreatureType::WOLF) {
+                // -> DEATH
+                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
+                    creature.state = CreatureState::DEATH;
+                }
+
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
@@ -1024,7 +1028,7 @@ class Game {
                             creature.state = CreatureState::IDLE;
                         } else if (!creature.can_attack_player && creature.animator.progress < 0.3) {
                             // -> MOVING
-                            creature.state = CreatureState::IDLE;
+                            creature.state = CreatureState::MOVING;
                         }
 
                         break;
@@ -1034,12 +1038,12 @@ class Game {
                         break;
                     default: break;
                 }
-
+            } else if (creature.type == CreatureType::GOLEM) {
                 // -> DEATH
                 if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
                     creature.state = CreatureState::DEATH;
                 }
-            } else if (creature.type == CreatureType::GOLEM) {
+
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
@@ -1077,7 +1081,7 @@ class Game {
                             creature.state = CreatureState::IDLE;
                         } else if (!creature.can_attack_player && creature.animator.progress < 0.3) {
                             // -> MOVING
-                            creature.state = CreatureState::IDLE;
+                            creature.state = CreatureState::MOVING;
                         }
 
                         break;
@@ -1087,11 +1091,6 @@ class Game {
                         break;
                     default: break;
                 }
-
-                // -> DEATH
-                if (creature.state != CreatureState::DEATH && creature.health <= 0.0) {
-                    creature.state = CreatureState::DEATH;
-                }
             }
 
             // -----------------------------------------------------------
@@ -1099,15 +1098,38 @@ class Game {
             creature.landed_at_speed = 0.0;
 
             // -----------------------------------------------------------
-            // apply immediate velocity and position steps
-            creature.velocity = Vector2Add(velocity_step, creature.velocity);
+            // apply gravity and x friction
+            if (creature.is_flying) {
+                creature.velocity = Vector2Zero();
+            } else {
+                creature.velocity.y += this->dt * GRAVITY;
+                if (fabs(creature.velocity.x) < this->dt * X_FRICTION) {
+                    creature.velocity.x = 0.0;
+                } else if (creature.velocity.x > 0.0) {
+                    creature.velocity.x -= this->dt * X_FRICTION;
+                } else {
+                    creature.velocity.x += this->dt * X_FRICTION;
+                }
+            }
+
+            // don't apply immediate position step if creature is under
+            // some velocity effect
+            if (fabs(creature.velocity.y) > EPSILON) {
+                position_step.y = 0.0;
+            }
+            if (fabs(creature.velocity.x) > EPSILON) {
+                position_step.x = 0.0;
+            }
+
+            // flip creature only if position_step.x != 0
+            if (fabs(position_step.x) > EPSILON) {
+                creature.is_hflip = position_step.x < 0.0;
+            }
+
             position_step = Vector2Add(
                 position_step, Vector2Scale(creature.velocity, this->dt)
             );
             creature.position = Vector2Add(creature.position, position_step);
-            if (fabs(position_step.x) > EPSILON) {
-                creature.is_hflip = position_step.x < 0.0;
-            }
 
             // -----------------------------------------------------------
             // push colliders
@@ -1142,7 +1164,7 @@ class Game {
             if (mtv.y < -EPSILON && rigid_creature->velocity.y > EPSILON) {
                 // hit the ground
                 rigid_creature->landed_at_speed = rigid_creature->velocity.y;
-                rigid_creature->velocity.y = 0.0;
+                rigid_creature->velocity = Vector2Zero();
                 rigid_creature->is_grounded = true;
             } else if (mtv.y > EPSILON && rigid_creature->velocity.y < -EPSILON) {
                 // hit the ceil
@@ -1151,7 +1173,7 @@ class Game {
                 rigid_creature->is_grounded = false;
             }
 
-            // resolve against attack colliders
+            // resolve attack colliders
             for (Collider &attack_collider : this->attack_colliders) {
                 if (!attack_collider.id) continue;
 
@@ -1178,6 +1200,8 @@ class Game {
 
                 rigid_creature->health -= attacker_creature->damage;
                 rigid_creature->last_received_attack_id = attack_collider.id;
+                rigid_creature->velocity = {
+                    .x = attacker_creature->get_view_dir() * 100.0f, .y = -100.0f};
             }
         }
 
@@ -1192,7 +1216,6 @@ class Game {
             float dist = Vector2Distance(view_line_start, view_line_end);
 
             // can't see and can't attack the dead player.
-            // TODO: maybe factor out into is_dead getter?
             if (player.health <= 0.0) continue;
 
             // PLAYER can't see or attack himself

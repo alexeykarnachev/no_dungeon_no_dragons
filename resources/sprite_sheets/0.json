@@ -1147,9 +1147,9 @@
                 "masks": {
                     "rigid": {
                         "name": "bat_death",
-                        "x": 5,
+                        "x": 29,
                         "y": 2,
-                        "w": 52,
+                        "w": 6,
                         "h": 3,
                         "frame_idx": 0
                     }
@@ -1167,9 +1167,9 @@
                 "masks": {
                     "rigid": {
                         "name": "bat_death",
-                        "x": 5,
+                        "x": 29,
                         "y": 2,
-                        "w": 52,
+                        "w": 6,
                         "h": 3,
                         "frame_idx": 1
                     }
@@ -1187,9 +1187,9 @@
                 "masks": {
                     "rigid": {
                         "name": "bat_death",
-                        "x": 5,
+                        "x": 29,
                         "y": 2,
-                        "w": 52,
+                        "w": 6,
                         "h": 3,
                         "frame_idx": 2
                     }
@@ -1207,9 +1207,9 @@
                 "masks": {
                     "rigid": {
                         "name": "bat_death",
-                        "x": 5,
+                        "x": 29,
                         "y": 2,
-                        "w": 52,
+                        "w": 6,
                         "h": 3,
                         "frame_idx": 3
                     }
@@ -1227,9 +1227,9 @@
                 "masks": {
                     "rigid": {
                         "name": "bat_death",
-                        "x": 5,
+                        "x": 29,
                         "y": 2,
-                        "w": 52,
+                        "w": 6,
                         "h": 3,
                         "frame_idx": 4
                     }
