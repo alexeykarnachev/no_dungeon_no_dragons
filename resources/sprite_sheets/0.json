@@ -3795,14 +3795,6 @@
                     "frame_idx": 3
                 },
                 "masks": {
-                    "attack": {
-                        "name": "knight_attack_0",
-                        "x": 40,
-                        "y": 14,
-                        "w": 20,
-                        "h": 2,
-                        "frame_idx": 3
-                    },
                     "rigid": {
                         "name": "knight_attack_0",
                         "x": 25,
