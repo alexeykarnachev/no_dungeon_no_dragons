@@ -590,7 +590,7 @@ class Game {
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 100.0,
-                                100.0,
+                                1000.0,
                                 50.0,
                                 0.0,
                                 true,
@@ -603,7 +603,7 @@ class Game {
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 50.0,
-                                100.0,
+                                300.0,
                                 50.0,
                                 25.0,
                                 true,
@@ -615,7 +615,7 @@ class Game {
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 80.0,
-                                100.0,
+                                300.0,
                                 50.0,
                                 35.0,
                                 false,
@@ -627,7 +627,7 @@ class Game {
                                 CreatureState::IDLE,
                                 SpriteSheetAnimator(&this->sprite_sheets["0"]),
                                 60.0,
-                                100.0,
+                                400.0,
                                 50.0,
                                 35.0,
                                 false,
@@ -1221,7 +1221,18 @@ class Game {
                     rigid_creature->position,
                     attacker_creature->is_hflip
                 );
-                splash.animator.play("blood_splash_0", 0.1, false);
+                switch (attacker_creature->state) {
+                    case CreatureState::ATTACK_0:
+                        splash.animator.play("blood_splash_0", 0.05, false);
+                        break;
+                    case CreatureState::ATTACK_1:
+                        splash.animator.play("blood_splash_1", 0.05, false);
+                        break;
+                    case CreatureState::ATTACK_2:
+                        splash.animator.play("blood_splash_2", 0.05, false);
+                        break;
+                    default: splash.animator.play("blood_splash_0", 0.05, false); break;
+                }
                 this->creatures.push_back(splash);
             }
         }
@@ -1343,20 +1354,20 @@ class Game {
 #if 1
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &creature : this->creatures) {
-            Sprite sprite = creature.animator.get_sprite(
-                creature.position, creature.is_hflip
-            );
-            Rectangle *mask = sprite.get_mask("rigid");
-            if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-            }
+        // for (auto &creature : this->creatures) {
+        //     Sprite sprite = creature.animator.get_sprite(
+        //         creature.position, creature.is_hflip
+        //     );
+        //     Rectangle *mask = sprite.get_mask("rigid");
+        //     if (mask) {
+        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+        //     }
 
-            mask = sprite.get_mask("attack");
-            if (mask) {
-                DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
-            }
-        }
+        //     mask = sprite.get_mask("attack");
+        //     if (mask) {
+        //         DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
+        //     }
+        // }
 
         // ---------------------------------------------------------------
         // draw colliders
