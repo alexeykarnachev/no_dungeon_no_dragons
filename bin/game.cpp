@@ -437,9 +437,11 @@ enum class CreatureState {
     ATTACK_1,
     ATTACK_2,
     DEATH,
+    DELETE,
 };
 
 enum class CreatureType {
+    SPRITE,
     PLAYER,
     BAT,
     WOLF,
@@ -481,8 +483,7 @@ class Creature {
         float damage,
         float attack_distance,
         bool can_view_vertically,
-        Vector2 position,
-        bool is_flying
+        Vector2 position
     )
         : type(type)
         , state(state)
@@ -493,8 +494,21 @@ class Creature {
         , attack_distance(attack_distance)
         , can_view_vertically(can_view_vertically)
         , position(position)
-        , is_flying(is_flying)
         , health(max_health) {}
+
+    static Creature create_sprite(
+        SpriteSheetAnimator animator, Vector2 position, bool is_hflip
+    ) {
+        Creature sprite;
+        sprite.type = CreatureType::SPRITE;
+        sprite.state = CreatureState::IDLE;
+        sprite.animator = animator;
+        sprite.position = position;
+        sprite.is_hflip = is_hflip;
+        sprite.is_flying = true;
+
+        return sprite;
+    }
 
     int get_view_dir() {
         return this->is_hflip ? -1 : 1;
@@ -580,8 +594,7 @@ class Game {
                                 50.0,
                                 0.0,
                                 true,
-                                {.x = object_x, .y = object_y},
-                                false
+                                {.x = object_x, .y = object_y}
                             );
                             this->camera.camera2d.target = creature.position;
                         } else if (property_value == "bat") {
@@ -594,8 +607,7 @@ class Game {
                                 50.0,
                                 25.0,
                                 true,
-                                {.x = object_x, .y = object_y},
-                                true
+                                {.x = object_x, .y = object_y}
                             );
                         } else if (property_value == "wolf") {
                             creature = Creature(
@@ -607,8 +619,7 @@ class Game {
                                 50.0,
                                 35.0,
                                 false,
-                                {.x = object_x, .y = object_y},
-                                false
+                                {.x = object_x, .y = object_y}
                             );
                         } else if (property_value == "golem") {
                             creature = Creature(
@@ -620,8 +631,7 @@ class Game {
                                 50.0,
                                 35.0,
                                 false,
-                                {.x = object_x, .y = object_y},
-                                false
+                                {.x = object_x, .y = object_y}
                             );
                         }
 
@@ -1091,6 +1101,10 @@ class Game {
                         break;
                     default: break;
                 }
+            } else if (creature.type == CreatureType::SPRITE) {
+                if (creature.animator.is_finished()) {
+                    creature.state = CreatureState::DELETE;
+                }
             }
 
             // -----------------------------------------------------------
@@ -1200,6 +1214,15 @@ class Game {
                 rigid_creature->last_received_attack_id = attack_collider.id;
                 rigid_creature->velocity = {
                     .x = attacker_creature->get_view_dir() * 100.0f, .y = -100.0f};
+
+                // create blood splash sprite
+                Creature splash = Creature::create_sprite(
+                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    rigid_creature->position,
+                    attacker_creature->is_hflip
+                );
+                splash.animator.play("blood_splash_0", 0.1, false);
+                this->creatures.push_back(splash);
             }
         }
 
@@ -1253,6 +1276,19 @@ class Game {
                 creature.can_attack_player = dist < creature.attack_distance;
             }
         }
+
+        // -----------------------------------------------------------
+        // clean up DELETE creatures
+        int free_idx = 0;
+        for (int i; i < this->creatures.size(); ++i) {
+            Creature &creature = this->creatures[i];
+            if (creature.state == CreatureState::DELETE && free_idx == -1) {
+                free_idx = i;
+            } else if (creature.state != CreatureState::DELETE && free_idx != -1) {
+                this->creatures[free_idx++] = creature;
+            }
+        }
+        this->creatures.resize(free_idx);
     }
 
     void draw() {
