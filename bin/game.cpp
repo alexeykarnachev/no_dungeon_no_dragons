@@ -275,7 +275,6 @@ class Collider {
   public:
     Rectangle mask;
     uint32_t id;
-    void *owner = NULL;
 
     Collider()
         : mask()
@@ -578,7 +577,6 @@ class Creature {
         Collider collider = this->animator.get_collider(
             "rigid", this->get_pivot(), is_hflip
         );
-        collider.owner = this;
         return collider;
     }
 
@@ -586,7 +584,6 @@ class Creature {
         Collider collider = this->animator.get_collider(
             "attack", this->get_pivot(), is_hflip
         );
-        collider.owner = this;
         return collider;
     }
 };
@@ -600,8 +597,6 @@ class Game {
     TiledLevel tiled_level;
 
     std::vector<Creature> creatures;
-    std::vector<Collider> attack_colliders;
-    std::vector<Collider> rigid_colliders;
     std::vector<Rectangle> static_rigid_rects;
 
     GameCamera camera;
@@ -724,10 +719,7 @@ class Game {
         }
 
         this->dt = GetFrameTime();
-
         this->camera.camera2d.target = this->creatures[0].position;
-        this->attack_colliders.clear();
-        this->rigid_colliders.clear();
 
         Creature &player = this->creatures[0];
         for (auto &creature : this->creatures) {
@@ -1206,19 +1198,13 @@ class Game {
                 position_step, Vector2Scale(creature.velocity, this->dt)
             );
             creature.position = Vector2Add(creature.position, position_step);
-
-            // -----------------------------------------------------------
-            // push colliders
-            this->attack_colliders.push_back(creature.get_attack_collider());
-            this->rigid_colliders.push_back(creature.get_rigid_collider());
         }
 
         // -----------------------------------------------------------
         // resolve colliders
-        for (Collider &rigid_collider : this->rigid_colliders) {
+        for (Creature &rigid_creature : this->creatures) {
+            Collider rigid_collider = rigid_creature.get_rigid_collider();
             if (!rigid_collider.id) continue;
-
-            Creature *rigid_creature = (Creature *)rigid_collider.owner;
 
             // compute mtv
             Vector2 mtv = Vector2Zero();
@@ -1235,58 +1221,57 @@ class Game {
             }
 
             // resolve mtv
-            rigid_creature->position = Vector2Add(rigid_creature->position, mtv);
+            rigid_creature.position = Vector2Add(rigid_creature.position, mtv);
 
-            if (mtv.y < -EPSILON && rigid_creature->velocity.y > EPSILON) {
+            if (mtv.y < -EPSILON && rigid_creature.velocity.y > EPSILON) {
                 // hit the ground
-                rigid_creature->landed_at_speed = rigid_creature->velocity.y;
-                rigid_creature->velocity = Vector2Zero();
-                rigid_creature->is_grounded = true;
-            } else if (mtv.y > EPSILON && rigid_creature->velocity.y < -EPSILON) {
+                rigid_creature.landed_at_speed = rigid_creature.velocity.y;
+                rigid_creature.velocity = Vector2Zero();
+                rigid_creature.is_grounded = true;
+            } else if (mtv.y > EPSILON && rigid_creature.velocity.y < -EPSILON) {
                 // hit the ceil
-                rigid_creature->velocity.y = 0.0;
+                rigid_creature.velocity.y = 0.0;
             } else {
-                rigid_creature->is_grounded = false;
+                rigid_creature.is_grounded = false;
             }
 
             // resolve attack colliders
-            for (Collider &attack_collider : this->attack_colliders) {
-                if (!attack_collider.id) continue;
-
-                Creature *attacker_creature = (Creature *)attack_collider.owner;
+            for (Creature &attacker_creature : this->creatures) {
+                Collider attacker_collider = attacker_creature.get_attack_collider();
+                if (!attacker_collider.id) continue;
 
                 // creature can't attack itself
-                if (attacker_creature == rigid_creature) continue;
+                if (&attacker_creature == &rigid_creature) continue;
 
                 // creature is already dead
-                if (rigid_creature->health <= 0.0) continue;
+                if (rigid_creature.health <= 0.0) continue;
 
                 // one of the creatures must be the PLAYER
-                if (rigid_creature->type != CreatureType::PLAYER
-                    && attacker_creature->type != CreatureType::PLAYER)
+                if (rigid_creature.type != CreatureType::PLAYER
+                    && attacker_creature.type != CreatureType::PLAYER)
                     continue;
 
                 // ignore already received attack
-                if (rigid_creature->last_received_attack_id == attack_collider.id)
+                if (rigid_creature.last_received_attack_id == attacker_collider.id)
                     continue;
 
                 // colliders must overlap
-                if (!CheckCollisionRecs(rigid_collider.mask, attack_collider.mask))
+                if (!CheckCollisionRecs(rigid_collider.mask, attacker_collider.mask))
                     continue;
 
-                rigid_creature->health -= attacker_creature->damage;
-                rigid_creature->last_received_attack_id = attack_collider.id;
-                rigid_creature->velocity = {
-                    .x = attacker_creature->get_view_dir() * 100.0f, .y = -100.0f};
+                rigid_creature.health -= attacker_creature.damage;
+                rigid_creature.last_received_attack_id = attacker_collider.id;
+                rigid_creature.velocity = {
+                    .x = attacker_creature.get_view_dir() * 100.0f, .y = -100.0f};
 
                 // create blood splash sprite
                 Creature splash = Creature::create_sprite(
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     get_rect_center(rigid_collider.mask),
-                    attacker_creature->is_hflip,
+                    attacker_creature.is_hflip,
                     PivotType::CENTER_CENTER
                 );
-                switch (attacker_creature->state) {
+                switch (attacker_creature.state) {
                     case CreatureState::ATTACK_0:
                         splash.animator.play("blood_splash_0", 0.04, false);
                         break;
@@ -1416,12 +1401,12 @@ class Game {
         }
         EndShaderMode();
 
-#if 0
+#if 1
         // ---------------------------------------------------------------
         // draw masks
-        for (auto &creature : this->creatures) {
-            DrawCircle(creature.position.x, creature.position.y, 2, RED);
-        }
+        // for (auto &creature : this->creatures) {
+        //     DrawCircle(creature.position.x, creature.position.y, 2, RED);
+        // }
 
         for (auto &creature : this->creatures) {
             Sprite sprite = creature.get_sprite();
