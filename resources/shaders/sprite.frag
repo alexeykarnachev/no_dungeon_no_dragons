@@ -16,13 +16,5 @@ vec4 texture2DAA(sampler2D tex, vec2 uv) {
 void main() {
     vec4 color = texture2DAA(texture0, fragTexCoord);
     if (color.a < 0.9) discard;
-
     fs_color = color;
-
-    // vec2 uv = fragTexCoord * tex_size;
-
-    // uv = floor(uv) + min(fract(uv) / fwidth(uv), 1.0) - 0.5;
-    // uv /= tex_size;
-
-    // fs_color = texture(texture0, uv);
 }

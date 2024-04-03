@@ -1,56 +1,56 @@
 { "frames": [
    {
     "filename": "blood_splash_2.sprite..0",
-    "frame": { "x": 1, "y": 1, "w": 60, "h": 60 },
+    "frame": { "x": 1, "y": 1, "w": 60, "h": 99 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 60 },
-    "sourceSize": { "w": 60, "h": 60 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 99 },
+    "sourceSize": { "w": 60, "h": 99 },
     "duration": 70
    },
    {
     "filename": "blood_splash_2.sprite..1",
-    "frame": { "x": 63, "y": 1, "w": 60, "h": 60 },
+    "frame": { "x": 63, "y": 1, "w": 60, "h": 99 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 60 },
-    "sourceSize": { "w": 60, "h": 60 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 99 },
+    "sourceSize": { "w": 60, "h": 99 },
     "duration": 70
    },
    {
     "filename": "blood_splash_2.sprite..2",
-    "frame": { "x": 125, "y": 1, "w": 60, "h": 60 },
+    "frame": { "x": 125, "y": 1, "w": 60, "h": 99 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 60 },
-    "sourceSize": { "w": 60, "h": 60 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 99 },
+    "sourceSize": { "w": 60, "h": 99 },
     "duration": 70
    },
    {
     "filename": "blood_splash_2.sprite..3",
-    "frame": { "x": 187, "y": 1, "w": 60, "h": 60 },
+    "frame": { "x": 187, "y": 1, "w": 60, "h": 99 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 60 },
-    "sourceSize": { "w": 60, "h": 60 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 99 },
+    "sourceSize": { "w": 60, "h": 99 },
     "duration": 70
    },
    {
     "filename": "blood_splash_2.sprite..4",
-    "frame": { "x": 249, "y": 1, "w": 60, "h": 60 },
+    "frame": { "x": 249, "y": 1, "w": 60, "h": 99 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 60 },
-    "sourceSize": { "w": 60, "h": 60 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 99 },
+    "sourceSize": { "w": 60, "h": 99 },
     "duration": 70
    },
    {
     "filename": "blood_splash_2.sprite..5",
-    "frame": { "x": 311, "y": 1, "w": 60, "h": 60 },
+    "frame": { "x": 311, "y": 1, "w": 60, "h": 99 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 60 },
-    "sourceSize": { "w": 60, "h": 60 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 60, "h": 99 },
+    "sourceSize": { "w": 60, "h": 99 },
     "duration": 70
    }
  ],
@@ -59,7 +59,7 @@
   "version": "1.3-rc2-x64",
   "image": "blood_splash_2.png",
   "format": "RGBA8888",
-  "size": { "w": 372, "h": 62 },
+  "size": { "w": 372, "h": 101 },
   "scale": "1",
   "layers": [
    { "name": "sprite", "opacity": 255, "blendMode": "normal" }

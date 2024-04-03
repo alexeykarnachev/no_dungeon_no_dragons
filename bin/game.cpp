@@ -77,6 +77,10 @@ Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_n
 
 // -----------------------------------------------------------------------
 // geometry and collisions
+Vector2 get_rect_center(Rectangle rect) {
+    return {.x = rect.x + 0.5f * rect.width, .y = rect.y + 0.5f * rect.height};
+}
+
 float get_line_angle(Vector2 start, Vector2 end) {
     float dx = end.x - start.x;
     float dy = end.y - start.y;
@@ -134,6 +138,23 @@ Rectangle rect_from_json(json data) {
     return rect;
 }
 
+enum class PivotType {
+    CENTER_BOTTOM,
+    LEFT_CENTER,
+    RIGHT_CENTER,
+    CENTER_CENTER,
+};
+
+class Pivot {
+  public:
+    PivotType type;
+    Vector2 position;
+
+    Pivot(PivotType type, Vector2 position)
+        : type(type)
+        , position(position) {}
+};
+
 class Sprite {
   private:
     Texture2D texture;
@@ -155,15 +176,42 @@ class Sprite {
         , dst(dst)
         , masks(masks) {}
 
-    Sprite(json frame_json, Texture2D texture, Vector2 position, bool is_hflip)
+    Sprite(json frame_json, Texture2D texture, Pivot pivot, bool is_hflip)
         : texture(texture) {
+
+        // flip sprite pivot if is_hflip = true
+        if (is_hflip) {
+            if (pivot.type == PivotType::LEFT_CENTER) {
+                pivot.type = PivotType::RIGHT_CENTER;
+            } else if (pivot.type == PivotType::RIGHT_CENTER) {
+                pivot.type = PivotType::LEFT_CENTER;
+            }
+        }
+
         json sprite_json = frame_json["sprite"];
         json masks_json = frame_json["masks"];
 
         Rectangle src = rect_from_json(sprite_json);
+
+        // find sprite's top right corner (because that's how sprites are rendered)
+        Vector2 offset;
+        switch (pivot.type) {
+            case PivotType::CENTER_BOTTOM:
+                offset = {-0.5f * src.width, -src.height};
+                break;
+            case PivotType::LEFT_CENTER: offset = {0.0, -0.5f * src.height}; break;
+            case PivotType::RIGHT_CENTER:
+                offset = {-src.width, -0.5f * src.height};
+                break;
+            case PivotType::CENTER_CENTER:
+                offset = {-0.5f * src.width, -0.5f * src.height};
+                break;
+        }
+
         Rectangle dst = src;
-        dst.x = position.x - 0.5 * dst.width;
-        dst.y = position.y - dst.height;
+
+        dst.x = pivot.position.x + offset.x;
+        dst.y = pivot.position.y + offset.y;
 
         std::unordered_map<std::string, Rectangle> masks;
         for (auto it = masks_json.begin(); it != masks_json.end(); ++it) {
@@ -171,10 +219,8 @@ class Sprite {
             const auto &mask_json = it.value();
 
             Rectangle mask = rect_from_json(mask_json);
-            Vector2 origin = {position.x - 0.5f * src.width, position.y - src.height};
-            mask.y = origin.y + mask.y;
-            mask.x = is_hflip ? origin.x - mask.x + src.width - mask.width
-                              : origin.x + mask.x;
+            mask.y = dst.y + mask.y;
+            mask.x = is_hflip ? dst.x - mask.x + src.width - mask.width : dst.x + mask.x;
             this->masks[mask_name] = mask;
         }
 
@@ -214,9 +260,9 @@ class SpriteSheet {
         return meta["frames"][name].size();
     }
 
-    Sprite get_sprite(std::string &name, int idx, Vector2 position, bool is_hflip) {
+    Sprite get_sprite(std::string &name, int idx, Pivot pivot, bool is_hflip) {
         json frame_json = meta["frames"][name][idx];
-        Sprite sprite(frame_json, this->texture, position, is_hflip);
+        Sprite sprite(frame_json, this->texture, pivot, is_hflip);
         return sprite;
     }
 
@@ -287,21 +333,19 @@ class SpriteSheetAnimator {
         return this->progress == 1.0 && !this->is_repeat;
     }
 
-    Sprite get_sprite(Vector2 position, bool is_hflip) {
+    Sprite get_sprite(Pivot pivot, bool is_hflip) {
         if (this->name.empty()) {
             return Sprite();
         }
 
         int n_frames = this->sprite_sheet->count_frames(this->name);
         int idx = std::round(this->progress * (n_frames - 1.0));
-        Sprite sprite = this->sprite_sheet->get_sprite(
-            this->name, idx, position, is_hflip
-        );
+        Sprite sprite = this->sprite_sheet->get_sprite(this->name, idx, pivot, is_hflip);
         return sprite;
     }
 
-    Collider get_collider(std::string name, Vector2 position, bool is_hflip) {
-        Sprite sprite = this->get_sprite(position, is_hflip);
+    Collider get_collider(std::string name, Pivot pivot, bool is_hflip) {
+        Sprite sprite = this->get_sprite(pivot, is_hflip);
         Rectangle *mask = sprite.get_mask(name);
         if (!mask) return Collider();
 
@@ -449,6 +493,9 @@ enum class CreatureType {
 };
 
 class Creature {
+  private:
+    PivotType sprite_pivot_type = PivotType::CENTER_BOTTOM;
+
   public:
     CreatureType type;
     CreatureState state;
@@ -497,7 +544,10 @@ class Creature {
         , health(max_health) {}
 
     static Creature create_sprite(
-        SpriteSheetAnimator animator, Vector2 position, bool is_hflip
+        SpriteSheetAnimator animator,
+        Vector2 position,
+        bool is_hflip,
+        PivotType sprite_pivot_type
     ) {
         Creature sprite;
         sprite.type = CreatureType::SPRITE;
@@ -505,6 +555,7 @@ class Creature {
         sprite.animator = animator;
         sprite.position = position;
         sprite.is_hflip = is_hflip;
+        sprite.sprite_pivot_type = sprite_pivot_type;
         sprite.is_flying = true;
 
         return sprite;
@@ -514,14 +565,27 @@ class Creature {
         return this->is_hflip ? -1 : 1;
     }
 
+    Pivot get_pivot() {
+        return Pivot(this->sprite_pivot_type, this->position);
+    }
+
+    Sprite get_sprite() {
+        Sprite sprite = this->animator.get_sprite(this->get_pivot(), this->is_hflip);
+        return sprite;
+    }
+
     Collider get_rigid_collider() {
-        Collider collider = this->animator.get_collider("rigid", position, is_hflip);
+        Collider collider = this->animator.get_collider(
+            "rigid", this->get_pivot(), is_hflip
+        );
         collider.owner = this;
         return collider;
     }
 
     Collider get_attack_collider() {
-        Collider collider = this->animator.get_collider("attack", position, is_hflip);
+        Collider collider = this->animator.get_collider(
+            "attack", this->get_pivot(), is_hflip
+        );
         collider.owner = this;
         return collider;
     }
@@ -1218,20 +1282,21 @@ class Game {
                 // create blood splash sprite
                 Creature splash = Creature::create_sprite(
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                    rigid_creature->position,
-                    attacker_creature->is_hflip
+                    get_rect_center(rigid_collider.mask),
+                    attacker_creature->is_hflip,
+                    PivotType::CENTER_CENTER
                 );
                 switch (attacker_creature->state) {
                     case CreatureState::ATTACK_0:
-                        splash.animator.play("blood_splash_0", 0.05, false);
+                        splash.animator.play("blood_splash_0", 0.04, false);
                         break;
                     case CreatureState::ATTACK_1:
-                        splash.animator.play("blood_splash_1", 0.05, false);
+                        splash.animator.play("blood_splash_3", 0.04, false);
                         break;
                     case CreatureState::ATTACK_2:
-                        splash.animator.play("blood_splash_2", 0.05, false);
+                        splash.animator.play("blood_splash_2", 0.04, false);
                         break;
-                    default: splash.animator.play("blood_splash_0", 0.05, false); break;
+                    default: splash.animator.play("blood_splash_0", 0.04, false); break;
                 }
                 this->creatures.push_back(splash);
             }
@@ -1290,8 +1355,8 @@ class Game {
 
         // -----------------------------------------------------------
         // clean up DELETE creatures
-        int free_idx = 0;
-        for (int i; i < this->creatures.size(); ++i) {
+        int free_idx = -1;
+        for (int i = 0; i < this->creatures.size(); ++i) {
             Creature &creature = this->creatures[i];
             if (creature.state == CreatureState::DELETE && free_idx == -1) {
                 free_idx = i;
@@ -1299,7 +1364,9 @@ class Game {
                 this->creatures[free_idx++] = creature;
             }
         }
-        this->creatures.resize(free_idx);
+        if (free_idx != -1) {
+            this->creatures.resize(free_idx);
+        }
     }
 
     void draw() {
@@ -1344,30 +1411,30 @@ class Game {
         // draw sprites
         BeginShaderMode(this->shaders["sprite"]);
         for (auto &creature : this->creatures) {
-            Sprite sprite = creature.animator.get_sprite(
-                creature.position, creature.is_hflip
-            );
+            Sprite sprite = creature.get_sprite();
             sprite.draw();
         }
         EndShaderMode();
 
-#if 1
+#if 0
         // ---------------------------------------------------------------
         // draw masks
-        // for (auto &creature : this->creatures) {
-        //     Sprite sprite = creature.animator.get_sprite(
-        //         creature.position, creature.is_hflip
-        //     );
-        //     Rectangle *mask = sprite.get_mask("rigid");
-        //     if (mask) {
-        //         DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
-        //     }
+        for (auto &creature : this->creatures) {
+            DrawCircle(creature.position.x, creature.position.y, 2, RED);
+        }
 
-        //     mask = sprite.get_mask("attack");
-        //     if (mask) {
-        //         DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
-        //     }
-        // }
+        for (auto &creature : this->creatures) {
+            Sprite sprite = creature.get_sprite();
+            Rectangle *mask = sprite.get_mask("rigid");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(GREEN, 0.2));
+            }
+
+            mask = sprite.get_mask("attack");
+            if (mask) {
+                DrawRectangleRec(*mask, ColorAlpha(YELLOW, 0.2));
+            }
+        }
 
         // ---------------------------------------------------------------
         // draw colliders
