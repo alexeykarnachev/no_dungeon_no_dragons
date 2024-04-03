@@ -872,20 +872,20 @@ class Game {
                         // -> IDLE, FALLING, ATTACK_0
                         creature.animator.play("knight_roll", 0.1, false);
 
-                        if (!creature.animator.is_finished()) {
-                            position_step.x += creature.get_view_dir()
-                                               * creature.move_speed * this->dt;
-
-                            // continue DASHING if the animation is not finished yet
-                            break;
-                        }
-
                         static float attack_0_pressed_at_progress = -INFINITY;
 
                         // check if ATTACK_0 is pressed while DASHING
                         if (IsKeyPressed(KEY_SPACE)
                             && attack_0_pressed_at_progress == -INFINITY) {
                             attack_0_pressed_at_progress = creature.animator.progress;
+                        }
+
+                        if (!creature.animator.is_finished()) {
+                            position_step.x += creature.get_view_dir()
+                                               * creature.move_speed * this->dt;
+
+                            // continue DASHING if the animation is not finished yet
+                            break;
                         }
 
                         if (!creature.is_grounded) {
