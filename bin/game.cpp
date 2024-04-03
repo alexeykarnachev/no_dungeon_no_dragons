@@ -516,6 +516,7 @@ class Creature {
     bool can_see_player = false;
     bool can_attack_player = false;
     float landed_at_speed = 0.0;
+    float last_received_damage_time = -1.0;
     uint32_t last_received_attack_id = 0;
 
     Creature() {}
@@ -602,6 +603,7 @@ class Game {
     GameCamera camera;
 
     float dt = 0.0;
+    float time = 0.0;
 
     Game() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -719,6 +721,7 @@ class Game {
         }
 
         this->dt = GetFrameTime();
+        this->time += this->dt;
         this->camera.camera2d.target = this->creatures[0].position;
 
         Creature &player = this->creatures[0];
@@ -841,6 +844,7 @@ class Game {
                             creature.health -= LANDING_DAMAGE_FACTOR
                                                * (creature.landed_at_speed
                                                   - LANDING_MIN_SPEED);
+                            creature.last_received_damage_time = this->time;
                             creature.state = CreatureState::LANDING;
                         } else if (position_step.x) {
                             // -> MOVING
@@ -1261,29 +1265,11 @@ class Game {
 
                 rigid_creature.health -= attacker_creature.damage;
                 rigid_creature.last_received_attack_id = attacker_collider.id;
-                rigid_creature.velocity = {
-                    .x = attacker_creature.get_view_dir() * 100.0f, .y = -100.0f};
+                rigid_creature.last_received_damage_time = this->time;
 
-                // create blood splash sprite
-                Creature splash = Creature::create_sprite(
-                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                    get_rect_center(rigid_collider.mask),
-                    attacker_creature.is_hflip,
-                    PivotType::CENTER_CENTER
-                );
-                switch (attacker_creature.state) {
-                    case CreatureState::ATTACK_0:
-                        splash.animator.play("blood_splash_0", 0.04, false);
-                        break;
-                    case CreatureState::ATTACK_1:
-                        splash.animator.play("blood_splash_3", 0.04, false);
-                        break;
-                    case CreatureState::ATTACK_2:
-                        splash.animator.play("blood_splash_2", 0.04, false);
-                        break;
-                    default: splash.animator.play("blood_splash_0", 0.04, false); break;
-                }
-                this->creatures.push_back(splash);
+                // apply knock back
+                rigid_creature.velocity = {
+                    .x = attacker_creature.get_view_dir() * 75.0f, .y = -75.0f};
             }
         }
 
@@ -1355,17 +1341,17 @@ class Game {
     }
 
     void draw() {
-        BeginDrawing();
-        ClearBackground(BLACK);
-
-        BeginMode2D(this->camera.camera2d);
-
         // ---------------------------------------------------------------
-        // draw tiled level
+        // sort sprite before rendering
+        static std::vector<Sprite> normal_sprites;
+        static std::vector<Sprite> attacked_sprites;
+        normal_sprites.clear();
+        attacked_sprites.clear();
+
+        // tiled level
+        // TODO: could be done once, maybe factor out into tiled_level object?
         int tile_width = this->tiled_level.meta["tilewidth"];
         int tile_height = this->tiled_level.meta["tileheight"];
-
-        BeginShaderMode(this->shaders["sprite"]);
         for (auto &layer_json : this->tiled_level.meta["layers"]) {
             for (auto &chunk_json : layer_json["chunks"]) {
                 int chunk_width = chunk_json["width"];
@@ -1386,27 +1372,36 @@ class Game {
                     Vector2 position = {.x = x, .y = y};
 
                     Sprite sprite = this->tiled_level.get_sprite(tile_id, position);
-                    sprite.draw();
+                    normal_sprites.push_back(sprite);
                 }
             }
         }
-        EndShaderMode();
+
+        // creatures
+        for (Creature &creature : this->creatures) {
+            Sprite sprite = creature.get_sprite();
+            float t = creature.last_received_damage_time;
+            if (t > 0.0 && this->time - t < 0.1) {
+                attacked_sprites.push_back(sprite);
+            } else {
+                normal_sprites.push_back(sprite);
+            }
+        }
 
         // ---------------------------------------------------------------
         // draw sprites
-        BeginShaderMode(this->shaders["sprite"]);
-        for (auto &creature : this->creatures) {
-            Sprite sprite = creature.get_sprite();
-            sprite.draw();
-        }
-        EndShaderMode();
+        BeginDrawing();
+        ClearBackground(BLACK);
+        BeginMode2D(this->camera.camera2d);
 
-#if 1
+        this->draw_sprites(normal_sprites, BLANK);
+        this->draw_sprites(attacked_sprites, WHITE);
+#if 0
         // ---------------------------------------------------------------
         // draw masks
-        // for (auto &creature : this->creatures) {
-        //     DrawCircle(creature.position.x, creature.position.y, 2, RED);
-        // }
+        for (auto &creature : this->creatures) {
+            DrawCircle(creature.position.x, creature.position.y, 2, RED);
+        }
 
         for (auto &creature : this->creatures) {
             Sprite sprite = creature.get_sprite();
@@ -1453,6 +1448,25 @@ class Game {
         Vector2 step = Vector2Scale(dir, creature.move_speed * this->dt);
 
         return step;
+    }
+
+    void draw_sprites(std::vector<Sprite> sprites, Color plain_color) {
+        Shader sprite_shader = this->shaders["sprite"];
+
+        BeginShaderMode(sprite_shader);
+
+        Vector4 color = ColorNormalize(plain_color);
+        SetShaderValue(
+            sprite_shader,
+            GetShaderLocation(sprite_shader, "plain_color"),
+            &color,
+            SHADER_UNIFORM_VEC4
+        );
+        for (Sprite &sprite : sprites) {
+            sprite.draw();
+        }
+
+        EndShaderMode();
     }
 };
 

@@ -3,6 +3,7 @@ in vec2 fragTexCoord;
 out vec4 fs_color;
 
 uniform sampler2D texture0;
+uniform vec4 plain_color;
 
 vec4 texture2DAA(sampler2D tex, vec2 uv) {
     vec2 texsize = vec2(textureSize(tex,0));
@@ -14,7 +15,11 @@ vec4 texture2DAA(sampler2D tex, vec2 uv) {
 }
 
 void main() {
-    vec4 color = texture2DAA(texture0, fragTexCoord);
-    if (color.a < 0.9) discard;
-    fs_color = color;
+    vec4 texture_color = texture2DAA(texture0, fragTexCoord);
+    if (texture_color.a < 0.9) discard;
+
+    float plain_color_weight = plain_color.a;
+    float texture_color_weight = 1.0 - plain_color_weight;
+
+    fs_color = texture_color_weight * texture_color + plain_color_weight * plain_color;
 }
