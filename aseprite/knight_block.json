@@ -1,0 +1,124 @@
+{ "frames": [
+   {
+    "filename": "knight_block.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.sprite..1",
+    "frame": { "x": 40, "y": 1, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.sprite..2",
+    "frame": { "x": 79, "y": 1, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.sprite..3",
+    "frame": { "x": 118, "y": 1, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_rigid..0",
+    "frame": { "x": 1, "y": 35, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_rigid..1",
+    "frame": { "x": 40, "y": 35, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_rigid..2",
+    "frame": { "x": 79, "y": 35, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_rigid..3",
+    "frame": { "x": 118, "y": 35, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_block..0",
+    "frame": { "x": 1, "y": 69, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_block..1",
+    "frame": { "x": 40, "y": 69, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_block..2",
+    "frame": { "x": 79, "y": 69, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   },
+   {
+    "filename": "knight_block.mask_block..3",
+    "frame": { "x": 118, "y": 69, "w": 37, "h": 32 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 37, "h": 32 },
+    "sourceSize": { "w": 37, "h": 32 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "knight_block.png",
+  "format": "RGBA8888",
+  "size": { "w": 156, "h": 102 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" },
+   { "name": "mask_block", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

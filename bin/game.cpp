@@ -29,6 +29,7 @@ namespace fs = std::filesystem;
 #define LANDING_MIN_SPEED 260
 #define LANDING_DAMAGE_FACTOR 1.0
 #define SAFE_DASHING_HEIGHT 24
+#define SUCCESSFUL_BLOCK_MIN_PROGRESS 0.5
 #define ATTACK_0_AFTER_DASH_MIN_PROGRESS 0.5
 #define ATTACK_1_AFTER_ATTACK_0_MIN_PROGRESS 0.5
 #define ATTACK_2_AFTER_ATTACK_1_MIN_PROGRESS 0.5
@@ -476,6 +477,7 @@ enum class CreatureState {
     FALLING,
     LANDING,
     DASHING,
+    BLOCKING,
     ATTACK_0,
     ATTACK_1,
     ATTACK_2,
@@ -587,6 +589,13 @@ class Creature {
         );
         return collider;
     }
+
+    Collider get_block_collider() {
+        Collider collider = this->animator.get_collider(
+            "block", this->get_pivot(), is_hflip
+        );
+        return collider;
+    }
 };
 
 // -----------------------------------------------------------------------
@@ -598,6 +607,7 @@ class Game {
     TiledLevel tiled_level;
 
     std::vector<Creature> creatures;
+    std::vector<Creature> new_creatures;
     std::vector<Rectangle> static_rigid_rects;
 
     GameCamera camera;
@@ -743,7 +753,7 @@ class Game {
 
                 switch (creature.state) {
                     case CreatureState::IDLE:
-                        // -> MOVING, JUMPING, FALLING, ATTACK_0
+                        // -> MOVING, JUMPING, FALLING, BLOCKING, ATTACK_0
                         creature.animator.play("knight_idle", 0.1, true);
 
                         // move
@@ -762,6 +772,9 @@ class Game {
                         } else if (IsKeyPressed(KEY_SPACE)) {
                             // -> ATTACK_0
                             creature.state = CreatureState::ATTACK_0;
+                        } else if (IsKeyPressed(KEY_LEFT_SHIFT)) {
+                            // -> BLOCKING
+                            creature.state = CreatureState::BLOCKING;
                         } else if (position_step.x) {
                             // -> MOVING
                             creature.state = CreatureState::MOVING;
@@ -788,6 +801,9 @@ class Game {
                         } else if (IsKeyPressed(KEY_LEFT_CONTROL)) {
                             // -> DASHING
                             creature.state = CreatureState::DASHING;
+                        } else if (IsKeyPressed(KEY_LEFT_SHIFT)) {
+                            // -> BLOCKING
+                            creature.state = CreatureState::BLOCKING;
                         } else if (IsKeyPressed(KEY_SPACE)) {
                             // -> ATTACK_0
                             creature.state = CreatureState::ATTACK_0;
@@ -901,6 +917,16 @@ class Game {
 
                         // reset attack_0 pressing event after finishing DASHING
                         attack_0_pressed_at_progress = -INFINITY;
+
+                        break;
+                    case CreatureState::BLOCKING:
+                        // -> IDLE
+                        creature.animator.play("knight_block", 0.05, false);
+
+                        if (creature.animator.is_finished()) {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
+                        }
 
                         break;
                     case CreatureState::ATTACK_0:
@@ -1241,8 +1267,10 @@ class Game {
 
             // resolve attack colliders
             for (Creature &attacker_creature : this->creatures) {
-                Collider attacker_collider = attacker_creature.get_attack_collider();
-                if (!attacker_collider.id) continue;
+                Collider attack_collider = attacker_creature.get_attack_collider();
+                Collider block_collider = rigid_creature.get_block_collider();
+
+                if (!attack_collider.id) continue;
 
                 // creature can't attack itself
                 if (&attacker_creature == &rigid_creature) continue;
@@ -1256,20 +1284,41 @@ class Game {
                     continue;
 
                 // ignore already received attack
-                if (rigid_creature.last_received_attack_id == attacker_collider.id)
+                if (rigid_creature.last_received_attack_id == attack_collider.id)
                     continue;
 
-                // colliders must overlap
-                if (!CheckCollisionRecs(rigid_collider.mask, attacker_collider.mask))
-                    continue;
+                if (block_collider.id
+                    && CheckCollisionRecs(attack_collider.mask, block_collider.mask)) {
+                    // if block is successful, apply damage to the attacker
+                    Creature block = Creature::create_sprite(
+                        SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                        get_rect_center(block_collider.mask),
+                        rigid_creature.is_hflip,
+                        PivotType::CENTER_CENTER
+                    );
+                    block.animator.play(
+                        "block_effect_" + std::to_string(rand() % 3), 0.02, false
+                    );
+                    this->new_creatures.push_back(block);
 
-                rigid_creature.health -= attacker_creature.damage;
-                rigid_creature.last_received_attack_id = attacker_collider.id;
-                rigid_creature.last_received_damage_time = this->time;
+                    rigid_creature.last_received_attack_id = attack_collider.id;
+                    attacker_creature.last_received_attack_id = block_collider.id;
 
-                // apply knock back
-                rigid_creature.velocity = {
-                    .x = attacker_creature.get_view_dir() * 75.0f, .y = -75.0f};
+                    attacker_creature.last_received_damage_time = this->time;
+                    attacker_creature.health -= rigid_creature.damage;
+                    attacker_creature.velocity = {
+                        .x = rigid_creature.get_view_dir() * 75.0f, .y = -75.0f};
+                } else if (CheckCollisionRecs(
+                               rigid_collider.mask, attack_collider.mask
+                           )) {
+                    // else if attack is successful, apply damage to the target
+                    rigid_creature.last_received_attack_id = attack_collider.id;
+
+                    rigid_creature.last_received_damage_time = this->time;
+                    rigid_creature.health -= attacker_creature.damage;
+                    rigid_creature.velocity = {
+                        .x = attacker_creature.get_view_dir() * 75.0f, .y = -75.0f};
+                }
             }
         }
 
@@ -1338,6 +1387,13 @@ class Game {
         if (free_idx != -1) {
             this->creatures.resize(free_idx);
         }
+
+        // -----------------------------------------------------------
+        // push new creatures
+        this->creatures.insert(
+            this->creatures.end(), this->new_creatures.begin(), this->new_creatures.end()
+        );
+        this->new_creatures.clear();
     }
 
     void draw() {
