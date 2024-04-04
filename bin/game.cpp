@@ -41,6 +41,8 @@ namespace fs = std::filesystem;
 #define CREATURE_VIEW_DISTANCE 200
 #define CREATURE_MAX_VIEW_ANGLE 20
 
+#define PLATFORM_SPEED 50
+
 // -----------------------------------------------------------------------
 // utils
 json load_json(std::string file_path) {
@@ -534,6 +536,7 @@ class Creature {
     std::string platform_tag;
     Vector2 platform_start;
     Vector2 platform_end;
+    float platform_speed;
 
     Creature() {}
 
@@ -578,13 +581,18 @@ class Creature {
     }
 
     static Creature creature_platform(
-        SpriteSheetAnimator animator, std::string tag, Vector2 start, Vector2 end
+        SpriteSheetAnimator animator,
+        std::string tag,
+        float speed,
+        Vector2 start,
+        Vector2 end
     ) {
         Creature platform;
         platform.type = CreatureType::PLATFORM;
         platform.state = CreatureState::IDLE;
         platform.animator = animator;
         platform.platform_tag = tag;
+        platform.platform_speed = speed;
         platform.position = start;
         platform.platform_start = start;
         platform.platform_end = end;
@@ -760,6 +768,7 @@ class Game {
                 this->creatures.push_back(Creature::creature_platform(
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     object_tag,
+                    PLATFORM_SPEED,
                     object_position,
                     {.x = dest["x"], .y = dest["y"]}
                 ));
@@ -1256,15 +1265,23 @@ class Game {
                     creature.state = CreatureState::DELETE;
                 }
             } else if (creature.type == CreatureType::PLATFORM) {
-                switch (creature.state) {
-                    case CreatureState::IDLE:
-                        creature.animator.play(
-                            "platform_" + creature.platform_tag + "_idle", 0.1, true
-                        );
+                // don't care in which state the PLATFORM is, always the same logic
+                creature.animator.play(
+                    "platform_" + creature.platform_tag + "_idle", 0.1, true
+                );
 
-                        break;
-                    default: break;
+                float speed = creature.platform_speed;
+                Vector2 target = speed > 0.0 ? creature.platform_end
+                                             : creature.platform_start;
+                float dist = Vector2Distance(target, creature.position);
+                Vector2 dir = Vector2Normalize(Vector2Subtract(target, creature.position)
+                );
+                Vector2 step = Vector2Scale(dir, fabs(speed) * this->dt);
+                if (Vector2Length(step) >= dist) {
+                    step = Vector2Scale(dir, dist);
+                    creature.platform_speed *= -1;
                 }
+                creature.position = Vector2Add(creature.position, step);
             }
 
             // -----------------------------------------------------------
