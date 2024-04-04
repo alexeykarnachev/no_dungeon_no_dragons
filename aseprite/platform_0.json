@@ -1,0 +1,33 @@
+{ "frames": [
+   {
+    "filename": "platform_0.sprite..0",
+    "frame": { "x": 1, "y": 1, "w": 65, "h": 8 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 65, "h": 8 },
+    "sourceSize": { "w": 65, "h": 8 },
+    "duration": 100
+   },
+   {
+    "filename": "platform_0.mask_rigid..0",
+    "frame": { "x": 1, "y": 11, "w": 65, "h": 8 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 65, "h": 8 },
+    "sourceSize": { "w": 65, "h": 8 },
+    "duration": 100
+   }
+ ],
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3-rc2-x64",
+  "image": "platform_0.png",
+  "format": "RGBA8888",
+  "size": { "w": 67, "h": 20 },
+  "scale": "1",
+  "layers": [
+   { "name": "sprite", "opacity": 255, "blendMode": "normal" },
+   { "name": "mask_rigid", "opacity": 128, "blendMode": "normal" }
+  ]
+ }
+}

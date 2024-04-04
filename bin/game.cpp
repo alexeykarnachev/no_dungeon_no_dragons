@@ -34,6 +34,10 @@ namespace fs = std::filesystem;
 #define ATTACK_1_AFTER_ATTACK_0_MIN_PROGRESS 0.5
 #define ATTACK_2_AFTER_ATTACK_1_MIN_PROGRESS 0.5
 
+#define ATTACK_0_FRAME_DURATION 0.07
+#define ATTACK_1_FRAME_DURATION 0.07
+#define ATTACK_2_FRAME_DURATION 0.07
+
 #define CREATURE_VIEW_DISTANCE 200
 #define CREATURE_MAX_VIEW_ANGLE 20
 
@@ -931,7 +935,7 @@ class Game {
                         break;
                     case CreatureState::ATTACK_0:
                         // -> IDLE, FALLING, ATTACK_1
-                        creature.animator.play("knight_attack_0", 0.1, false);
+                        creature.animator.play("knight_attack_0", ATTACK_0_FRAME_DURATION, false);
 
                         static float attack_1_pressed_at_progress = -INFINITY;
 
@@ -962,7 +966,7 @@ class Game {
                         break;
                     case CreatureState::ATTACK_1:
                         // -> IDLE, FALLING, ATTACK_2
-                        creature.animator.play("knight_attack_1", 0.1, false);
+                        creature.animator.play("knight_attack_1", ATTACK_1_FRAME_DURATION, false);
 
                         static float attack_2_pressed_at_progress = -INFINITY;
 
@@ -993,7 +997,7 @@ class Game {
                         break;
                     case CreatureState::ATTACK_2:
                         // -> IDLE, FALLING
-                        creature.animator.play("knight_attack_2", 0.1, false);
+                        creature.animator.play("knight_attack_2", ATTACK_2_FRAME_DURATION, false);
 
                         // continue ATTACK_2 if the animation is not finished yet
                         if (!creature.animator.is_finished()) break;
