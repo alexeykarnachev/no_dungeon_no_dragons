@@ -491,6 +491,7 @@ enum class CreatureState {
 
 enum class CreatureType {
     SPRITE,
+    PLATFORM,
     PLAYER,
     BAT,
     WOLF,
@@ -524,6 +525,11 @@ class Creature {
     float landed_at_speed = 0.0;
     float last_received_damage_time = -1.0;
     uint32_t last_received_attack_id = 0;
+
+    // PLATFORM
+    std::string platform_tag;
+    Vector2 platform_start;
+    Vector2 platform_end;
 
     Creature() {}
 
@@ -565,6 +571,22 @@ class Creature {
         sprite.is_flying = true;
 
         return sprite;
+    }
+
+    static Creature creature_platform(
+        SpriteSheetAnimator animator, std::string tag, Vector2 start, Vector2 end
+    ) {
+        Creature platform;
+        platform.type = CreatureType::PLATFORM;
+        platform.state = CreatureState::IDLE;
+        platform.animator = animator;
+        platform.platform_tag = tag;
+        platform.position = start;
+        platform.platform_start = start;
+        platform.platform_end = end;
+        platform.is_flying = true;
+
+        return platform;
     }
 
     int get_view_dir() {
@@ -646,7 +668,7 @@ class Game {
         }
 
         // iterate over all objects and create game entities
-        for (auto& item : objects) {
+        for (auto &item : objects) {
             auto object = item.second;
             auto object_x = object["x"];
             auto object_y = object["y"];
@@ -656,12 +678,14 @@ class Game {
             Vector2 object_position = {.x = object_x, .y = object_y};
 
             std::string object_type = "";
+            std::string object_tag = "";
             int destination_object_id = -1;
             for (auto property : object["properties"]) {
                 std::string name = property["name"];
                 auto value = property["value"];
                 if (name == "type") object_type = value;
                 else if (name == "destination") destination_object_id = value;
+                else if (name == "tag") object_tag = value;
             }
 
             if (object_type == "rigid_collider") {
@@ -720,10 +744,14 @@ class Game {
                     false,
                     object_position
                 ));
-            } else if (object_type == "platform_0") {
-                auto destination = objects[destination_object_id];
-                std::cout << destination << "\n";
-                std::cout << "---------------------------\n";
+            } else if (object_type == "platform") {
+                auto dest = objects[destination_object_id];
+                this->creatures.push_back(Creature::creature_platform(
+                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    object_tag,
+                    object_position,
+                    {.x = dest["x"], .y = dest["y"]}
+                ));
             }
         }
     }
@@ -1215,6 +1243,16 @@ class Game {
             } else if (creature.type == CreatureType::SPRITE) {
                 if (creature.animator.is_finished()) {
                     creature.state = CreatureState::DELETE;
+                }
+            } else if (creature.type == CreatureType::PLATFORM) {
+                switch (creature.state) {
+                    case CreatureState::IDLE:
+                        creature.animator.play(
+                            "platform_" + creature.platform_tag + "_idle", 0.1, true
+                        );
+
+                        break;
+                    default: break;
                 }
             }
 

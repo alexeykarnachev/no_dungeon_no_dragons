@@ -303,9 +303,14 @@
                          "value":33
                         }, 
                         {
+                         "name":"tag",
+                         "type":"string",
+                         "value":"0"
+                        }, 
+                        {
                          "name":"type",
                          "type":"string",
-                         "value":"platform_0"
+                         "value":"platform"
                         }],
                  "rotation":0,
                  "type":"",

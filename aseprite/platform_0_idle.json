@@ -1,6 +1,6 @@
 { "frames": [
    {
-    "filename": "platform_0.sprite..0",
+    "filename": "platform_0_idle.sprite..0",
     "frame": { "x": 1, "y": 1, "w": 65, "h": 8 },
     "rotated": false,
     "trimmed": false,
@@ -9,7 +9,7 @@
     "duration": 100
    },
    {
-    "filename": "platform_0.mask_rigid..0",
+    "filename": "platform_0_idle.mask_rigid..0",
     "frame": { "x": 1, "y": 11, "w": 65, "h": 8 },
     "rotated": false,
     "trimmed": false,
@@ -21,7 +21,7 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.3-rc2-x64",
-  "image": "platform_0.png",
+  "image": "platform_0_idle.png",
   "format": "RGBA8888",
   "size": { "w": 67, "h": 20 },
   "scale": "1",
