@@ -616,6 +616,7 @@ class Game {
 
     GameCamera camera;
 
+    Creature *player;
     float dt = 0.0;
     float time = 0.0;
 
@@ -637,14 +638,16 @@ class Game {
         this->tiled_level = TiledLevel(dir_path, name);
 
         // get all objects for the map
-        std::vector<json> objects;
+        std::unordered_map<int, json> objects;
         for (auto layer_json : this->tiled_level.meta["layers"]) {
-            auto layer_objects = layer_json["objects"];
-            objects.insert(objects.end(), layer_objects.begin(), layer_objects.end());
+            for (auto object : layer_json["objects"]) {
+                objects[object["id"]] = object;
+            }
         }
 
         // iterate over all objects and create game entities
-        for (auto object : objects) {
+        for (auto& item : objects) {
+            auto object = item.second;
             auto object_x = object["x"];
             auto object_y = object["y"];
             auto object_name = object["name"];
@@ -653,9 +656,12 @@ class Game {
             Vector2 object_position = {.x = object_x, .y = object_y};
 
             std::string object_type = "";
+            int destination_object_id = -1;
             for (auto property : object["properties"]) {
                 std::string name = property["name"];
-                if (name == "type") object_type = property["value"];
+                auto value = property["value"];
+                if (name == "type") object_type = value;
+                else if (name == "destination") destination_object_id = value;
             }
 
             if (object_type == "rigid_collider") {
@@ -714,7 +720,10 @@ class Game {
                     false,
                     object_position
                 ));
-            } else if (object_type == "platform") {
+            } else if (object_type == "platform_0") {
+                auto destination = objects[destination_object_id];
+                std::cout << destination << "\n";
+                std::cout << "---------------------------\n";
             }
         }
     }
@@ -736,11 +745,15 @@ class Game {
             return;
         }
 
+        // find player
+        for (auto &creature : this->creatures) {
+            if (creature.type == CreatureType::PLAYER) this->player = &creature;
+        }
+
         this->dt = GetFrameTime();
         this->time += this->dt;
-        this->camera.camera2d.target = this->creatures[0].position;
+        this->camera.camera2d.target = player->position;
 
-        Creature &player = this->creatures[0];
         for (auto &creature : this->creatures) {
             creature.animator.update(this->dt);
 
@@ -1341,11 +1354,11 @@ class Game {
             creature.can_attack_player = false;
 
             Vector2 view_line_start = creature.position;
-            Vector2 view_line_end = player.position;
+            Vector2 view_line_end = player->position;
             float dist = Vector2Distance(view_line_start, view_line_end);
 
             // can't see and can't attack the dead player.
-            if (player.health <= 0.0) continue;
+            if (this->player->health <= 0.0) continue;
 
             // PLAYER can't see or attack himself
             if (creature.type == CreatureType::PLAYER) continue;
@@ -1493,12 +1506,8 @@ class Game {
 
         EndMode2D();
 
-        // ---------------------------------------------------------------
-        // draw ui
-        Creature &player = this->creatures[0];
-
         // healthbar
-        float health_ratio = player.health / player.max_health;
+        float health_ratio = this->player->health / this->player->max_health;
         int max_bar_width = 300;
         int bar_width = health_ratio * max_bar_width;
         DrawRectangle(5, 5, bar_width, 30, RED);
@@ -1507,11 +1516,10 @@ class Game {
     }
 
     Vector2 get_step_towards_player(Creature &creature) {
-        Creature &player = this->creatures[0];
-        if (&creature == &player) return {0.0, 0.0};
+        if (&creature == this->player) return {0.0, 0.0};
 
         Vector2 start = creature.position;
-        Vector2 end = player.position;
+        Vector2 end = player->position;
         Vector2 dir = Vector2Normalize(Vector2Subtract(end, start));
         Vector2 step = Vector2Scale(dir, creature.move_speed * this->dt);
 
