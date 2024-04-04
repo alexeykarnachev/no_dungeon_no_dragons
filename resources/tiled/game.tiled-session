@@ -13,16 +13,24 @@
             "scaleInEditor": 4
         },
         "level_0.json": {
-            "scale": 5.5,
-            "selectedLayer": 2,
+            "expandedGroupLayers": [
+                13,
+                12
+            ],
+            "scale": 4,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 193.36363636363637,
-                "y": 179.90909090909093
+                "x": 321.625,
+                "y": 164.875
             }
         },
         "walls.json": {
             "scaleInDock": 1.5,
             "scaleInEditor": 1
+        },
+        "wood_env.json": {
+            "scaleInDock": 4,
+            "scaleInEditor": 3
         }
     },
     "last.imagePath": "/home/akarnachev/src/game/resources/tile_maps/pixel_castle_2d",
@@ -38,9 +46,10 @@
     "project": "game.tiled-project",
     "property.type": "string",
     "recentFiles": [
+        "level_0.json",
+        "wood_env.json",
         "walls.json",
-        "ground.json",
-        "level_0.json"
+        "ground.json"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {

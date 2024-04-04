@@ -636,83 +636,85 @@ class Game {
 
         this->tiled_level = TiledLevel(dir_path, name);
 
+        // get all objects for the map
+        std::vector<json> objects;
         for (auto layer_json : this->tiled_level.meta["layers"]) {
-            std::string layer_name = std::string(layer_json["name"]);
-            for (auto object : layer_json["objects"]) {
-                auto object_x = object["x"];
-                auto object_y = object["y"];
-                auto object_width = object["width"];
-                auto object_height = object["height"];
+            auto layer_objects = layer_json["objects"];
+            objects.insert(objects.end(), layer_objects.begin(), layer_objects.end());
+        }
 
-                for (auto property : object["properties"]) {
+        // iterate over all objects and create game entities
+        for (auto object : objects) {
+            auto object_x = object["x"];
+            auto object_y = object["y"];
+            auto object_name = object["name"];
+            auto object_width = object["width"];
+            auto object_height = object["height"];
+            Vector2 object_position = {.x = object_x, .y = object_y};
 
-                    auto property_name = property["name"];
-                    auto property_value = property["value"];
+            std::string object_type = "";
+            for (auto property : object["properties"]) {
+                std::string name = property["name"];
+                if (name == "type") object_type = property["value"];
+            }
 
-                    if (layer_name == "colliders" && property_name == "is_rigid"
-                        && property_value) {
-                        this->static_rigid_rects.push_back(
-                            {.x = object_x,
-                             .y = object_y,
-                             .width = object_width,
-                             .height = object_height}
-                        );
-                    } else if (layer_name == "creatures" && property_name == "type") {
-                        Creature creature;
-                        if (property_value == "player") {
-                            creature = Creature(
-                                CreatureType::PLAYER,
-                                CreatureState::IDLE,
-                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                                100.0,
-                                1000.0,
-                                50.0,
-                                0.0,
-                                true,
-                                {.x = object_x, .y = object_y}
-                            );
-                            this->camera.camera2d.target = creature.position;
-                        } else if (property_value == "bat") {
-                            creature = Creature(
-                                CreatureType::BAT,
-                                CreatureState::IDLE,
-                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                                50.0,
-                                300.0,
-                                50.0,
-                                25.0,
-                                true,
-                                {.x = object_x, .y = object_y}
-                            );
-                        } else if (property_value == "wolf") {
-                            creature = Creature(
-                                CreatureType::WOLF,
-                                CreatureState::IDLE,
-                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                                80.0,
-                                300.0,
-                                50.0,
-                                35.0,
-                                false,
-                                {.x = object_x, .y = object_y}
-                            );
-                        } else if (property_value == "golem") {
-                            creature = Creature(
-                                CreatureType::GOLEM,
-                                CreatureState::IDLE,
-                                SpriteSheetAnimator(&this->sprite_sheets["0"]),
-                                60.0,
-                                400.0,
-                                50.0,
-                                35.0,
-                                false,
-                                {.x = object_x, .y = object_y}
-                            );
-                        }
-
-                        this->creatures.push_back(creature);
-                    }
-                }
+            if (object_type == "rigid_collider") {
+                this->static_rigid_rects.push_back(
+                    {.x = object_x,
+                     .y = object_y,
+                     .width = object_width,
+                     .height = object_height}
+                );
+            } else if (object_type == "player") {
+                this->creatures.push_back(Creature(
+                    CreatureType::PLAYER,
+                    CreatureState::IDLE,
+                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    100.0,
+                    1000.0,
+                    50.0,
+                    0.0,
+                    true,
+                    object_position
+                ));
+                this->camera.camera2d.target = object_position;
+            } else if (object_type == "bat") {
+                this->creatures.push_back(Creature(
+                    CreatureType::BAT,
+                    CreatureState::IDLE,
+                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    50.0,
+                    300.0,
+                    50.0,
+                    25.0,
+                    true,
+                    object_position
+                ));
+            } else if (object_type == "wolf") {
+                this->creatures.push_back(Creature(
+                    CreatureType::WOLF,
+                    CreatureState::IDLE,
+                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    80.0,
+                    300.0,
+                    50.0,
+                    35.0,
+                    false,
+                    object_position
+                ));
+            } else if (object_type == "golem") {
+                this->creatures.push_back(Creature(
+                    CreatureType::GOLEM,
+                    CreatureState::IDLE,
+                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    60.0,
+                    400.0,
+                    50.0,
+                    35.0,
+                    false,
+                    object_position
+                ));
+            } else if (object_type == "platform") {
             }
         }
     }
@@ -935,7 +937,9 @@ class Game {
                         break;
                     case CreatureState::ATTACK_0:
                         // -> IDLE, FALLING, ATTACK_1
-                        creature.animator.play("knight_attack_0", ATTACK_0_FRAME_DURATION, false);
+                        creature.animator.play(
+                            "knight_attack_0", ATTACK_0_FRAME_DURATION, false
+                        );
 
                         static float attack_1_pressed_at_progress = -INFINITY;
 
@@ -966,7 +970,9 @@ class Game {
                         break;
                     case CreatureState::ATTACK_1:
                         // -> IDLE, FALLING, ATTACK_2
-                        creature.animator.play("knight_attack_1", ATTACK_1_FRAME_DURATION, false);
+                        creature.animator.play(
+                            "knight_attack_1", ATTACK_1_FRAME_DURATION, false
+                        );
 
                         static float attack_2_pressed_at_progress = -INFINITY;
 
@@ -997,7 +1003,9 @@ class Game {
                         break;
                     case CreatureState::ATTACK_2:
                         // -> IDLE, FALLING
-                        creature.animator.play("knight_attack_2", ATTACK_2_FRAME_DURATION, false);
+                        creature.animator.play(
+                            "knight_attack_2", ATTACK_2_FRAME_DURATION, false
+                        );
 
                         // continue ATTACK_2 if the animation is not finished yet
                         if (!creature.animator.is_finished()) break;

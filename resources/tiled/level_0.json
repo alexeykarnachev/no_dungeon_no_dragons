@@ -129,9 +129,9 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"is_rigid",
-                         "type":"bool",
-                         "value":true
+                         "name":"type",
+                         "type":"string",
+                         "value":"rigid_collider"
                         }],
                  "rotation":0,
                  "type":"",
@@ -146,9 +146,9 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"is_rigid",
-                         "type":"bool",
-                         "value":true
+                         "name":"type",
+                         "type":"string",
+                         "value":"rigid_collider"
                         }],
                  "rotation":0,
                  "type":"",
@@ -163,9 +163,9 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"is_rigid",
-                         "type":"bool",
-                         "value":true
+                         "name":"type",
+                         "type":"string",
+                         "value":"rigid_collider"
                         }],
                  "rotation":0,
                  "type":"",
@@ -180,9 +180,9 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"is_rigid",
-                         "type":"bool",
-                         "value":true
+                         "name":"type",
+                         "type":"string",
+                         "value":"rigid_collider"
                         }],
                  "rotation":0,
                  "type":"",
@@ -197,9 +197,9 @@
                  "name":"",
                  "properties":[
                         {
-                         "name":"is_rigid",
-                         "type":"bool",
-                         "value":true
+                         "name":"type",
+                         "type":"string",
+                         "value":"rigid_collider"
                         }],
                  "rotation":0,
                  "type":"",
@@ -290,6 +290,24 @@
                  "width":0,
                  "x":230,
                  "y":226
+                }, 
+                {
+                 "height":0,
+                 "id":31,
+                 "name":"platform",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"platform_0"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":346.5,
+                 "y":156.75
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -297,8 +315,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":5,
- "nextobjectid":19,
+ "nextlayerid":17,
+ "nextobjectid":33,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
@@ -311,6 +329,10 @@
         {
          "firstgid":267,
          "source":"walls.json"
+        }, 
+        {
+         "firstgid":1291,
+         "source":"wood_env.json"
         }],
  "tilewidth":16,
  "type":"map",
