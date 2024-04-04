@@ -490,6 +490,7 @@ enum class CreatureState {
 };
 
 enum class CreatureType {
+    RIGID_COLLIDER,
     SPRITE,
     PLATFORM,
     PLAYER,
@@ -525,6 +526,9 @@ class Creature {
     float landed_at_speed = 0.0;
     float last_received_damage_time = -1.0;
     uint32_t last_received_attack_id = 0;
+
+    // RIGID_COLLIDER
+    Rectangle rigid_collider_rect;
 
     // PLATFORM
     std::string platform_tag;
@@ -589,6 +593,15 @@ class Creature {
         return platform;
     }
 
+    static Creature create_rigid_collider(Rectangle rect) {
+        Creature rigid_collider;
+        rigid_collider.type = CreatureType::RIGID_COLLIDER;
+        rigid_collider.rigid_collider_rect = rect;
+        rigid_collider.is_flying = true;
+
+        return rigid_collider;
+    }
+
     int get_view_dir() {
         return this->is_hflip ? -1 : 1;
     }
@@ -634,7 +647,6 @@ class Game {
 
     std::vector<Creature> creatures;
     std::vector<Creature> new_creatures;
-    std::vector<Rectangle> static_rigid_rects;
 
     GameCamera camera;
 
@@ -654,7 +666,6 @@ class Game {
 
     void load_level(std::string dir_path, std::string name) {
         this->tiled_level.unload();
-        this->static_rigid_rects.clear();
         this->creatures.clear();
 
         this->tiled_level = TiledLevel(dir_path, name);
@@ -689,12 +700,12 @@ class Game {
             }
 
             if (object_type == "rigid_collider") {
-                this->static_rigid_rects.push_back(
+                this->creatures.push_back(Creature::create_rigid_collider(
                     {.x = object_x,
                      .y = object_y,
                      .width = object_width,
                      .height = object_height}
-                );
+                ));
             } else if (object_type == "player") {
                 this->creatures.push_back(Creature(
                     CreatureType::PLAYER,
@@ -1301,7 +1312,21 @@ class Game {
 
             // compute mtv
             Vector2 mtv = Vector2Zero();
-            for (auto &rect : this->static_rigid_rects) {
+            for (Creature &collider_creature : this->creatures) {
+                if (&rigid_creature == &collider_creature) continue;
+
+                // TODO: factor out this rect extraction logic
+                Rectangle rect;
+                switch (collider_creature.type) {
+                    case (CreatureType::RIGID_COLLIDER):
+                        rect = collider_creature.rigid_collider_rect;
+                        break;
+                    case (CreatureType::PLATFORM):
+                        rect = collider_creature.get_rigid_collider().mask;
+                        break;
+                    default: continue;
+                }
+
                 Vector2 collider_mtv = get_aabb_mtv(rigid_collider.mask, rect);
 
                 if (fabs(mtv.x) < fabs(collider_mtv.x)) {
@@ -1391,12 +1416,13 @@ class Game {
             creature.can_see_player = false;
             creature.can_attack_player = false;
 
+            // can't see and can't attack the dead player or if dead itself
+            if (this->player->health <= 0.0) continue;
+            if (creature.health <= 0.0) continue;
+
             Vector2 view_line_start = creature.position;
             Vector2 view_line_end = player->position;
             float dist = Vector2Distance(view_line_start, view_line_end);
-
-            // can't see and can't attack the dead player.
-            if (this->player->health <= 0.0) continue;
 
             // PLAYER can't see or attack himself
             if (creature.type == CreatureType::PLAYER) continue;
@@ -1423,7 +1449,21 @@ class Game {
             view_line_end.y += VIEW_LINE_Y_OFFSET;
 
             // can_see_player
-            for (auto &rect : this->static_rigid_rects) {
+            for (Creature &collider_creature : this->creatures) {
+                if (&creature == &collider_creature) continue;
+
+                // TODO: factor out this rect extraction logic
+                Rectangle rect;
+                switch (collider_creature.type) {
+                    case (CreatureType::RIGID_COLLIDER):
+                        rect = collider_creature.rigid_collider_rect;
+                        break;
+                    case (CreatureType::PLATFORM):
+                        rect = collider_creature.get_rigid_collider().mask;
+                        break;
+                    default: continue;
+                }
+
                 creature.can_see_player = !check_collision_rect_line(
                     rect, view_line_start, view_line_end
                 );
