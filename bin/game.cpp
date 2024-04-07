@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 using json = nlohmann::json;
@@ -492,6 +493,7 @@ enum class CreatureState {
 };
 
 enum class CreatureType {
+    NONE,
     RIGID_COLLIDER,
     SPRITE,
     PLATFORM,
@@ -527,12 +529,13 @@ class Creature {
     bool can_attack_player = false;
     float landed_at_speed = 0.0;
     float last_received_damage_time = -1.0;
-    uint32_t last_received_attack_id = 0;
+    std::unordered_set<uint32_t> received_attack_ids;
 
     // RIGID_COLLIDER
     Rectangle rigid_collider_rect;
 
     // PLATFORM
+    std::unordered_set<Creature *> creatures_on_platform;
     std::string platform_tag;
     Vector2 platform_start;
     Vector2 platform_end;
@@ -805,9 +808,14 @@ class Game {
         for (auto &creature : this->creatures) {
             creature.animator.update(this->dt);
 
-            // -----------------------------------------------------------
-            // immediate velocity and position needs to be computed by
-            // the Character update logic
+            // clear old received attack ids once in a while
+            if (this->time - creature.last_received_damage_time > 5.0
+                && creature.received_attack_ids.size()) {
+                creature.received_attack_ids.clear();
+            }
+
+            // immediate position_step needs to be computed by
+            // the Character update logic (will be applied later)
             Vector2 position_step = Vector2Zero();
 
             // -----------------------------------------------------------
@@ -881,7 +889,7 @@ class Game {
 
                         break;
                     case CreatureState::JUMPING:
-                        // -> FALLING
+                        // -> IDLE, MOVING, FALLING
                         creature.animator.play("knight_jump", 0.1, false);
 
                         // move
@@ -890,9 +898,15 @@ class Game {
                         if (IsKeyDown(KEY_A))
                             position_step.x -= creature.move_speed * this->dt;
 
-                        // -> FALLING
                         if (creature.velocity.y > EPSILON) {
+                            // -> FALLING
                             creature.state = CreatureState::FALLING;
+                        } else if (position_step.x && creature.is_grounded) {
+                            // -> MOVING
+                            creature.state = CreatureState::MOVING;
+                        } else if (creature.is_grounded) {
+                            // -> IDLE
+                            creature.state = CreatureState::IDLE;
                         }
 
                         break;
@@ -1270,6 +1284,7 @@ class Game {
                     "platform_" + creature.platform_tag + "_idle", 0.1, true
                 );
 
+                // move the platform
                 float speed = creature.platform_speed;
                 Vector2 target = speed > 0.0 ? creature.platform_end
                                              : creature.platform_start;
@@ -1282,6 +1297,11 @@ class Game {
                     creature.platform_speed *= -1;
                 }
                 creature.position = Vector2Add(creature.position, step);
+
+                // move creatures on the platform
+                for (Creature *other : creature.creatures_on_platform) {
+                    other->position = Vector2Add(other->position, step);
+                }
             }
 
             // -----------------------------------------------------------
@@ -1353,6 +1373,16 @@ class Game {
                 if (fabs(mtv.y) < fabs(collider_mtv.y)) {
                     mtv.y = collider_mtv.y;
                 }
+
+                if (collider_creature.type == CreatureType::PLATFORM) {
+                    if (collider_mtv.y < 0.0) {
+                        // put creature on the platform
+                        collider_creature.creatures_on_platform.insert(&rigid_creature);
+                    } else {
+                        // remove creature from the platform
+                        collider_creature.creatures_on_platform.erase(&rigid_creature);
+                    }
+                }
             }
 
             // resolve mtv
@@ -1389,8 +1419,10 @@ class Game {
                     continue;
 
                 // ignore already received attack
-                if (rigid_creature.last_received_attack_id == attack_collider.id)
+                if (rigid_creature.received_attack_ids.find(attack_collider.id)
+                    != rigid_creature.received_attack_ids.end()) {
                     continue;
+                }
 
                 if (block_collider.id
                     && CheckCollisionRecs(attack_collider.mask, block_collider.mask)) {
@@ -1406,8 +1438,8 @@ class Game {
                     );
                     this->new_creatures.push_back(block);
 
-                    rigid_creature.last_received_attack_id = attack_collider.id;
-                    attacker_creature.last_received_attack_id = block_collider.id;
+                    rigid_creature.received_attack_ids.insert(attack_collider.id);
+                    attacker_creature.received_attack_ids.insert(attack_collider.id);
 
                     attacker_creature.last_received_damage_time = this->time;
                     attacker_creature.health -= rigid_creature.damage;
@@ -1417,7 +1449,7 @@ class Game {
                                rigid_collider.mask, attack_collider.mask
                            )) {
                     // else if attack is successful, apply damage to the target
-                    rigid_creature.last_received_attack_id = attack_collider.id;
+                    rigid_creature.received_attack_ids.insert(attack_collider.id);
 
                     rigid_creature.last_received_damage_time = this->time;
                     rigid_creature.health -= attacker_creature.damage;
