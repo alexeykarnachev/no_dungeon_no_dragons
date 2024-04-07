@@ -1348,7 +1348,10 @@ class Game {
             if (!rigid_collider.id) continue;
 
             // compute mtv
-            Vector2 mtv = Vector2Zero();
+            float mtv_neg_x = 0.0;
+            float mtv_pos_x = 0.0;
+            float mtv_neg_y = 0.0;
+            float mtv_pos_y = 0.0;
             for (Creature &collider_creature : this->creatures) {
                 if (&rigid_creature == &collider_creature) continue;
 
@@ -1366,13 +1369,10 @@ class Game {
 
                 Vector2 collider_mtv = get_aabb_mtv(rigid_collider.mask, rect);
 
-                if (fabs(mtv.x) < fabs(collider_mtv.x)) {
-                    mtv.x = collider_mtv.x;
-                }
-
-                if (fabs(mtv.y) < fabs(collider_mtv.y)) {
-                    mtv.y = collider_mtv.y;
-                }
+                mtv_neg_x = std::min(mtv_neg_x, collider_mtv.x);
+                mtv_pos_x = std::max(mtv_pos_x, collider_mtv.x);
+                mtv_neg_y = std::min(mtv_neg_y, collider_mtv.y);
+                mtv_pos_y = std::max(mtv_pos_y, collider_mtv.y);
 
                 if (collider_creature.type == CreatureType::PLATFORM) {
                     if (collider_mtv.y < 0.0) {
@@ -1386,6 +1386,23 @@ class Game {
             }
 
             // resolve mtv
+            Vector2 mtv = {mtv_neg_x, mtv_neg_y};
+            if (fabs(mtv_pos_x) > fabs(mtv_neg_x)) mtv.x = mtv_pos_x;
+            if (fabs(mtv_pos_y) > fabs(mtv_neg_y)) mtv.y = mtv_pos_y;
+
+            // vertical smash
+            if (fabs(mtv_pos_y) > EPSILON && fabs(mtv_neg_y) > EPSILON) {
+                // when smashed vertically, set mtv.y to the negative one,
+                // e.g resolve only floor collision
+                mtv.y = mtv_neg_y;
+                this->receive_damage(rigid_creature, rigid_creature.health);
+            }
+            // horizontal smash
+            if (fabs(mtv_pos_x) > EPSILON && fabs(mtv_neg_x) > EPSILON) {
+                mtv.x = 0.0;
+                this->receive_damage(rigid_creature, rigid_creature.health);
+            }
+
             rigid_creature.position = Vector2Add(rigid_creature.position, mtv);
 
             if (mtv.y < -EPSILON && rigid_creature.velocity.y > EPSILON) {
@@ -1441,8 +1458,7 @@ class Game {
                     rigid_creature.received_attack_ids.insert(attack_collider.id);
                     attacker_creature.received_attack_ids.insert(attack_collider.id);
 
-                    attacker_creature.last_received_damage_time = this->time;
-                    attacker_creature.health -= rigid_creature.damage;
+                    this->receive_damage(attacker_creature, rigid_creature.damage);
                     attacker_creature.velocity = {
                         .x = rigid_creature.get_view_dir() * 75.0f, .y = -75.0f};
                 } else if (CheckCollisionRecs(
@@ -1451,8 +1467,7 @@ class Game {
                     // else if attack is successful, apply damage to the target
                     rigid_creature.received_attack_ids.insert(attack_collider.id);
 
-                    rigid_creature.last_received_damage_time = this->time;
-                    rigid_creature.health -= attacker_creature.damage;
+                    this->receive_damage(rigid_creature, attacker_creature.damage);
                     rigid_creature.velocity = {
                         .x = attacker_creature.get_view_dir() * 75.0f, .y = -75.0f};
                 }
@@ -1651,6 +1666,13 @@ class Game {
         Vector2 step = Vector2Scale(dir, creature.move_speed * this->dt);
 
         return step;
+    }
+
+    void receive_damage(Creature &creature, float damage) {
+        if (creature.health <= 0.0) return;
+
+        creature.health -= damage;
+        creature.last_received_damage_time = this->time;
     }
 
     void draw_sprites(std::vector<Sprite> sprites, Color plain_color) {
