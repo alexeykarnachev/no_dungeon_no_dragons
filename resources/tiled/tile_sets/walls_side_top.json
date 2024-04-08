@@ -1,0 +1,14 @@
+{ "columns":30,
+ "image":"..\/tile_sheets\/pixel_castle_2d\/walls_side_top.png",
+ "imageheight":304,
+ "imagewidth":480,
+ "margin":0,
+ "name":"walls_side_top",
+ "spacing":0,
+ "tilecount":570,
+ "tiledversion":"1.10.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

@@ -1,0 +1,14 @@
+{ "columns":23,
+ "image":"tile_sheets\/pixel_castle_2d\/environment.png",
+ "imageheight":480,
+ "imagewidth":368,
+ "margin":0,
+ "name":"environment",
+ "spacing":0,
+ "tilecount":690,
+ "tiledversion":"1.10.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

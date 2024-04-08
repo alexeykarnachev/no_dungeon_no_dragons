@@ -1,0 +1,14 @@
+{ "columns":19,
+ "image":"..\/tile_sheets\/pixel_castle_2d\/ground.png",
+ "imageheight":224,
+ "imagewidth":304,
+ "margin":0,
+ "name":"ground",
+ "spacing":0,
+ "tilecount":266,
+ "tiledversion":"1.10.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

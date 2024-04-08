@@ -19,12 +19,15 @@ namespace fs = std::filesystem;
 #define HASHMAP_GET_OR_NULL(map, key) \
     ((map).find(key) != (map).end() ? &((map)[key]) : nullptr)
 
+#define LEVELS_DIR "./resources/tiled/levels/"
+#define LEVEL "level_1"
+
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
 #define VIEW_LINE_Y_OFFSET -16
 
-#define GRAVITY 400
+#define GRAVITY 700
 #define X_FRICTION 100
 
 #define LANDING_MIN_SPEED 260
@@ -382,7 +385,7 @@ class TileSheet {
         this->tile_height = meta["tileheight"];
         this->n_tiles = meta["tilecount"];
 
-        std::string texture_file_path = "./resources/tiled/" + std::string(meta["image"]);
+        std::string texture_file_path = LEVELS_DIR + std::string(meta["image"]);
         this->texture = LoadTexture(texture_file_path.c_str());
         SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
     }
@@ -513,6 +516,7 @@ class Creature {
     SpriteSheetAnimator animator;
 
     float move_speed;
+    float jump_speed;
     float max_health;
     float health;
     float damage;
@@ -548,6 +552,7 @@ class Creature {
         CreatureState state,
         SpriteSheetAnimator animator,
         float move_speed,
+        float jump_speed,
         float max_health,
         float damage,
         float attack_distance,
@@ -558,6 +563,7 @@ class Creature {
         , state(state)
         , animator(animator)
         , move_speed(move_speed)
+        , jump_speed(jump_speed)
         , max_health(max_health)
         , damage(damage)
         , attack_distance(attack_distance)
@@ -672,7 +678,7 @@ class Game {
 
         this->shaders["sprite"] = load_shader("base.vert", "sprite.frag");
         this->sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
-        this->load_level("./resources/tiled/", "level_0");
+        this->load_level(LEVELS_DIR, LEVEL);
     }
 
     void load_level(std::string dir_path, std::string name) {
@@ -723,6 +729,7 @@ class Game {
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     100.0,
+                    250.0,
                     1000.0,
                     50.0,
                     0.0,
@@ -736,6 +743,7 @@ class Game {
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     50.0,
+                    0.0,
                     300.0,
                     50.0,
                     25.0,
@@ -748,6 +756,7 @@ class Game {
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     80.0,
+                    0.0,
                     300.0,
                     50.0,
                     35.0,
@@ -760,6 +769,7 @@ class Game {
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     60.0,
+                    0.0,
                     400.0,
                     50.0,
                     35.0,
@@ -792,7 +802,7 @@ class Game {
 
     void update() {
         if (IsKeyPressed(KEY_R)) {
-            this->load_level("./resources/tiled/", "level_0");
+            this->load_level(LEVELS_DIR, LEVEL);
             return;
         }
 
@@ -842,7 +852,7 @@ class Game {
                             creature.state = CreatureState::FALLING;
                         } else if (IsKeyPressed(KEY_W)) {
                             // -> JUMPING
-                            creature.velocity.y = -250.0;
+                            creature.velocity.y = -creature.jump_speed;
                             creature.state = CreatureState::JUMPING;
                         } else if (IsKeyPressed(KEY_SPACE)) {
                             // -> ATTACK_0
@@ -871,7 +881,7 @@ class Game {
                             creature.state = CreatureState::FALLING;
                         } else if (IsKeyPressed(KEY_W)) {
                             // -> JUMPING
-                            creature.velocity.y = -250.0;
+                            creature.velocity.y = -creature.jump_speed;
                             creature.state = CreatureState::JUMPING;
                         } else if (IsKeyPressed(KEY_LEFT_CONTROL)) {
                             // -> DASHING
