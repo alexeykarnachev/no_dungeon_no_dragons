@@ -1,6 +1,17 @@
 in vec2 fragTexCoord;
+in vec3 fragPosition;
 
 out vec4 fs_color;
+
+struct Light {
+    float intensity;
+    vec2 position;
+    vec3 color;
+    vec3 attenuation;
+};
+
+uniform int n_lights;
+uniform Light lights[32];
 
 uniform sampler2D texture0;
 uniform vec4 plain_color;
@@ -21,5 +32,16 @@ void main() {
     float plain_color_weight = plain_color.a;
     float texture_color_weight = 1.0 - plain_color_weight;
 
-    fs_color = texture_color_weight * texture_color + plain_color_weight * plain_color;
+    vec3 total_light = vec3(0.0, 0.0, 0.0);
+    for (int i = 0; i < n_lights; ++i) {
+        Light light = lights[i];
+        float dist = distance(light.position, fragPosition.xy);
+        float attenuation = 1.0 / dot(light.attenuation, vec3(1.0, dist, dist * dist));
+        total_light += light.color * light.intensity * attenuation;
+    }
+
+    vec3 color = plain_color_weight * plain_color.rgb;
+    color += total_light * texture_color_weight * texture_color.rgb;
+
+    fs_color = vec4(color, 1.0);
 }

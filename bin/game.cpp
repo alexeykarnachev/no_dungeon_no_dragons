@@ -19,11 +19,15 @@ namespace fs = std::filesystem;
 #define HASHMAP_GET_OR_NULL(map, key) \
     ((map).find(key) != (map).end() ? &((map)[key]) : nullptr)
 
-#define LEVELS_DIR "./resources/tiled/levels/"
-#define LEVEL "level_1"
+// #define LEVELS_DIR "./resources/tiled/levels/"
+// #define LEVEL "level_1"
+#define LEVELS_DIR "./resources/tiled/"
+#define LEVEL "level_0"
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
+
+#define MAX_N_LIGHTS 32
 
 #define VIEW_LINE_Y_OFFSET -16
 
@@ -506,6 +510,24 @@ enum class CreatureType {
     GOLEM,
 };
 
+class Light {
+  public:
+    float intensity = 0.0;
+    Vector2 position;
+    Vector3 color;
+    Vector3 attenuation;
+
+    // set in runtime for sorting
+    float _dist;
+
+    Light() = default;
+    Light(float intensity, Vector2 position, Vector3 color, Vector3 attenuation)
+        : intensity(intensity)
+        , position(position)
+        , color(color)
+        , attenuation(attenuation) {}
+};
+
 class Creature {
   private:
     PivotType sprite_pivot_type = PivotType::CENTER_BOTTOM;
@@ -514,6 +536,7 @@ class Creature {
     CreatureType type;
     CreatureState state;
     SpriteSheetAnimator animator;
+    Light light;
 
     float move_speed;
     float jump_speed;
@@ -551,6 +574,7 @@ class Creature {
         CreatureType type,
         CreatureState state,
         SpriteSheetAnimator animator,
+        Light light,
         float move_speed,
         float jump_speed,
         float max_health,
@@ -562,6 +586,7 @@ class Creature {
         : type(type)
         , state(state)
         , animator(animator)
+        , light(light)
         , move_speed(move_speed)
         , jump_speed(jump_speed)
         , max_health(max_health)
@@ -728,6 +753,7 @@ class Game {
                     CreatureType::PLAYER,
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    Light(30.0, {0.0, -16.0}, {1.0, 0.9, 0.8}, {25.0, 0.2, 0.007}),
                     100.0,
                     250.0,
                     1000.0,
@@ -742,6 +768,7 @@ class Game {
                     CreatureType::BAT,
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    Light(),
                     50.0,
                     0.0,
                     300.0,
@@ -755,6 +782,7 @@ class Game {
                     CreatureType::WOLF,
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    Light(),
                     80.0,
                     0.0,
                     300.0,
@@ -768,6 +796,7 @@ class Game {
                     CreatureType::GOLEM,
                     CreatureState::IDLE,
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    Light(30.0, {0.0, -32.0}, {1.0, 0.2, 0.1}, {25.0, 0.5, 0.1}),
                     60.0,
                     0.0,
                     400.0,
@@ -817,6 +846,12 @@ class Game {
 
         for (auto &creature : this->creatures) {
             creature.animator.update(this->dt);
+
+            // turn off light if non-player creature is dead
+            if (creature.state == CreatureState::DEATH
+                && creature.type != CreatureType::PLAYER) {
+                creature.light.intensity = 0.0;
+            }
 
             // clear old received attack ids once in a while
             if (this->time - creature.last_received_damage_time > 5.0
@@ -1627,6 +1662,7 @@ class Game {
         ClearBackground(BLACK);
         BeginMode2D(this->camera.camera2d);
 
+        this->set_shader_lights();
         this->draw_sprites(normal_sprites, BLANK);
         this->draw_sprites(attacked_sprites, WHITE);
 #if 0
@@ -1683,6 +1719,73 @@ class Game {
 
         creature.health -= damage;
         creature.last_received_damage_time = this->time;
+    }
+
+    void set_shader_lights() {
+        Shader sprite_shader = this->shaders["sprite"];
+
+        static std::vector<Light> lights;
+        lights.clear();
+
+        for (Creature &creature : this->creatures) {
+            if (creature.light.intensity > EPSILON) {
+                Light light = creature.light;
+                light._dist = Vector2Distance(
+                    creature.position, this->camera.camera2d.target
+                );
+                light.position = Vector2Add(light.position, creature.position);
+                lights.push_back(light);
+            }
+        }
+
+        std::sort(
+            lights.begin(),
+            lights.end(),
+            [](const Light &light1, const Light &light2) {
+                return light1._dist < light2._dist;
+            }
+        );
+        if (lights.size() > MAX_N_LIGHTS) {
+            lights.resize(MAX_N_LIGHTS);
+        }
+
+        int n_lights = lights.size();
+        SetShaderValue(
+            sprite_shader,
+            GetShaderLocation(sprite_shader, "n_lights"),
+            &n_lights,
+            SHADER_UNIFORM_INT
+        );
+
+        for (int i = 0; i < n_lights; ++i) {
+            Light &light = lights[i];
+            std::string light_name = "lights[" + std::to_string(i) + "]";
+
+            SetShaderValue(
+                sprite_shader,
+                GetShaderLocation(sprite_shader, (light_name + ".intensity").c_str()),
+                &light.intensity,
+                SHADER_UNIFORM_FLOAT
+            );
+            SetShaderValue(
+                sprite_shader,
+                GetShaderLocation(sprite_shader, (light_name + ".position").c_str()),
+                &light.position,
+                SHADER_UNIFORM_VEC2
+            );
+            SetShaderValue(
+                sprite_shader,
+                GetShaderLocation(sprite_shader, (light_name + ".color").c_str()),
+                &light.color,
+                SHADER_UNIFORM_VEC3
+            );
+            SetShaderValue(
+                sprite_shader,
+                GetShaderLocation(sprite_shader, (light_name + ".attenuation").c_str()),
+                &light.attenuation,
+                SHADER_UNIFORM_VEC3
+            );
+        }
     }
 
     void draw_sprites(std::vector<Sprite> sprites, Color plain_color) {
