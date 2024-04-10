@@ -1,6 +1,7 @@
 #include "json.hpp"
 #include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
 #include <algorithm>
 #include <asm-generic/errno.h>
 #include <cmath>
@@ -132,6 +133,7 @@ Vector2 get_aabb_mtv(Rectangle r1, Rectangle r2) {
 }
 
 bool check_collision_rect_line(Rectangle rect, Vector2 start, Vector2 end) {
+    // TODO: factor out into RectangleVerts
     Vector2 rect_tl = {rect.x, rect.y};
     Vector2 rect_tr = {rect.x + rect.width, rect.y};
     Vector2 rect_br = {rect.x + rect.width, rect.y + rect.height};
@@ -143,6 +145,17 @@ bool check_collision_rect_line(Rectangle rect, Vector2 start, Vector2 end) {
            || CheckCollisionLines(start, end, rect_br, rect_bl, &point)
            || CheckCollisionLines(start, end, rect_bl, rect_tl, &point);
 }
+
+typedef struct Triangle {
+    Vector2 a;
+    Vector2 b;
+    Vector2 c;
+} Triangle;
+
+#define LEFT (1 << 0)
+#define TOP (1 << 1)
+#define RIGHT (1 << 2)
+#define BOT (1 << 3)
 
 // -----------------------------------------------------------------------
 // sprite
@@ -480,6 +493,17 @@ class GameCamera {
             .rotation = 0.0,
             .zoom = this->zoom};
     }
+
+    Rectangle get_screen_rect() {
+        Vector2 top_left = GetScreenToWorld2D({0.0, 0.0}, this->camera2d);
+        Vector2 top_right = GetScreenToWorld2D({SCREEN_WIDTH, 0.0}, this->camera2d);
+        Vector2 bot_right = GetScreenToWorld2D(
+            {SCREEN_WIDTH, SCREEN_HEIGHT}, this->camera2d
+        );
+
+        return {
+            top_left.x, top_left.y, top_right.x - top_left.x, bot_right.y - top_right.y};
+    }
 };
 
 // -----------------------------------------------------------------------
@@ -538,13 +562,13 @@ class Creature {
     SpriteSheetAnimator animator;
     Light light;
 
-    float move_speed;
-    float jump_speed;
-    float max_health;
-    float health;
-    float damage;
-    float attack_distance;
-    bool can_view_vertically;
+    float move_speed = 0.0;
+    float jump_speed = 0.0;
+    float max_health = 0.0;
+    float health = 0.0;
+    float damage = 0.0;
+    float attack_distance = 0.0;
+    bool can_view_vertically = false;
 
     Vector2 position = {0.0, 0.0};
     Vector2 velocity = {0.0, 0.0};
@@ -677,6 +701,22 @@ class Creature {
         );
         return collider;
     }
+
+    Rectangle get_rigid_rect() {
+        Rectangle rect = {0.0, 0.0, 0.0, 0.0};
+        switch (this->type) {
+            case (CreatureType::RIGID_COLLIDER): rect = this->rigid_collider_rect; break;
+            case (CreatureType::PLATFORM): rect = this->get_rigid_collider().mask; break;
+            default: break;
+        }
+        return rect;
+    }
+
+    Light get_light() {
+        Light light = this->light;
+        light.position = Vector2Add(light.position, this->position);
+        return light;
+    }
 };
 
 // -----------------------------------------------------------------------
@@ -700,6 +740,8 @@ class Game {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         SetTargetFPS(60);
         InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
+
+        rlDisableBackfaceCulling();
 
         this->shaders["sprite"] = load_shader("base.vert", "sprite.frag");
         this->sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
@@ -1400,17 +1442,8 @@ class Game {
             for (Creature &collider_creature : this->creatures) {
                 if (&rigid_creature == &collider_creature) continue;
 
-                // TODO: factor out this rect extraction logic
-                Rectangle rect;
-                switch (collider_creature.type) {
-                    case (CreatureType::RIGID_COLLIDER):
-                        rect = collider_creature.rigid_collider_rect;
-                        break;
-                    case (CreatureType::PLATFORM):
-                        rect = collider_creature.get_rigid_collider().mask;
-                        break;
-                    default: continue;
-                }
+                Rectangle rect = collider_creature.get_rigid_rect();
+                if (rect.width <= 0.0) continue;
 
                 Vector2 collider_mtv = get_aabb_mtv(rigid_collider.mask, rect);
 
@@ -1561,17 +1594,8 @@ class Game {
             for (Creature &collider_creature : this->creatures) {
                 if (&creature == &collider_creature) continue;
 
-                // TODO: factor out this rect extraction logic
-                Rectangle rect;
-                switch (collider_creature.type) {
-                    case (CreatureType::RIGID_COLLIDER):
-                        rect = collider_creature.rigid_collider_rect;
-                        break;
-                    case (CreatureType::PLATFORM):
-                        rect = collider_creature.get_rigid_collider().mask;
-                        break;
-                    default: continue;
-                }
+                Rectangle rect = collider_creature.get_rigid_rect();
+                if (rect.width <= 0.0) continue;
 
                 creature.can_see_player = !check_collision_rect_line(
                     rect, view_line_start, view_line_end
@@ -1662,9 +1686,9 @@ class Game {
         ClearBackground(BLACK);
         BeginMode2D(this->camera.camera2d);
 
-        this->set_shader_lights();
         this->draw_sprites(normal_sprites, BLANK);
         this->draw_sprites(attacked_sprites, WHITE);
+        this->update_lights();
 #if 0
         // ---------------------------------------------------------------
         // draw masks
@@ -1721,7 +1745,9 @@ class Game {
         creature.last_received_damage_time = this->time;
     }
 
-    void set_shader_lights() {
+    void update_lights() {
+        // ---------------------------------------------------------------
+        // collect lights
         Shader sprite_shader = this->shaders["sprite"];
 
         static std::vector<Light> lights;
@@ -1729,11 +1755,10 @@ class Game {
 
         for (Creature &creature : this->creatures) {
             if (creature.light.intensity > EPSILON) {
-                Light light = creature.light;
+                Light light = creature.get_light();
                 light._dist = Vector2Distance(
                     creature.position, this->camera.camera2d.target
                 );
-                light.position = Vector2Add(light.position, creature.position);
                 lights.push_back(light);
             }
         }
@@ -1749,6 +1774,144 @@ class Game {
             lights.resize(MAX_N_LIGHTS);
         }
 
+        // ---------------------------------------------------------------
+        // compute vision polygons
+        Rectangle screen_rect = this->camera.get_screen_rect();
+
+        // TODO: factor out into RectangleVerts
+        Vector2 screen_tl = {screen_rect.x, screen_rect.y};
+        Vector2 screen_tr = {screen_rect.x + screen_rect.width, screen_rect.y};
+        Vector2 screen_br = {
+            screen_rect.x + screen_rect.width, screen_rect.y + screen_rect.height};
+        Vector2 screen_bl = {screen_rect.x, screen_rect.y + screen_rect.height};
+        float diag = Vector2Distance(screen_tl, screen_br);
+
+        // TODO: create and use Eyes component instead of light for this
+        Light light = this->player->get_light();
+        for (Creature &obstacle : this->creatures) {
+            Rectangle rect = obstacle.get_rigid_rect();
+            if (rect.width <= 0.0) continue;
+
+            // TODO: factor out into RectangleVerts
+            Vector2 tl = {rect.x, rect.y};
+            Vector2 tr = {rect.x + rect.width, rect.y};
+            Vector2 br = {rect.x + rect.width, rect.y + rect.height};
+            Vector2 bl = {rect.x, rect.y + rect.height};
+
+            // get shadow walls
+            Vector2 walls[4][2];
+            int n_walls = 0;
+
+            if (light.position.x < rect.x) {
+                walls[n_walls][0] = tr;
+                walls[n_walls++][1] = br;
+            } else if (light.position.x > rect.x + rect.width) {
+                walls[n_walls][0] = tl;
+                walls[n_walls++][1] = bl;
+            } else {
+                walls[n_walls][0] = tr;
+                walls[n_walls++][1] = br;
+
+                walls[n_walls][0] = tl;
+                walls[n_walls++][1] = bl;
+            }
+
+            if (light.position.y < rect.y) {
+                walls[n_walls][0] = bl;
+                walls[n_walls++][1] = br;
+            } else if (light.position.y > rect.y + rect.height) {
+                walls[n_walls][0] = tl;
+                walls[n_walls++][1] = tr;
+            } else {
+                walls[n_walls][0] = bl;
+                walls[n_walls++][1] = br;
+
+                walls[n_walls][0] = tl;
+                walls[n_walls++][1] = tr;
+            }
+
+            // get shadow triangles
+            static std::vector<Triangle> triangles;
+            triangles.clear();
+            for (int i = 0; i < n_walls; ++i) {
+                Vector2 start0 = walls[i][0];
+                Vector2 start1 = walls[i][1];
+
+                Vector2 d0 = Vector2Normalize(Vector2Subtract(start0, light.position));
+                Vector2 d1 = Vector2Normalize(Vector2Subtract(start1, light.position));
+
+                Vector2 end0 = Vector2Add(start0, Vector2Scale(d0, diag));
+                Vector2 end1 = Vector2Add(start1, Vector2Scale(d1, diag));
+
+                Vector2 point;
+                int intersection = 0;
+                if (CheckCollisionLines(start0, end0, screen_tl, screen_bl, &point)) {
+                    intersection |= LEFT;
+                }
+                if (CheckCollisionLines(start0, end0, screen_tl, screen_tr, &point)) {
+                    intersection |= TOP;
+                }
+                if (CheckCollisionLines(start0, end0, screen_tr, screen_br, &point)) {
+                    intersection |= RIGHT;
+                }
+                if (CheckCollisionLines(start0, end0, screen_bl, screen_br, &point)) {
+                    intersection |= BOT;
+                }
+
+                if (CheckCollisionLines(start1, end1, screen_tl, screen_bl, &point)) {
+                    intersection |= LEFT;
+                }
+                if (CheckCollisionLines(start1, end1, screen_tl, screen_tr, &point)) {
+                    intersection |= TOP;
+                }
+                if (CheckCollisionLines(start1, end1, screen_tr, screen_br, &point)) {
+                    intersection |= RIGHT;
+                }
+                if (CheckCollisionLines(start1, end1, screen_bl, screen_br, &point)) {
+                    intersection |= BOT;
+                }
+
+                switch (intersection) {
+                    case LEFT:
+                    case TOP:
+                    case RIGHT:
+                    case BOT:
+                        triangles.push_back({start0, end0, start1});
+                        triangles.push_back({start1, end0, end1});
+                        break;
+                    case LEFT | BOT:
+                        triangles.push_back({start0, end0, screen_bl});
+                        triangles.push_back({start1, end1, screen_bl});
+                        triangles.push_back({start0, start1, screen_bl});
+                        break;
+                    case LEFT | TOP:
+                        triangles.push_back({start0, end0, screen_tl});
+                        triangles.push_back({start1, end1, screen_tl});
+                        triangles.push_back({start0, start1, screen_tl});
+                        break;
+                    case RIGHT | TOP:
+                        triangles.push_back({start0, end0, screen_tr});
+                        triangles.push_back({start1, end1, screen_tr});
+                        triangles.push_back({start0, start1, screen_tr});
+                        break;
+                    case RIGHT | BOT:
+                        triangles.push_back({start0, end0, screen_br});
+                        triangles.push_back({start1, end1, screen_br});
+                        triangles.push_back({start0, start1, screen_br});
+                        break;
+                }
+
+                if (intersection == (LEFT | BOT)) {
+                }
+            }
+
+            for (Triangle &triangle : triangles) {
+                DrawTriangle(triangle.a, triangle.b, triangle.c, ColorAlpha(BLACK, 0.7));
+            }
+        }
+
+        // ---------------------------------------------------------------
+        // set shader values
         int n_lights = lights.size();
         SetShaderValue(
             sprite_shader,
