@@ -1899,9 +1899,32 @@ class Game {
                         triangles.push_back({start1, end1, screen_br});
                         triangles.push_back({start0, start1, screen_br});
                         break;
-                }
-
-                if (intersection == (LEFT | BOT)) {
+                    case LEFT | RIGHT:
+                        if (light.position.y < start0.y) {
+                            triangles.push_back({start0, end0, screen_bl});
+                            triangles.push_back({start0, start1, screen_bl});
+                            triangles.push_back({start1, screen_br, screen_bl});
+                            triangles.push_back({start1, end1, screen_br});
+                        } else {
+                            triangles.push_back({start0, end0, screen_tl});
+                            triangles.push_back({start0, start1, screen_tl});
+                            triangles.push_back({start1, screen_tr, screen_tl});
+                            triangles.push_back({start1, end1, screen_tr});
+                        }
+                        break;
+                    case TOP | BOT:
+                        if (light.position.x < start0.x) {
+                            triangles.push_back({start0, end0, screen_tr});
+                            triangles.push_back({start0, start1, screen_tr});
+                            triangles.push_back({start1, screen_br, screen_tr});
+                            triangles.push_back({start1, end1, screen_br});
+                        } else {
+                            triangles.push_back({start0, end0, screen_tl});
+                            triangles.push_back({start0, start1, screen_tl});
+                            triangles.push_back({start1, screen_bl, screen_tl});
+                            triangles.push_back({start1, end1, screen_bl});
+                        }
+                        break;
                 }
             }
 
