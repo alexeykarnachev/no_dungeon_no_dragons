@@ -1,5 +1,6 @@
 in vec2 fragTexCoord;
 in vec3 fragPosition;
+in vec2 fragScreenPosition;
 
 out vec4 fs_color;
 
@@ -14,6 +15,7 @@ uniform int n_lights;
 uniform Light lights[32];
 
 uniform sampler2D texture0;
+uniform sampler2D shadow_map;
 uniform vec4 plain_color;
 
 vec4 texture2DAA(sampler2D tex, vec2 uv) {
@@ -27,8 +29,9 @@ vec4 texture2DAA(sampler2D tex, vec2 uv) {
 
 void main() {
     vec4 texture_color = texture2DAA(texture0, fragTexCoord);
-    if (texture_color.a < 0.9) discard;
+    if (texture_color.a < 0.99) discard;
 
+    float shadow = texture(shadow_map, fragScreenPosition).r;
     float plain_color_weight = plain_color.a;
     float texture_color_weight = 1.0 - plain_color_weight;
 
@@ -37,7 +40,8 @@ void main() {
         Light light = lights[i];
         float dist = distance(light.position, fragPosition.xy);
         float attenuation = 1.0 / dot(light.attenuation, vec3(1.0, dist, dist * dist));
-        total_light += light.color * light.intensity * attenuation;
+        float shadow_factor = 1.0 - shadow * 0.8;
+        total_light += light.color * light.intensity * attenuation * shadow_factor;
     }
 
     vec3 color = plain_color_weight * plain_color.rgb;

@@ -28,6 +28,11 @@ namespace fs = std::filesystem;
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 
+// TODO: in order to use different width and height for shadow map,
+// the camera and all other SCREEN_WIDTH and SCREEN_HEIGHT need to be factored out.
+#define SHADOW_MAP_WIDTH SCREEN_WIDTH
+#define SHADOW_MAP_HEIGHT SCREEN_HEIGHT
+
 #define MAX_N_LIGHTS 32
 
 #define VIEW_LINE_Y_OFFSET -16
@@ -93,6 +98,50 @@ Shader load_shader(const std::string &vs_file_name, const std::string &fs_file_n
 
 // -----------------------------------------------------------------------
 // geometry and collisions
+#define LEFT (1 << 0)
+#define TOP (1 << 1)
+#define RIGHT (1 << 2)
+#define BOT (1 << 3)
+
+typedef struct Triangle {
+    Vector2 a;
+    Vector2 b;
+    Vector2 c;
+} Triangle;
+
+typedef struct Line {
+    Vector2 a;
+    Vector2 b;
+} Line;
+
+typedef struct RectDetailed {
+    Vector2 tl;
+    Vector2 tr;
+    Vector2 br;
+    Vector2 bl;
+
+    Line left;
+    Line top;
+    Line right;
+    Line bot;
+} RectDetailed;
+
+RectDetailed get_rect_detailed(Rectangle rect) {
+    Vector2 tl = {rect.x, rect.y};
+    Vector2 tr = {rect.x + rect.width, rect.y};
+    Vector2 br = {rect.x + rect.width, rect.y + rect.height};
+    Vector2 bl = {rect.x, rect.y + rect.height};
+    return {
+        .tl = tl,
+        .tr = tr,
+        .br = br,
+        .bl = bl,
+        .left = {tl, bl},
+        .top = {tl, tr},
+        .right = {tr, br},
+        .bot = {bl, br}};
+}
+
 Vector2 get_rect_center(Rectangle rect) {
     return {.x = rect.x + 0.5f * rect.width, .y = rect.y + 0.5f * rect.height};
 }
@@ -146,16 +195,10 @@ bool check_collision_rect_line(Rectangle rect, Vector2 start, Vector2 end) {
            || CheckCollisionLines(start, end, rect_bl, rect_tl, &point);
 }
 
-typedef struct Triangle {
-    Vector2 a;
-    Vector2 b;
-    Vector2 c;
-} Triangle;
-
-#define LEFT (1 << 0)
-#define TOP (1 << 1)
-#define RIGHT (1 << 2)
-#define BOT (1 << 3)
+bool check_collision_lines(Line line0, Line line1) {
+    Vector2 point;
+    return CheckCollisionLines(line0.a, line0.b, line1.a, line1.b, &point);
+}
 
 // -----------------------------------------------------------------------
 // sprite
@@ -504,6 +547,10 @@ class GameCamera {
         return {
             top_left.x, top_left.y, top_right.x - top_left.x, bot_right.y - top_right.y};
     }
+
+    RectDetailed get_screen_rect_detailed() {
+        return get_rect_detailed(this->get_screen_rect());
+    }
 };
 
 // -----------------------------------------------------------------------
@@ -638,7 +685,7 @@ class Creature {
         return sprite;
     }
 
-    static Creature creature_platform(
+    static Creature create_platform(
         SpriteSheetAnimator animator,
         std::string tag,
         float speed,
@@ -723,6 +770,8 @@ class Creature {
 // game
 class Game {
   public:
+    RenderTexture2D shadow_map;
+
     std::unordered_map<std::string, Shader> shaders;
     std::unordered_map<std::string, SpriteSheet> sprite_sheets;
     TiledLevel tiled_level;
@@ -743,9 +792,25 @@ class Game {
 
         rlDisableBackfaceCulling();
 
+        this->shadow_map = LoadRenderTexture(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
+        SetTextureWrap(this->shadow_map.texture, TEXTURE_WRAP_CLAMP);
+
         this->shaders["sprite"] = load_shader("base.vert", "sprite.frag");
         this->sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
         this->load_level(LEVELS_DIR, LEVEL);
+    }
+
+    ~Game() {
+        this->tiled_level.unload();
+
+        UnloadRenderTexture(this->shadow_map);
+
+        for (auto &pair : this->shaders)
+            UnloadShader(pair.second);
+        for (auto &pair : this->sprite_sheets)
+            pair.second.unload();
+
+        CloseWindow();
     }
 
     void load_level(std::string dir_path, std::string name) {
@@ -849,7 +914,7 @@ class Game {
                 ));
             } else if (object_type == "platform") {
                 auto dest = objects[destination_object_id];
-                this->creatures.push_back(Creature::creature_platform(
+                this->creatures.push_back(Creature::create_platform(
                     SpriteSheetAnimator(&this->sprite_sheets["0"]),
                     object_tag,
                     PLATFORM_SPEED,
@@ -858,17 +923,6 @@ class Game {
                 ));
             }
         }
-    }
-
-    ~Game() {
-        tiled_level.unload();
-
-        for (auto &pair : shaders)
-            UnloadShader(pair.second);
-        for (auto &pair : this->sprite_sheets)
-            pair.second.unload();
-
-        CloseWindow();
     }
 
     void update() {
@@ -1681,14 +1735,17 @@ class Game {
         }
 
         // ---------------------------------------------------------------
-        // draw sprites
+        // draw scene
+        this->draw_shadow_map();
+        this->update_lights();
+
         BeginDrawing();
-        ClearBackground(BLACK);
+        rlViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        ClearBackground(BLANK);
         BeginMode2D(this->camera.camera2d);
 
         this->draw_sprites(normal_sprites, BLANK);
         this->draw_sprites(attacked_sprites, WHITE);
-        this->update_lights();
 #if 0
         // ---------------------------------------------------------------
         // draw masks
@@ -1775,165 +1832,6 @@ class Game {
         }
 
         // ---------------------------------------------------------------
-        // compute vision polygons
-        Rectangle screen_rect = this->camera.get_screen_rect();
-
-        // TODO: factor out into RectangleVerts
-        Vector2 screen_tl = {screen_rect.x, screen_rect.y};
-        Vector2 screen_tr = {screen_rect.x + screen_rect.width, screen_rect.y};
-        Vector2 screen_br = {
-            screen_rect.x + screen_rect.width, screen_rect.y + screen_rect.height};
-        Vector2 screen_bl = {screen_rect.x, screen_rect.y + screen_rect.height};
-        float diag = Vector2Distance(screen_tl, screen_br);
-
-        // TODO: create and use Eyes component instead of light for this
-        Light light = this->player->get_light();
-        for (Creature &obstacle : this->creatures) {
-            Rectangle rect = obstacle.get_rigid_rect();
-            if (rect.width <= 0.0) continue;
-
-            // TODO: factor out into RectangleVerts
-            Vector2 tl = {rect.x, rect.y};
-            Vector2 tr = {rect.x + rect.width, rect.y};
-            Vector2 br = {rect.x + rect.width, rect.y + rect.height};
-            Vector2 bl = {rect.x, rect.y + rect.height};
-
-            // get shadow walls
-            Vector2 walls[4][2];
-            int n_walls = 0;
-
-            if (light.position.x < rect.x) {
-                walls[n_walls][0] = tr;
-                walls[n_walls++][1] = br;
-            } else if (light.position.x > rect.x + rect.width) {
-                walls[n_walls][0] = tl;
-                walls[n_walls++][1] = bl;
-            } else {
-                walls[n_walls][0] = tr;
-                walls[n_walls++][1] = br;
-
-                walls[n_walls][0] = tl;
-                walls[n_walls++][1] = bl;
-            }
-
-            if (light.position.y < rect.y) {
-                walls[n_walls][0] = bl;
-                walls[n_walls++][1] = br;
-            } else if (light.position.y > rect.y + rect.height) {
-                walls[n_walls][0] = tl;
-                walls[n_walls++][1] = tr;
-            } else {
-                walls[n_walls][0] = bl;
-                walls[n_walls++][1] = br;
-
-                walls[n_walls][0] = tl;
-                walls[n_walls++][1] = tr;
-            }
-
-            // get shadow triangles
-            static std::vector<Triangle> triangles;
-            triangles.clear();
-            for (int i = 0; i < n_walls; ++i) {
-                Vector2 start0 = walls[i][0];
-                Vector2 start1 = walls[i][1];
-
-                Vector2 d0 = Vector2Normalize(Vector2Subtract(start0, light.position));
-                Vector2 d1 = Vector2Normalize(Vector2Subtract(start1, light.position));
-
-                Vector2 end0 = Vector2Add(start0, Vector2Scale(d0, diag));
-                Vector2 end1 = Vector2Add(start1, Vector2Scale(d1, diag));
-
-                Vector2 point;
-                int intersection = 0;
-                if (CheckCollisionLines(start0, end0, screen_tl, screen_bl, &point)) {
-                    intersection |= LEFT;
-                }
-                if (CheckCollisionLines(start0, end0, screen_tl, screen_tr, &point)) {
-                    intersection |= TOP;
-                }
-                if (CheckCollisionLines(start0, end0, screen_tr, screen_br, &point)) {
-                    intersection |= RIGHT;
-                }
-                if (CheckCollisionLines(start0, end0, screen_bl, screen_br, &point)) {
-                    intersection |= BOT;
-                }
-
-                if (CheckCollisionLines(start1, end1, screen_tl, screen_bl, &point)) {
-                    intersection |= LEFT;
-                }
-                if (CheckCollisionLines(start1, end1, screen_tl, screen_tr, &point)) {
-                    intersection |= TOP;
-                }
-                if (CheckCollisionLines(start1, end1, screen_tr, screen_br, &point)) {
-                    intersection |= RIGHT;
-                }
-                if (CheckCollisionLines(start1, end1, screen_bl, screen_br, &point)) {
-                    intersection |= BOT;
-                }
-
-                switch (intersection) {
-                    case LEFT:
-                    case TOP:
-                    case RIGHT:
-                    case BOT:
-                        triangles.push_back({start0, end0, start1});
-                        triangles.push_back({start1, end0, end1});
-                        break;
-                    case LEFT | BOT:
-                        triangles.push_back({start0, end0, screen_bl});
-                        triangles.push_back({start1, end1, screen_bl});
-                        triangles.push_back({start0, start1, screen_bl});
-                        break;
-                    case LEFT | TOP:
-                        triangles.push_back({start0, end0, screen_tl});
-                        triangles.push_back({start1, end1, screen_tl});
-                        triangles.push_back({start0, start1, screen_tl});
-                        break;
-                    case RIGHT | TOP:
-                        triangles.push_back({start0, end0, screen_tr});
-                        triangles.push_back({start1, end1, screen_tr});
-                        triangles.push_back({start0, start1, screen_tr});
-                        break;
-                    case RIGHT | BOT:
-                        triangles.push_back({start0, end0, screen_br});
-                        triangles.push_back({start1, end1, screen_br});
-                        triangles.push_back({start0, start1, screen_br});
-                        break;
-                    case LEFT | RIGHT:
-                        if (light.position.y < start0.y) {
-                            triangles.push_back({start0, end0, screen_bl});
-                            triangles.push_back({start0, start1, screen_bl});
-                            triangles.push_back({start1, screen_br, screen_bl});
-                            triangles.push_back({start1, end1, screen_br});
-                        } else {
-                            triangles.push_back({start0, end0, screen_tl});
-                            triangles.push_back({start0, start1, screen_tl});
-                            triangles.push_back({start1, screen_tr, screen_tl});
-                            triangles.push_back({start1, end1, screen_tr});
-                        }
-                        break;
-                    case TOP | BOT:
-                        if (light.position.x < start0.x) {
-                            triangles.push_back({start0, end0, screen_tr});
-                            triangles.push_back({start0, start1, screen_tr});
-                            triangles.push_back({start1, screen_br, screen_tr});
-                            triangles.push_back({start1, end1, screen_br});
-                        } else {
-                            triangles.push_back({start0, end0, screen_tl});
-                            triangles.push_back({start0, start1, screen_tl});
-                            triangles.push_back({start1, screen_bl, screen_tl});
-                            triangles.push_back({start1, end1, screen_bl});
-                        }
-                        break;
-                }
-            }
-
-            for (Triangle &triangle : triangles) {
-                DrawTriangle(triangle.a, triangle.b, triangle.c, ColorAlpha(BLACK, 0.7));
-            }
-        }
-
-        // ---------------------------------------------------------------
         // set shader values
         int n_lights = lights.size();
         SetShaderValue(
@@ -1974,18 +1872,134 @@ class Game {
         }
     }
 
-    void draw_sprites(std::vector<Sprite> sprites, Color plain_color) {
-        Shader sprite_shader = this->shaders["sprite"];
+    void draw_shadow_map() {
+        static std::vector<Triangle> triangles;
+        triangles.clear();
 
-        BeginShaderMode(sprite_shader);
+        RectDetailed screen = this->camera.get_screen_rect_detailed();
+        float diag = Vector2Distance(screen.tl, screen.br);
+
+        // TODO: create and use Eyes component instead of light for this
+        Light light = this->player->get_light();
+
+        // push shadow triangles
+        for (Creature &obstacle : this->creatures) {
+            Rectangle rect = obstacle.get_rigid_rect();
+            if (rect.width <= 0.0) continue;
+
+            RectDetailed obst = get_rect_detailed(rect);
+
+            // get shadow walls
+            Line walls[4];
+            int n_walls = 0;
+            if (light.position.x < obst.right.a.x) walls[n_walls++] = obst.right;
+            if (light.position.x > obst.left.a.x) walls[n_walls++] = obst.left;
+            if (light.position.y < obst.bot.a.y) walls[n_walls++] = obst.bot;
+            if (light.position.y > obst.top.a.y) walls[n_walls++] = obst.top;
+
+            // get shadow triangles
+            for (int i = 0; i < n_walls; ++i) {
+                Line start = walls[i];
+                Line dir = {
+                    Vector2Normalize(Vector2Subtract(start.a, light.position)),
+                    Vector2Normalize(Vector2Subtract(start.b, light.position))};
+                Line end = {
+                    Vector2Add(start.a, Vector2Scale(dir.a, diag)),
+                    Vector2Add(start.b, Vector2Scale(dir.b, diag))};
+                Line side0 = {start.a, end.a};
+                Line side1 = {start.b, end.b};
+
+                Vector2 point;
+                int intersection = 0;
+                for (Line side : {side0, side1}) {
+                    if (check_collision_lines(side, screen.left)) intersection |= LEFT;
+                    if (check_collision_lines(side, screen.top)) intersection |= TOP;
+                    if (check_collision_lines(side, screen.right)) intersection |= RIGHT;
+                    if (check_collision_lines(side, screen.bot)) intersection |= BOT;
+                }
+
+                switch (intersection) {
+                    case LEFT:
+                    case TOP:
+                    case RIGHT:
+                    case BOT:
+                        triangles.push_back({start.a, end.a, start.b});
+                        triangles.push_back({start.b, end.a, end.b});
+                        break;
+                    case LEFT | BOT:
+                        triangles.push_back({start.a, end.a, screen.bl});
+                        triangles.push_back({start.b, end.b, screen.bl});
+                        triangles.push_back({start.a, start.b, screen.bl});
+                        break;
+                    case LEFT | TOP:
+                        triangles.push_back({start.a, end.a, screen.tl});
+                        triangles.push_back({start.b, end.b, screen.tl});
+                        triangles.push_back({start.a, start.b, screen.tl});
+                        break;
+                    case RIGHT | TOP:
+                        triangles.push_back({start.a, end.a, screen.tr});
+                        triangles.push_back({start.b, end.b, screen.tr});
+                        triangles.push_back({start.a, start.b, screen.tr});
+                        break;
+                    case RIGHT | BOT:
+                        triangles.push_back({start.a, end.a, screen.br});
+                        triangles.push_back({start.b, end.b, screen.br});
+                        triangles.push_back({start.a, start.b, screen.br});
+                        break;
+                    case LEFT | RIGHT:
+                        if (light.position.y < start.a.y) {
+                            triangles.push_back({start.a, end.a, screen.bl});
+                            triangles.push_back({start.a, start.b, screen.bl});
+                            triangles.push_back({start.b, screen.br, screen.bl});
+                            triangles.push_back({start.b, end.b, screen.br});
+                        } else {
+                            triangles.push_back({start.a, end.a, screen.tl});
+                            triangles.push_back({start.a, start.b, screen.tl});
+                            triangles.push_back({start.b, screen.tr, screen.tl});
+                            triangles.push_back({start.b, end.b, screen.tr});
+                        }
+                        break;
+                    case TOP | BOT:
+                        if (light.position.x < start.a.x) {
+                            triangles.push_back({start.a, end.a, screen.tr});
+                            triangles.push_back({start.a, start.b, screen.tr});
+                            triangles.push_back({start.b, screen.br, screen.tr});
+                            triangles.push_back({start.b, end.b, screen.br});
+                        } else {
+                            triangles.push_back({start.a, end.a, screen.tl});
+                            triangles.push_back({start.a, start.b, screen.tl});
+                            triangles.push_back({start.b, screen.bl, screen.tl});
+                            triangles.push_back({start.b, end.b, screen.bl});
+                        }
+                        break;
+                }
+            }
+        }
+
+        // draw shadow triangles into the shadow map
+        rlViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
+        BeginTextureMode(this->shadow_map);
+        ClearBackground(BLANK);
+        BeginMode2D(this->camera.camera2d);
+        for (Triangle &triangle : triangles) {
+            DrawTriangle(triangle.a, triangle.b, triangle.c, WHITE);
+        }
+        EndMode2D();
+        EndTextureMode();
+    }
+
+    void draw_sprites(std::vector<Sprite> sprites, Color plain_color) {
+        Shader shader = this->shaders["sprite"];
+        BeginShaderMode(shader);
 
         Vector4 color = ColorNormalize(plain_color);
         SetShaderValue(
-            sprite_shader,
-            GetShaderLocation(sprite_shader, "plain_color"),
-            &color,
-            SHADER_UNIFORM_VEC4
+            shader, GetShaderLocation(shader, "plain_color"), &color, SHADER_UNIFORM_VEC4
         );
+        SetShaderValueTexture(
+            shader, GetShaderLocation(shader, "shadow_map"), this->shadow_map.texture
+        );
+
         for (Sprite &sprite : sprites) {
             sprite.draw();
         }
