@@ -588,6 +588,8 @@ class Light {
     Vector3 color;
     Vector3 attenuation;
 
+    bool is_off = true;
+
     // set in runtime for sorting
     float _dist;
 
@@ -596,7 +598,8 @@ class Light {
         : intensity(intensity)
         , position(position)
         , color(color)
-        , attenuation(attenuation) {}
+        , attenuation(attenuation)
+        , is_off(false) {}
 };
 
 class Creature {
@@ -946,7 +949,7 @@ class Game {
             // turn off light if non-player creature is dead
             if (creature.state == CreatureState::DEATH
                 && creature.type != CreatureType::PLAYER) {
-                creature.light.intensity = 0.0;
+                creature.light.is_off = true;
             }
 
             // clear old received attack ids once in a while
@@ -1811,7 +1814,7 @@ class Game {
         lights.clear();
 
         for (Creature &creature : this->creatures) {
-            if (creature.light.intensity > EPSILON) {
+            if (!creature.light.is_off) {
                 Light light = creature.get_light();
                 light._dist = Vector2Distance(
                     creature.position, this->camera.camera2d.target
