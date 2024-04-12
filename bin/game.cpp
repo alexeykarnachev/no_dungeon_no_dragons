@@ -25,6 +25,10 @@ namespace fs = std::filesystem;
 #define LEVELS_DIR "./resources/tiled/"
 #define LEVEL "level_0"
 
+#define SCREEN_WIDTH 1920
+#define SCREEN_HEIGHT 1080
+#define SHADOW_MAP_WIDTH 512
+#define SHADOW_MAP_HEIGHT 512
 #define MAX_N_LIGHTS 32
 
 #define VIEW_LINE_Y_OFFSET -16
@@ -535,42 +539,51 @@ class TiledLevel {
 // -----------------------------------------------------------------------
 // game camera
 class GameCamera {
- private:
-    Camera2D get_cam_2d(Vector2 screen_size) {
-        float zoom = screen_size.x / this->view_width;
-        return {
-            .offset = {0.5f * screen_size.x, 0.5f * screen_size.y},
-            .target = this->target,
-            .rotation = 0.0,
-            .zoom = zoom};
-    }
-
   public:
-    float view_width = 500.0;
-    Vector2 target = {0.0, 0.0};
+    float view_width;
+    float aspect;
+    Vector2 target;
 
     GameCamera() = default;
+    GameCamera(float view_width, float aspect)
+        : view_width(view_width)
+        , aspect(aspect) {}
 
-    void begin_mode_2d(Vector2 screen_size) {
-        BeginMode2D(this->get_cam_2d(screen_size));
-    }
-
-    void end_mode_2d() {
-        EndMode2D();
-    }
-
-    Rectangle get_screen_rect(Vector2 screen_size) {
-        Camera2D cam = this->get_cam_2d(screen_size);
-        Vector2 top_left = GetScreenToWorld2D({0.0, 0.0}, cam);
-        Vector2 top_right = GetScreenToWorld2D({screen_size.x, 0.0}, cam);
-        Vector2 bot_right = GetScreenToWorld2D(screen_size, cam);
+    Rectangle get_screen_rect() {
+        float view_height = this->view_width / this->aspect;
+        Vector2 top_left = {
+            this->target.x - 0.5f * this->view_width,
+            this->target.y - 0.5f * view_height};
+        Vector2 top_right = {top_left.x + this->view_width, top_left.y};
+        Vector2 bot_right = {top_right.x, top_right.y + view_height};
 
         return {
             top_left.x, top_left.y, top_right.x - top_left.x, bot_right.y - top_right.y};
     }
 
-    RectDetailed get_screen_rect_detailed(Vector2 screen_size) {
-        return get_rect_detailed(this->get_screen_rect(screen_size));
+    RectDetailed get_screen_rect_detailed() {
+        return get_rect_detailed(this->get_screen_rect());
+    }
+
+    void set_shader_values(Shader shader) {
+        SetShaderValue(
+            shader,
+            GetShaderLocation(shader, "camera.view_width"),
+            &this->view_width,
+            SHADER_UNIFORM_FLOAT
+        );
+        SetShaderValue(
+            shader,
+            GetShaderLocation(shader, "camera.aspect"),
+            &this->aspect,
+            SHADER_UNIFORM_FLOAT
+        );
+        SetShaderValue(
+            shader,
+            GetShaderLocation(shader, "camera.target"),
+            &this->target,
+            SHADER_UNIFORM_VEC2
+        );
     }
 };
 
@@ -794,8 +807,6 @@ class Creature {
 // game
 class Game {
   public:
-    Vector2 screen_size = {1920, 1080};
-    Vector2 shadow_map_size = {480, 270};
     RenderTexture2D shadow_map;
 
     std::unordered_map<std::string, Shader> shaders;
@@ -814,14 +825,16 @@ class Game {
     Game() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         SetTargetFPS(60);
-        InitWindow(this->screen_size.x, this->screen_size.y, "Game");
+        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
 
         rlDisableBackfaceCulling();
 
-        this->shadow_map = LoadRenderTexture(this->shadow_map_size.x, this->shadow_map_size.y);
+        this->camera = GameCamera(500.0, (float)SCREEN_WIDTH / SCREEN_HEIGHT);
+        this->shadow_map = LoadRenderTexture(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
         SetTextureWrap(this->shadow_map.texture, TEXTURE_WRAP_CLAMP);
 
         this->shaders["sprite"] = load_shader("base.vert", "sprite.frag");
+        this->shaders["shadow"] = load_shader("base.vert", "shadow.frag");
         this->sprite_sheets["0"] = SpriteSheet("./resources/sprite_sheets/", "0");
         this->load_level(LEVELS_DIR, LEVEL);
     }
@@ -1780,9 +1793,9 @@ class Game {
         this->update_lights();
 
         BeginDrawing();
-        rlViewport(0, 0, this->screen_size.x, this->screen_size.y);
+        rlViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
         ClearBackground(BLANK);
-        this->camera.begin_mode_2d(this->screen_size);
+
         this->draw_sprites(normal_sprites, BLANK);
         this->draw_sprites(attacked_sprites, WHITE);
 #if 0
@@ -1811,8 +1824,6 @@ class Game {
             DrawRectangleRec(collider, ColorAlpha(RED, 0.2));
         }
 #endif
-
-        this->camera.end_mode_2d();
 
         // healthbar
         float health_ratio = this->player->health / this->player->max_health;
@@ -1913,7 +1924,7 @@ class Game {
         static std::vector<Triangle> triangles;
         triangles.clear();
 
-        RectDetailed screen = this->camera.get_screen_rect_detailed(this->screen_size);
+        RectDetailed screen = this->camera.get_screen_rect_detailed();
         float diag = Vector2Distance(screen.tl, screen.br);
 
         // TODO: create and use Eyes component instead of light for this
@@ -2014,21 +2025,27 @@ class Game {
         }
 
         // draw shadow triangles into the shadow map
+        Shader shader = this->shaders["shadow"];
+        BeginShaderMode(shader);
         BeginTextureMode(this->shadow_map);
-        rlViewport(0, 0, this->shadow_map_size.x, this->shadow_map_size.y);
+        rlViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
         ClearBackground(BLANK);
 
-        this->camera.begin_mode_2d(this->shadow_map_size);
+        this->camera.set_shader_values(shader);
         for (Triangle &triangle : triangles) {
             DrawTriangle(triangle.a, triangle.b, triangle.c, WHITE);
         }
-        this->camera.end_mode_2d();
+
         EndTextureMode();
+        EndShaderMode();
     }
 
     void draw_sprites(std::vector<Sprite> sprites, Color plain_color) {
         Shader shader = this->shaders["sprite"];
+
         BeginShaderMode(shader);
+
+        this->camera.set_shader_values(shader);
 
         Vector4 color = ColorNormalize(plain_color);
         SetShaderValue(
