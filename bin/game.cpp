@@ -25,14 +25,6 @@ namespace fs = std::filesystem;
 #define LEVELS_DIR "./resources/tiled/"
 #define LEVEL "level_0"
 
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080
-
-// TODO: in order to use different width and height for shadow map,
-// the camera and all other SCREEN_WIDTH and SCREEN_HEIGHT need to be factored out.
-#define SHADOW_MAP_WIDTH SCREEN_WIDTH
-#define SHADOW_MAP_HEIGHT SCREEN_HEIGHT
-
 #define MAX_N_LIGHTS 32
 
 #define VIEW_LINE_Y_OFFSET -16
@@ -543,33 +535,42 @@ class TiledLevel {
 // -----------------------------------------------------------------------
 // game camera
 class GameCamera {
-  private:
-    float zoom = 4.0;
-
-  public:
-    Camera2D camera2d;
-
-    GameCamera() {
-        camera2d = {
-            .offset = {0.5 * SCREEN_WIDTH, 0.5 * SCREEN_HEIGHT + 200.0},
-            .target = {0.0, 0.0},
+ private:
+    Camera2D get_cam_2d(Vector2 screen_size) {
+        float zoom = screen_size.x / this->view_width;
+        return {
+            .offset = {0.5f * screen_size.x, 0.5f * screen_size.y},
+            .target = this->target,
             .rotation = 0.0,
-            .zoom = this->zoom};
+            .zoom = zoom};
     }
 
-    Rectangle get_screen_rect() {
-        Vector2 top_left = GetScreenToWorld2D({0.0, 0.0}, this->camera2d);
-        Vector2 top_right = GetScreenToWorld2D({SCREEN_WIDTH, 0.0}, this->camera2d);
-        Vector2 bot_right = GetScreenToWorld2D(
-            {SCREEN_WIDTH, SCREEN_HEIGHT}, this->camera2d
-        );
+  public:
+    float view_width = 500.0;
+    Vector2 target = {0.0, 0.0};
+
+    GameCamera() = default;
+
+    void begin_mode_2d(Vector2 screen_size) {
+        BeginMode2D(this->get_cam_2d(screen_size));
+    }
+
+    void end_mode_2d() {
+        EndMode2D();
+    }
+
+    Rectangle get_screen_rect(Vector2 screen_size) {
+        Camera2D cam = this->get_cam_2d(screen_size);
+        Vector2 top_left = GetScreenToWorld2D({0.0, 0.0}, cam);
+        Vector2 top_right = GetScreenToWorld2D({screen_size.x, 0.0}, cam);
+        Vector2 bot_right = GetScreenToWorld2D(screen_size, cam);
 
         return {
             top_left.x, top_left.y, top_right.x - top_left.x, bot_right.y - top_right.y};
     }
 
-    RectDetailed get_screen_rect_detailed() {
-        return get_rect_detailed(this->get_screen_rect());
+    RectDetailed get_screen_rect_detailed(Vector2 screen_size) {
+        return get_rect_detailed(this->get_screen_rect(screen_size));
     }
 };
 
@@ -793,6 +794,8 @@ class Creature {
 // game
 class Game {
   public:
+    Vector2 screen_size = {1920, 1080};
+    Vector2 shadow_map_size = {480, 270};
     RenderTexture2D shadow_map;
 
     std::unordered_map<std::string, Shader> shaders;
@@ -811,11 +814,11 @@ class Game {
     Game() {
         SetConfigFlags(FLAG_MSAA_4X_HINT);
         SetTargetFPS(60);
-        InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Game");
+        InitWindow(this->screen_size.x, this->screen_size.y, "Game");
 
         rlDisableBackfaceCulling();
 
-        this->shadow_map = LoadRenderTexture(SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
+        this->shadow_map = LoadRenderTexture(this->shadow_map_size.x, this->shadow_map_size.y);
         SetTextureWrap(this->shadow_map.texture, TEXTURE_WRAP_CLAMP);
 
         this->shaders["sprite"] = load_shader("base.vert", "sprite.frag");
@@ -892,7 +895,7 @@ class Game {
                     true,
                     object_position
                 ));
-                this->camera.camera2d.target = object_position;
+                this->camera.target = object_position;
             } else if (object_type == "bat") {
                 this->creatures.push_back(Creature(
                     CreatureType::BAT,
@@ -978,7 +981,7 @@ class Game {
 
         this->dt = GetFrameTime();
         this->time += this->dt;
-        this->camera.camera2d.target = player->position;
+        this->camera.target = player->position;
 
         for (auto &creature : this->creatures) {
             creature.animator.update(this->dt);
@@ -1777,10 +1780,9 @@ class Game {
         this->update_lights();
 
         BeginDrawing();
-        rlViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        rlViewport(0, 0, this->screen_size.x, this->screen_size.y);
         ClearBackground(BLANK);
-        BeginMode2D(this->camera.camera2d);
-
+        this->camera.begin_mode_2d(this->screen_size);
         this->draw_sprites(normal_sprites, BLANK);
         this->draw_sprites(attacked_sprites, WHITE);
 #if 0
@@ -1810,7 +1812,7 @@ class Game {
         }
 #endif
 
-        EndMode2D();
+        this->camera.end_mode_2d();
 
         // healthbar
         float health_ratio = this->player->health / this->player->max_health;
@@ -1850,9 +1852,7 @@ class Game {
         for (Creature &creature : this->creatures) {
             if (!creature.light.is_off) {
                 Light light = creature.get_light();
-                light._dist = Vector2Distance(
-                    creature.position, this->camera.camera2d.target
-                );
+                light._dist = Vector2Distance(creature.position, this->camera.target);
                 lights.push_back(light);
             }
         }
@@ -1913,7 +1913,7 @@ class Game {
         static std::vector<Triangle> triangles;
         triangles.clear();
 
-        RectDetailed screen = this->camera.get_screen_rect_detailed();
+        RectDetailed screen = this->camera.get_screen_rect_detailed(this->screen_size);
         float diag = Vector2Distance(screen.tl, screen.br);
 
         // TODO: create and use Eyes component instead of light for this
@@ -2014,14 +2014,15 @@ class Game {
         }
 
         // draw shadow triangles into the shadow map
-        rlViewport(0, 0, SHADOW_MAP_WIDTH, SHADOW_MAP_HEIGHT);
         BeginTextureMode(this->shadow_map);
+        rlViewport(0, 0, this->shadow_map_size.x, this->shadow_map_size.y);
         ClearBackground(BLANK);
-        BeginMode2D(this->camera.camera2d);
+
+        this->camera.begin_mode_2d(this->shadow_map_size);
         for (Triangle &triangle : triangles) {
             DrawTriangle(triangle.a, triangle.b, triangle.c, WHITE);
         }
-        EndMode2D();
+        this->camera.end_mode_2d();
         EndTextureMode();
     }
 
