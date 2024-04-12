@@ -4851,6 +4851,74 @@
                     }
                 }
             }
+        ],
+        "light_0": [
+            {
+                "sprite": {
+                    "name": "light_0",
+                    "x": 302,
+                    "y": 164,
+                    "w": 14,
+                    "h": 33,
+                    "frame_idx": 0
+                },
+                "masks": {}
+            },
+            {
+                "sprite": {
+                    "name": "light_0",
+                    "x": 48,
+                    "y": 253,
+                    "w": 14,
+                    "h": 33,
+                    "frame_idx": 1
+                },
+                "masks": {}
+            },
+            {
+                "sprite": {
+                    "name": "light_0",
+                    "x": 48,
+                    "y": 297,
+                    "w": 14,
+                    "h": 33,
+                    "frame_idx": 2
+                },
+                "masks": {}
+            },
+            {
+                "sprite": {
+                    "name": "light_0",
+                    "x": 344,
+                    "y": 43,
+                    "w": 14,
+                    "h": 33,
+                    "frame_idx": 3
+                },
+                "masks": {}
+            },
+            {
+                "sprite": {
+                    "name": "light_0",
+                    "x": 385,
+                    "y": 350,
+                    "w": 14,
+                    "h": 33,
+                    "frame_idx": 4
+                },
+                "masks": {}
+            },
+            {
+                "sprite": {
+                    "name": "light_0",
+                    "x": 148,
+                    "y": 388,
+                    "w": 14,
+                    "h": 33,
+                    "frame_idx": 5
+                },
+                "masks": {}
+            }
         ]
     }
 }

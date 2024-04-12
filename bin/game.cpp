@@ -211,6 +211,7 @@ Rectangle rect_from_json(json data) {
 
 enum class PivotType {
     CENTER_BOTTOM,
+    CENTER_TOP,
     LEFT_CENTER,
     RIGHT_CENTER,
     CENTER_CENTER,
@@ -264,12 +265,13 @@ class Sprite {
 
         Rectangle src = rect_from_json(sprite_json);
 
-        // find sprite's top right corner (because that's how sprites are rendered)
+        // find sprite's top left corner (because that's how sprites are rendered)
         Vector2 offset;
         switch (pivot.type) {
             case PivotType::CENTER_BOTTOM:
                 offset = {-0.5f * src.width, -src.height};
                 break;
+            case PivotType::CENTER_TOP: offset = {-0.5f * src.width, 0.0}; break;
             case PivotType::LEFT_CENTER: offset = {0.0, -0.5f * src.height}; break;
             case PivotType::RIGHT_CENTER:
                 offset = {-src.width, -0.5f * src.height};
@@ -328,10 +330,16 @@ class SpriteSheet {
     }
 
     int count_frames(std::string &name) {
+        if (!meta["frames"].contains(name)) {
+            return 0;
+        }
         return meta["frames"][name].size();
     }
 
     Sprite get_sprite(std::string &name, int idx, Pivot pivot, bool is_hflip) {
+        if (!meta["frames"].contains(name)) {
+            return Sprite();
+        }
         json frame_json = meta["frames"][name][idx];
         Sprite sprite(frame_json, this->texture, pivot, is_hflip);
         return sprite;
@@ -362,31 +370,45 @@ class SpriteSheetAnimator {
     uint32_t animation_id;
 
     SpriteSheet *sprite_sheet;
-    std::string name = "";
+    std::string base_name = "";
+    std::string animation_name = "";
     float frame_duration = 0.0;
     bool is_repeat = true;
+
+    std::string get_full_name() {
+        if (this->animation_name.empty()) {
+            return this->base_name;
+        } else {
+            return this->base_name + "_" + this->animation_name;
+        }
+    }
 
   public:
     float progress = 0.0;
     SpriteSheetAnimator() {}
-    SpriteSheetAnimator(SpriteSheet *sprite_sheet)
-        : sprite_sheet(sprite_sheet) {}
+    SpriteSheetAnimator(SpriteSheet *sprite_sheet, std::string base_name)
+        : sprite_sheet(sprite_sheet)
+        , base_name(base_name) {}
 
-    void play(std::string name, float frame_duration, bool is_repeat) {
+    void play(std::string animation_name, float frame_duration, bool is_repeat) {
         this->frame_duration = frame_duration;
         this->is_repeat = is_repeat;
 
-        if (this->name != name) {
-            this->name = name;
+        if (this->animation_name != animation_name) {
+            this->animation_name = animation_name;
             this->progress = 0.0;
             this->animation_id = ++this->global_animation_id;
         }
     }
 
-    void update(float dt) {
-        if (this->name.empty()) return;
+    void play(float frame_duration, bool is_repeat) {
+        return this->play("", frame_duration, is_repeat);
+    }
 
-        int n_frames = this->sprite_sheet->count_frames(this->name);
+    void update(float dt) {
+        std::string name = this->get_full_name();
+
+        int n_frames = this->sprite_sheet->count_frames(name);
 
         this->progress += dt / (n_frames * this->frame_duration);
         if (this->is_repeat) {
@@ -404,13 +426,11 @@ class SpriteSheetAnimator {
     }
 
     Sprite get_sprite(Pivot pivot, bool is_hflip) {
-        if (this->name.empty()) {
-            return Sprite();
-        }
+        std::string name = this->get_full_name();
 
-        int n_frames = this->sprite_sheet->count_frames(this->name);
+        int n_frames = this->sprite_sheet->count_frames(name);
         int idx = std::round(this->progress * (n_frames - 1.0));
-        Sprite sprite = this->sprite_sheet->get_sprite(this->name, idx, pivot, is_hflip);
+        Sprite sprite = this->sprite_sheet->get_sprite(name, idx, pivot, is_hflip);
         return sprite;
     }
 
@@ -862,7 +882,7 @@ class Game {
                 this->creatures.push_back(Creature(
                     CreatureType::PLAYER,
                     CreatureState::IDLE,
-                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    SpriteSheetAnimator(&this->sprite_sheets["0"], "knight"),
                     Light(30.0, {0.0, -16.0}, {1.0, 0.9, 0.8}, {25.0, 0.2, 0.007}),
                     100.0,
                     250.0,
@@ -877,7 +897,7 @@ class Game {
                 this->creatures.push_back(Creature(
                     CreatureType::BAT,
                     CreatureState::IDLE,
-                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    SpriteSheetAnimator(&this->sprite_sheets["0"], "bat"),
                     Light(),
                     50.0,
                     0.0,
@@ -891,7 +911,7 @@ class Game {
                 this->creatures.push_back(Creature(
                     CreatureType::WOLF,
                     CreatureState::IDLE,
-                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    SpriteSheetAnimator(&this->sprite_sheets["0"], "wolf"),
                     Light(),
                     80.0,
                     0.0,
@@ -905,7 +925,7 @@ class Game {
                 this->creatures.push_back(Creature(
                     CreatureType::GOLEM,
                     CreatureState::IDLE,
-                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    SpriteSheetAnimator(&this->sprite_sheets["0"], "golem"),
                     Light(30.0, {0.0, -32.0}, {1.0, 0.2, 0.1}, {25.0, 0.5, 0.1}),
                     60.0,
                     0.0,
@@ -917,13 +937,30 @@ class Game {
                 ));
             } else if (object_type == "platform") {
                 auto dest = objects[destination_object_id];
+                std::string base_name = "platform_" + object_tag;
                 this->creatures.push_back(Creature::create_platform(
-                    SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                    SpriteSheetAnimator(&this->sprite_sheets["0"], base_name),
                     object_tag,
                     PLATFORM_SPEED,
                     object_position,
                     {.x = dest["x"], .y = dest["y"]}
                 ));
+            } else if (object_type == "light") {
+                std::string base_name = "light_" + object_tag;
+                PivotType pivot_type = PivotType::CENTER_BOTTOM;
+                Light light(100.0, {0.0, 16.0}, {1.0, 0.7, 0.2}, {25.0, 0.5, 0.1});
+                if (object_tag == "0") {
+                    pivot_type = PivotType::CENTER_TOP;
+                }
+                Creature creature = Creature::create_sprite(
+                    SpriteSheetAnimator(&this->sprite_sheets["0"], base_name),
+                    object_position,
+                    false,
+                    pivot_type
+                );
+                creature.light = light;
+                creature.animator.play(0.2, true);
+                this->creatures.push_back(creature);
             }
         }
     }
@@ -973,7 +1010,7 @@ class Game {
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, JUMPING, FALLING, BLOCKING, ATTACK_0
-                        creature.animator.play("knight_idle", 0.1, true);
+                        creature.animator.play("idle", 0.1, true);
 
                         // move
                         if (IsKeyDown(KEY_D))
@@ -1002,7 +1039,7 @@ class Game {
                         break;
                     case CreatureState::MOVING:
                         // -> JUMPING, FALLING, DASHING, ATTACK_0
-                        creature.animator.play("knight_run", 0.1, true);
+                        creature.animator.play("run", 0.1, true);
 
                         // move
                         if (IsKeyDown(KEY_D))
@@ -1034,7 +1071,7 @@ class Game {
                         break;
                     case CreatureState::JUMPING:
                         // -> IDLE, MOVING, FALLING
-                        creature.animator.play("knight_jump", 0.1, false);
+                        creature.animator.play("jump", 0.1, false);
 
                         // move
                         if (IsKeyDown(KEY_D))
@@ -1056,7 +1093,7 @@ class Game {
                         break;
                     case CreatureState::FALLING:
                         // -> IDLE, MOVING, DASHING, LANDING
-                        creature.animator.play("knight_fall", 0.1, false);
+                        creature.animator.play("fall", 0.1, false);
 
                         static float dash_pressed_at_y = -INFINITY;
 
@@ -1101,7 +1138,7 @@ class Game {
                         break;
                     case CreatureState::LANDING:
                         // -> IDLE
-                        creature.animator.play("knight_landing", 0.1, false);
+                        creature.animator.play("landing", 0.1, false);
 
                         // -> IDLE
                         if (creature.animator.is_finished()) {
@@ -1111,7 +1148,7 @@ class Game {
                         break;
                     case CreatureState::DASHING:
                         // -> IDLE, FALLING, ATTACK_0
-                        creature.animator.play("knight_roll", 0.1, false);
+                        creature.animator.play("roll", 0.1, false);
 
                         static float attack_0_pressed_at_progress = -INFINITY;
 
@@ -1146,7 +1183,7 @@ class Game {
                         break;
                     case CreatureState::BLOCKING:
                         // -> IDLE
-                        creature.animator.play("knight_block", 0.05, false);
+                        creature.animator.play("block", 0.05, false);
 
                         if (creature.animator.is_finished()) {
                             // -> IDLE
@@ -1157,7 +1194,7 @@ class Game {
                     case CreatureState::ATTACK_0:
                         // -> IDLE, FALLING, ATTACK_1
                         creature.animator.play(
-                            "knight_attack_0", ATTACK_0_FRAME_DURATION, false
+                            "attack_0", ATTACK_0_FRAME_DURATION, false
                         );
 
                         static float attack_1_pressed_at_progress = -INFINITY;
@@ -1190,7 +1227,7 @@ class Game {
                     case CreatureState::ATTACK_1:
                         // -> IDLE, FALLING, ATTACK_2
                         creature.animator.play(
-                            "knight_attack_1", ATTACK_1_FRAME_DURATION, false
+                            "attack_1", ATTACK_1_FRAME_DURATION, false
                         );
 
                         static float attack_2_pressed_at_progress = -INFINITY;
@@ -1223,7 +1260,7 @@ class Game {
                     case CreatureState::ATTACK_2:
                         // -> IDLE, FALLING
                         creature.animator.play(
-                            "knight_attack_2", ATTACK_2_FRAME_DURATION, false
+                            "attack_2", ATTACK_2_FRAME_DURATION, false
                         );
 
                         // continue ATTACK_2 if the animation is not finished yet
@@ -1239,7 +1276,7 @@ class Game {
 
                         break;
                     case CreatureState::DEATH:
-                        creature.animator.play("knight_death", 0.1, false);
+                        creature.animator.play("death", 0.1, false);
 
                         break;
                     default: break;
@@ -1256,7 +1293,7 @@ class Game {
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
-                        creature.animator.play("bat_flight", 0.04, true);
+                        creature.animator.play("flight", 0.04, true);
 
                         if (creature.can_attack_player) {
                             // -> ATTACK_0
@@ -1269,7 +1306,7 @@ class Game {
                         break;
                     case CreatureState::MOVING:
                         // -> IDLE, ATTACK_0
-                        creature.animator.play("bat_flight", 0.04, true);
+                        creature.animator.play("flight", 0.04, true);
 
                         if (creature.can_attack_player) {
                             // -> ATTACK_0
@@ -1283,7 +1320,7 @@ class Game {
                         break;
                     case CreatureState::ATTACK_0:
                         // -> IDLE, MOVING
-                        creature.animator.play("bat_attack", 0.1, true);
+                        creature.animator.play("attack", 0.1, true);
 
                         if (!creature.can_see_player) {
                             // -> IDLE
@@ -1296,7 +1333,7 @@ class Game {
                         break;
                     case CreatureState::FALLING:
                         // -> IDLE, DEATH
-                        creature.animator.play("bat_fall", 0.1, false);
+                        creature.animator.play("fall", 0.1, false);
 
                         if (creature.health <= 0.0 && creature.animator.is_finished()
                             && creature.is_grounded) {
@@ -1307,7 +1344,7 @@ class Game {
 
                         break;
                     case CreatureState::DEATH:
-                        creature.animator.play("bat_death", 0.1, false);
+                        creature.animator.play("death", 0.1, false);
 
                         break;
                     default: break;
@@ -1321,7 +1358,7 @@ class Game {
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
-                        creature.animator.play("wolf_idle", 0.1, true);
+                        creature.animator.play("idle", 0.1, true);
 
                         if (creature.can_attack_player) {
                             // -> ATTACK_0
@@ -1334,7 +1371,7 @@ class Game {
                         break;
                     case CreatureState::MOVING:
                         // -> IDLE, ATTACK_0
-                        creature.animator.play("wolf_run", 0.1, true);
+                        creature.animator.play("run", 0.1, true);
 
                         if (creature.can_attack_player) {
                             // -> ATTACK_0
@@ -1348,7 +1385,7 @@ class Game {
                         break;
                     case CreatureState::ATTACK_0:
                         // -> IDLE, MOVING
-                        creature.animator.play("wolf_attack", 0.1, true);
+                        creature.animator.play("attack", 0.1, true);
 
                         if (!creature.can_see_player) {
                             // -> IDLE
@@ -1360,7 +1397,7 @@ class Game {
 
                         break;
                     case CreatureState::DEATH:
-                        creature.animator.play("wolf_death", 0.1, false);
+                        creature.animator.play("death", 0.1, false);
 
                         break;
                     default: break;
@@ -1374,7 +1411,7 @@ class Game {
                 switch (creature.state) {
                     case CreatureState::IDLE:
                         // -> MOVING, ATTACK_0
-                        creature.animator.play("golem_idle", 0.1, true);
+                        creature.animator.play("idle", 0.1, true);
 
                         if (creature.can_attack_player) {
                             // -> ATTACK_0
@@ -1387,7 +1424,7 @@ class Game {
                         break;
                     case CreatureState::MOVING:
                         // -> IDLE, ATTACK_0
-                        creature.animator.play("golem_run", 0.1, true);
+                        creature.animator.play("run", 0.1, true);
 
                         if (creature.can_attack_player) {
                             // -> ATTACK_0
@@ -1401,7 +1438,7 @@ class Game {
                         break;
                     case CreatureState::ATTACK_0:
                         // -> IDLE, MOVING
-                        creature.animator.play("golem_attack", 0.1, true);
+                        creature.animator.play("attack", 0.1, true);
 
                         if (!creature.can_see_player) {
                             // -> IDLE
@@ -1413,7 +1450,7 @@ class Game {
 
                         break;
                     case CreatureState::DEATH:
-                        creature.animator.play("golem_death", 0.1, false);
+                        creature.animator.play("death", 0.1, false);
 
                         break;
                     default: break;
@@ -1424,9 +1461,7 @@ class Game {
                 }
             } else if (creature.type == CreatureType::PLATFORM) {
                 // don't care in which state the PLATFORM is, always the same logic
-                creature.animator.play(
-                    "platform_" + creature.platform_tag + "_idle", 0.1, true
-                );
+                creature.animator.play("idle", 0.1, true);
 
                 // move the platform
                 float speed = creature.platform_speed;
@@ -1579,15 +1614,14 @@ class Game {
                 if (block_collider.id
                     && CheckCollisionRecs(attack_collider.mask, block_collider.mask)) {
                     // if block is successful, apply damage to the attacker
+                    std::string base_name = "block_effect_" + std::to_string(rand() % 3);
                     Creature block = Creature::create_sprite(
-                        SpriteSheetAnimator(&this->sprite_sheets["0"]),
+                        SpriteSheetAnimator(&this->sprite_sheets["0"], base_name),
                         get_rect_center(block_collider.mask),
                         rigid_creature.is_hflip,
                         PivotType::CENTER_CENTER
                     );
-                    block.animator.play(
-                        "block_effect_" + std::to_string(rand() % 3), 0.02, false
-                    );
+                    block.animator.play(0.02, false);
                     this->new_creatures.push_back(block);
 
                     rigid_creature.received_attack_ids.insert(attack_collider.id);

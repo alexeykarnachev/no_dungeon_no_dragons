@@ -370,6 +370,29 @@
                  "width":0,
                  "x":160.25,
                  "y":128.5
+                }, 
+                {
+                 "height":0,
+                 "id":38,
+                 "name":"light_0_0",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"tag",
+                         "type":"string",
+                         "value":"0"
+                        }, 
+                        {
+                         "name":"type",
+                         "type":"string",
+                         "value":"light"
+                        }],
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":226.8125,
+                 "y":160.328125
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -378,7 +401,7 @@
          "y":0
         }],
  "nextlayerid":17,
- "nextobjectid":37,
+ "nextobjectid":39,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
