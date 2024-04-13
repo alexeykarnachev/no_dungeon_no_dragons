@@ -111,31 +111,59 @@ typedef struct Line {
 } Line;
 
 typedef struct RectDetailed {
-    Vector2 tl;
-    Vector2 tr;
-    Vector2 br;
-    Vector2 bl;
+    Vector2 lt;  // left top
+    Vector2 rt;  // right top
+    Vector2 rb;  // right bot
+    Vector2 lb;  // left bot
+
+    Vector2 lm;  // left mid
+    Vector2 rm;  // right mid
+    Vector2 mt;  // mid top
+    Vector2 mb;  // mid bot
 
     Line left;
     Line top;
     Line right;
     Line bot;
+
+    Line midh;
+    Line midv;
 } RectDetailed;
 
-RectDetailed get_rect_detailed(Rectangle rect) {
-    Vector2 tl = {rect.x, rect.y};
-    Vector2 tr = {rect.x + rect.width, rect.y};
-    Vector2 br = {rect.x + rect.width, rect.y + rect.height};
-    Vector2 bl = {rect.x, rect.y + rect.height};
+Rectangle erode_rect(Rectangle rect, float val) {
     return {
-        .tl = tl,
-        .tr = tr,
-        .br = br,
-        .bl = bl,
-        .left = {tl, bl},
-        .top = {tl, tr},
-        .right = {tr, br},
-        .bot = {bl, br}};
+        .x = rect.x + val,
+        .y = rect.y + val,
+        .width = rect.width - 2.0f * val,
+        .height = rect.height - 2.0f * val};
+}
+
+RectDetailed get_rect_detailed(Rectangle rect) {
+    Vector2 lt = {rect.x, rect.y};
+    Vector2 rt = {rect.x + rect.width, rect.y};
+    Vector2 rb = {rect.x + rect.width, rect.y + rect.height};
+    Vector2 lb = {rect.x, rect.y + rect.height};
+
+    Vector2 lm = {rect.x, rect.y + 0.5f * rect.height};
+    Vector2 rm = {rect.x + rect.width, rect.y + 0.5f * rect.height};
+    Vector2 mt = {rect.x + 0.5f * rect.width, rect.y};
+    Vector2 mb = {rect.x + 0.5f * rect.width, rect.y + rect.height};
+    return {
+        .lt = lt,
+        .rt = rt,
+        .rb = rb,
+        .lb = lb,
+        .lm = lm,
+        .rm = rm,
+        .mt = mt,
+        .mb = mb,
+        .left = {lt, lb},
+        .top = {lt, rt},
+        .right = {rt, rb},
+        .bot = {lb, rb},
+        .midh = {lm, rm},
+        .midv = {mt, mb},
+    };
 }
 
 Vector2 get_rect_center(Rectangle rect) {
@@ -1925,7 +1953,7 @@ class Game {
         triangles.clear();
 
         RectDetailed screen = this->camera.get_screen_rect_detailed();
-        float diag = Vector2Distance(screen.tl, screen.br);
+        float diag = Vector2Distance(screen.lt, screen.rb);
 
         // TODO: create and use Eyes component instead of light for this
         Light light = this->player->get_light();
@@ -1975,49 +2003,49 @@ class Game {
                         triangles.push_back({start.b, end.a, end.b});
                         break;
                     case LEFT | BOT:
-                        triangles.push_back({start.a, end.a, screen.bl});
-                        triangles.push_back({start.b, end.b, screen.bl});
-                        triangles.push_back({start.a, start.b, screen.bl});
+                        triangles.push_back({start.a, end.a, screen.lb});
+                        triangles.push_back({start.b, end.b, screen.lb});
+                        triangles.push_back({start.a, start.b, screen.lb});
                         break;
                     case LEFT | TOP:
-                        triangles.push_back({start.a, end.a, screen.tl});
-                        triangles.push_back({start.b, end.b, screen.tl});
-                        triangles.push_back({start.a, start.b, screen.tl});
+                        triangles.push_back({start.a, end.a, screen.lt});
+                        triangles.push_back({start.b, end.b, screen.lt});
+                        triangles.push_back({start.a, start.b, screen.lt});
                         break;
                     case RIGHT | TOP:
-                        triangles.push_back({start.a, end.a, screen.tr});
-                        triangles.push_back({start.b, end.b, screen.tr});
-                        triangles.push_back({start.a, start.b, screen.tr});
+                        triangles.push_back({start.a, end.a, screen.rt});
+                        triangles.push_back({start.b, end.b, screen.rt});
+                        triangles.push_back({start.a, start.b, screen.rt});
                         break;
                     case RIGHT | BOT:
-                        triangles.push_back({start.a, end.a, screen.br});
-                        triangles.push_back({start.b, end.b, screen.br});
-                        triangles.push_back({start.a, start.b, screen.br});
+                        triangles.push_back({start.a, end.a, screen.rb});
+                        triangles.push_back({start.b, end.b, screen.rb});
+                        triangles.push_back({start.a, start.b, screen.rb});
                         break;
                     case LEFT | RIGHT:
                         if (light.position.y < start.a.y) {
-                            triangles.push_back({start.a, end.a, screen.bl});
-                            triangles.push_back({start.a, start.b, screen.bl});
-                            triangles.push_back({start.b, screen.br, screen.bl});
-                            triangles.push_back({start.b, end.b, screen.br});
+                            triangles.push_back({start.a, end.a, screen.lb});
+                            triangles.push_back({start.a, start.b, screen.lb});
+                            triangles.push_back({start.b, screen.rb, screen.lb});
+                            triangles.push_back({start.b, end.b, screen.rb});
                         } else {
-                            triangles.push_back({start.a, end.a, screen.tl});
-                            triangles.push_back({start.a, start.b, screen.tl});
-                            triangles.push_back({start.b, screen.tr, screen.tl});
-                            triangles.push_back({start.b, end.b, screen.tr});
+                            triangles.push_back({start.a, end.a, screen.lt});
+                            triangles.push_back({start.a, start.b, screen.lt});
+                            triangles.push_back({start.b, screen.rt, screen.lt});
+                            triangles.push_back({start.b, end.b, screen.rt});
                         }
                         break;
                     case TOP | BOT:
                         if (light.position.x < start.a.x) {
-                            triangles.push_back({start.a, end.a, screen.tr});
-                            triangles.push_back({start.a, start.b, screen.tr});
-                            triangles.push_back({start.b, screen.br, screen.tr});
-                            triangles.push_back({start.b, end.b, screen.br});
+                            triangles.push_back({start.a, end.a, screen.rt});
+                            triangles.push_back({start.a, start.b, screen.rt});
+                            triangles.push_back({start.b, screen.rb, screen.rt});
+                            triangles.push_back({start.b, end.b, screen.rb});
                         } else {
-                            triangles.push_back({start.a, end.a, screen.tl});
-                            triangles.push_back({start.a, start.b, screen.tl});
-                            triangles.push_back({start.b, screen.bl, screen.tl});
-                            triangles.push_back({start.b, end.b, screen.bl});
+                            triangles.push_back({start.a, end.a, screen.lt});
+                            triangles.push_back({start.a, start.b, screen.lt});
+                            triangles.push_back({start.b, screen.lb, screen.lt});
+                            triangles.push_back({start.b, end.b, screen.lb});
                         }
                         break;
                 }
